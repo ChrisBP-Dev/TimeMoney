@@ -1,0 +1,61 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:7443704063251689733",
+      "lastPropertyId": "3:4613111846464606794",
+      "name": "TimeBox",
+      "properties": [
+        {
+          "id": "1:1458660342663906038",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:9220117843141886681",
+          "name": "hour",
+          "type": 6
+        },
+        {
+          "id": "3:4613111846464606794",
+          "name": "minutes",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:1397771064655685503",
+      "lastPropertyId": "2:1227875365833965248",
+      "name": "WageHourlyBox",
+      "properties": [
+        {
+          "id": "1:6082580828192077545",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1227875365833965248",
+          "name": "value",
+          "type": 8
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "2:1397771064655685503",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
