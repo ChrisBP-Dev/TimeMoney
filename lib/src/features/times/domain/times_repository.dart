@@ -11,7 +11,8 @@ abstract class TimesRepository {
   UpdateTimeResult update(ModelTime time);
 }
 
-typedef FetchTimesResultStream = Either<GlobalFailure<dynamic>, Stream<List<ModelTime>>>;
+typedef FetchTimesResultStream
+    = Either<GlobalFailure<dynamic>, Stream<List<ModelTime>>>;
 typedef CreateTimeResult = Future<Either<GlobalFailure<dynamic>, ModelTime>>;
 typedef DeleteTimeResult = Future<Either<GlobalFailure<dynamic>, Unit>>;
 typedef UpdateTimeResult = Future<Either<GlobalFailure<dynamic>, ModelTime>>;

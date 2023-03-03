@@ -14,7 +14,8 @@ part 'update_wage_hourly_event.dart';
 part 'update_wage_hourly_state.dart';
 part 'update_wage_hourly_bloc.freezed.dart';
 
-class UpdateWageHourlyBloc extends Bloc<UpdateWageHourlyEvent, UpdateWageHourlyState> {
+class UpdateWageHourlyBloc
+    extends Bloc<UpdateWageHourlyEvent, UpdateWageHourlyState> {
   UpdateWageHourlyBloc(UpdateWageHourlyUseCase useCase)
       : _updateWageHourlyUseCase = useCase,
         super(UpdateWageHourlyState.initial()) {

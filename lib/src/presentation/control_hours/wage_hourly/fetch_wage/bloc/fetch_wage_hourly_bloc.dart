@@ -10,7 +10,8 @@ part 'fetch_wage_hourly_event.dart';
 part 'fetch_wage_hourly_state.dart';
 part 'fetch_wage_hourly_bloc.freezed.dart';
 
-class FetchWageHourlyBloc extends Bloc<FetchWageHourlyEvent, FetchWageHourlyState> {
+class FetchWageHourlyBloc
+    extends Bloc<FetchWageHourlyEvent, FetchWageHourlyState> {
   FetchWageHourlyBloc(FetchWageHourlyUseCase useCase)
       : _fetchWageUseCase = useCase,
         super(const _Initial()) {

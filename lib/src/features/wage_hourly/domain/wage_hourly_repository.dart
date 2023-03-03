@@ -10,6 +10,8 @@ abstract class WageHourlyRepository {
   UpdateWageHourlyResult update(WageHourly wageHourly);
 }
 
-typedef FetchTimesResultStream = Either<GlobalDefaultFailure, Stream<WageHourly>>;
+typedef FetchTimesResultStream
+    = Either<GlobalDefaultFailure, Stream<WageHourly>>;
 typedef SetWageHourlyResult = Future<Either<GlobalDefaultFailure, WageHourly>>;
-typedef UpdateWageHourlyResult = Future<Either<GlobalDefaultFailure, WageHourly>>;
+typedef UpdateWageHourlyResult
+    = Future<Either<GlobalDefaultFailure, WageHourly>>;
