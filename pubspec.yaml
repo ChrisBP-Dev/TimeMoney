@@ -19,7 +19,7 @@ dependencies:
   freezed_annotation: ^2.2.0
   intl: ^0.17.0
   json_annotation: ^4.8.0
-  json_serializable: ^6.6.1
+  json_serializable: ^6.6.2
   provider: ^6.0.5
   dartz: ^0.10.1
   objectbox: ^1.7.2
