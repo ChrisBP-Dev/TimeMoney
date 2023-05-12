@@ -26,7 +26,7 @@ dependencies:
   objectbox_flutter_libs: ^1.7.2
   flutter_web_plugins:
     sdk: flutter
-  path_provider: ^2.0.13
+  path_provider: ^2.0.15
   path: ^1.8.2
   flutter_hooks: ^0.18.6
 
