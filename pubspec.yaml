@@ -22,8 +22,8 @@ dependencies:
   json_serializable: ^6.6.1
   provider: ^6.0.5
   dartz: ^0.10.1
-  objectbox: ^1.7.2
-  objectbox_flutter_libs: ^1.7.2
+  objectbox: ^2.0.0
+  objectbox_flutter_libs: ^2.0.0
   flutter_web_plugins:
     sdk: flutter
   path_provider: ^2.0.13
@@ -35,7 +35,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^0.3.0
-  objectbox_generator: ^1.7.2
+  objectbox_generator: ^2.0.0
   very_good_analysis: ^4.0.0
 
 flutter:
