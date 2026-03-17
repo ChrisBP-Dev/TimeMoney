@@ -32,7 +32,7 @@ dev_dependencies:
   mocktail: ^1.0.0
   objectbox_generator: ^4.0.0
   very_good_analysis: ^5.0.0
-  build_runner: ^2.4.14
+  build_runner: ^2.4.14 # BROKEN: source_gen/analyzer conflict — do NOT run until Story 1.2
   json_serializable: ^6.6.1
 
 flutter:

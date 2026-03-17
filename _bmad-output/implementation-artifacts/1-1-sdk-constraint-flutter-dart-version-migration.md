@@ -1,6 +1,6 @@
 # Story 1.1: SDK Constraint & Flutter/Dart Version Migration
 
-Status: review
+Status: done
 
 ## Story
 
@@ -53,10 +53,10 @@ So that the codebase runs on a current, supported SDK and enables all modern Dar
 - [x] Task 4: Update Android platform configuration (AC: #1)
   - [x] 4.1 Update `android/build.gradle`: Removed buildscript block; `android/settings.gradle`: AGP 8.11.1, Kotlin 2.2.20
   - [x] 4.2 Update `android/gradle/wrapper/gradle-wrapper.properties`: Gradle 7.4 → 8.14
-  - [x] 4.3 Update `android/app/build.gradle`: compileSdk → 35, targetSdk → 35, minSdk → 21, Java → JavaVersion.VERSION_17
+  - [x] 4.3 Update `android/app/build.gradle`: compileSdk → 36 (path_provider_android requires SDK 36), targetSdk → 35, minSdk → 21, Java → JavaVersion.VERSION_17
   - [x] 4.4 Migrate Gradle plugin application from imperative `apply plugin:` to declarative `plugins {}` block
   - [x] 4.5 **CRITICAL:** All three build flavors (development, staging, production) and application IDs preserved. Verified `.dev` and `.stg` suffixes
-  - [x] 4.6 Verify `flutter build ios` succeeds (APK build not available on macOS without Android SDK; iOS build verified instead)
+  - [x] 4.6 Verify `flutter build apk --debug` succeeds for all 3 flavors (development, staging, production) — verified during code review. Required fixes: compileSdk 35→36, gradle.jvmargs 1536M→4G
 
 - [x] Task 5: Update iOS platform configuration (AC: #1)
   - [x] 5.1 Updated `ios/Podfile` platform to `platform :ios, '13.0'`
@@ -88,12 +88,12 @@ So that the codebase runs on a current, supported SDK and enables all modern Dar
   - [x] 9.1 `flutter analyze` — zero errors (17 info only)
   - [x] 9.2 `flutter build ios --no-codesign` — succeeds for all 3 flavors
   - [x] 9.3 No test files exist — test directory compiles (verified via `flutter analyze`)
-  - [ ] 9.4 Launch app on a native platform — requires physical device or emulator (manual verification needed by developer)
-  - [x] 9.5 All three flavors compile: development, staging, production — verified via `flutter build ios --no-codesign --flavor <name>`
-  - [ ] 9.6 Verify time entry CRUD works — requires runtime verification (manual)
-  - [ ] 9.7 Verify wage management works — requires runtime verification (manual)
-  - [ ] 9.8 Verify payment calculation works — requires runtime verification (manual)
-  - [ ] 9.9 Verify localization works — requires runtime verification (manual)
+  - [x] 9.4 Launch app on iOS simulator (iPhone 15 Pro) — no crashes, no runtime errors
+  - [x] 9.5 All three flavors compile: development, staging, production — verified via `flutter build ios --no-codesign` and `flutter build apk --debug` for all flavors
+  - [x] 9.6 Verify time entry CRUD works — manually verified by developer on iOS simulator
+  - [x] 9.7 Verify wage management works — manually verified by developer on iOS simulator
+  - [x] 9.8 Verify payment calculation works — manually verified by developer on iOS simulator
+  - [x] 9.9 Verify localization setup works — l10n generates correctly, delegates configured. Only 1 placeholder string localized (pre-existing); app UI strings are hardcoded in English (pre-existing, not a migration issue)
 
 ## Dev Notes
 
@@ -120,11 +120,11 @@ This story is NOT about:
 
 | Package | Current | Target | Section | Notes |
 |---------|---------|--------|---------|-------|
-| objectbox | ^1.7.2 | ^2.0.0 | dependencies | Major version, min Dart 3. Do NOT jump to 5.x |
-| objectbox_flutter_libs | ^1.7.2 | ^2.1.0 | dependencies | Must match objectbox major |
-| objectbox_generator | ^1.7.2 | ^2.1.0 | dev_dependencies | Must match objectbox major |
-| freezed | ^2.3.2 | ^3.0.0 | dev_dependencies | Version bump only — do NOT regenerate .freezed.dart |
-| freezed_annotation | ^2.2.0 | ^2.4.2 | dependencies | Minor breaking: `JsonKey(ignore:true)` → `JsonKey(includeFromJson:false, includeToJson:false)` |
+| objectbox | ^1.7.2 | ^4.0.0 | dependencies | ^2.0.0 incompatible with Dart 3.11 analyzer — bumped to ^4.0.0. Below 5.x guardrail. Story 1.2 starts from 4.x |
+| objectbox_flutter_libs | ^1.7.2 | ^4.0.0 | dependencies | Must match objectbox major |
+| objectbox_generator | ^1.7.2 | ^4.0.0 | dev_dependencies | Must match objectbox major |
+| freezed | ^2.3.2 | **REMOVE** | dev_dependencies | Removed — source_gen conflict with objectbox_generator 4.x. Reinstall in Story 1.4 |
+| freezed_annotation | ^2.2.0 | ^3.0.0 | dependencies | freezed 3.x requires annotation ^3.0.0 (not ^2.4.2). Existing .freezed.dart files compile with 3.x |
 | intl | ^0.17.0 | ^0.20.0 | dependencies | Requires Dart >=3.3.0 |
 | mocktail | ^0.3.0 | ^1.0.0 | dev_dependencies | No breaking API changes |
 | very_good_analysis | ^4.0.0 | ^5.0.0 | dev_dependencies | Lint rule changes only |
@@ -135,7 +135,7 @@ This story is NOT about:
 | bloc_test | ^9.1.1 | ^9.1.1 | dev_dependencies | Already Dart 3 compatible |
 | json_annotation | ^4.8.0 | ^4.8.0 | dependencies | Already Dart 3 compatible |
 | json_serializable | ^6.6.1 | ^6.6.1 | dev_dependencies | Already Dart 3 compatible |
-| build_runner | ^2.3.3 | ^2.3.3 | dev_dependencies | Already Dart 3 compatible |
+| build_runner | ^2.3.3 | ^2.4.14 | dev_dependencies | Dart 3 compatible but BROKEN at runtime: source_gen/analyzer conflict. Do NOT run until Story 1.2 |
 | provider | ^6.0.5 | ^6.0.5 | dependencies | Already Dart 3 compatible |
 | path_provider | ^2.0.13 | ^2.0.13 | dependencies | Already Dart 3 compatible |
 | path | ^1.8.2 | ^1.8.2 | dependencies | Already Dart 3 compatible |
@@ -155,7 +155,7 @@ This is a Dart 2.x → Dart 3.11+ migration spanning ~3 years of releases. The k
 
 ### Dependency-Specific Notes
 
-**ObjectBox 1.7.2 → 2.0.0:** Major version bump with breaking API changes. Bump to `^2.0.0` / `^2.1.0` for flutter_libs and generator. Regenerate `objectbox.g.dart` and `objectbox-model.json`. Verify the existing dev database (`test-1`) still loads. Do NOT jump to 5.x — Story 1.2 handles the full migration with schema verification and data integrity checks.
+**ObjectBox 1.7.2 → 4.0.0:** Originally targeted ^2.0.0, but `objectbox_generator 2.x` requires `analyzer <7.0.0` which is incompatible with Dart 3.11's `analyzer 8.x`. Bumped to `^4.0.0` (all three packages). Existing `.g.dart` files compile correctly with 4.x runtime. Do NOT jump to 5.x — Story 1.2 handles the full migration with schema verification and data integrity checks starting from 4.x.
 
 **flutter_hooks 0.18.6 → REMOVE:** No published Dart 3 version (last release 0.21.3+1 still has SDK `<3.0.0`). Remove the dependency and convert all 5 HookWidget usages to StatefulWidget. The 5 files:
 1. `lib/src/presentation/control_hours/times/create_time/widgets/create_hour_field.dart`
@@ -344,6 +344,53 @@ lib/
 - [Source: _bmad-output/project-context.md#Development Workflow Rules]
 - [Source: _bmad-output/planning-artifacts/prd.md#FR18, FR19]
 
+## Code Review Record
+
+### Review Date
+2026-03-17
+
+### Review Model
+Claude Opus 4.6 (1M context)
+
+### Review Layers Executed
+- Blind Hunter (adversarial, diff-only)
+- Edge Case Hunter (diff + project access)
+- Acceptance Auditor (diff + spec + context)
+
+### Triage Summary
+
+| Category | Count | Description |
+|----------|-------|-------------|
+| Intent Gap | 2 | Incomplete intent — needs clarification |
+| Bad Spec | 2 | Spec prescribed incompatible versions — corrected |
+| Patch | 1 | Code fix applied |
+| Defer | 5 | Pre-existing issues, not caused by this change |
+| Reject | 13 | Noise / false positives — dropped |
+
+### Findings Actioned
+
+**P-1 (patch — applied):** Added warning comment to `pubspec.yaml` for `build_runner` being broken at runtime due to `source_gen`/`analyzer` conflict. Prevents developer confusion.
+
+**BS-1 (bad spec — corrected):** Updated version table: ObjectBox target changed from `^2.0.0` to `^4.0.0` with rationale. Updated dependency-specific notes. Story 1.2 now documented as starting from 4.x.
+
+**BS-2 (bad spec — corrected):** Updated version table: `freezed` changed to **REMOVE**, `freezed_annotation` target changed from `^2.4.2` to `^3.0.0`. Documented source_gen conflict rationale.
+
+### Intent Gaps (Documented — Require Action Before Done)
+
+**IG-1: Android build never verified — RESOLVED.** Verified `flutter build apk --debug` for all 3 flavors. Required 2 fixes: `compileSdk 35→36` (path_provider_android requires SDK 36) and `gradle.jvmargs -Xmx1536M→-Xmx4G` (Java heap space on Jetify transform). All 3 APKs build successfully.
+
+**IG-2: AC#3 runtime verification — RESOLVED.** Developer manually verified on iOS simulator (iPhone 15 Pro): app launches without crash, CRUD works, wage management works, payment calculation works. Localization setup is functional but only 1 placeholder string exists (pre-existing — app UI strings are hardcoded). No runtime errors observed. System logs clean.
+
+### Deferred Findings (Pre-existing — Not Blocking)
+
+- **D-1:** TextEditingController text set once in initState, not synced with bloc state changes (`update_hour_field.dart`, `update_minutes_field.dart`). Pre-existing from HookWidget era — `useTextEditingController` also only set text on first creation.
+- **D-2:** BlocConsumer listener is a no-op (`listener: (context, state) => state`) in all 5 converted widget files. Pre-existing.
+- **D-3:** StackTrace parameter captured but discarded in `error_view.dart`. Pre-existing.
+- **D-4:** `windows/CMakeLists.txt` cmake_policy scope broader than original. Unverifiable on macOS. Low risk.
+- **D-5:** No automated test coverage for migration changes. Pre-existing — project has no tests implemented.
+
+---
+
 ## Dev Agent Record
 
 ### Agent Model Used
@@ -372,9 +419,14 @@ Claude Opus 4.6 (1M context)
 
 9. **Runtime verification pending**: Tasks 9.4, 9.6-9.9 require manual runtime verification on a device/emulator. All compilation checks pass. Recommend running the app on iOS simulator to verify CRUD, wage management, payment calculation, and localization.
 
+10. **Android build fixes (code review)**: `compileSdk` bumped from 35 to 36 — required by `path_provider_android` plugin. `gradle.jvmargs` increased from `-Xmx1536M` to `-Xmx4G` to resolve Java heap space during Jetify transform. All 3 Android flavors build successfully after these fixes.
+
 ### Change Log
 
 - 2026-03-17: Story 1.1 implementation — SDK constraint migration Dart 2.19 → 3.11+, Flutter 3.7.5 → 3.41.4
+- 2026-03-17: Code review — 3-layer adversarial review. 1 patch applied (build_runner warning), 2 bad spec entries corrected (ObjectBox/freezed versions), 2 intent gaps documented, 5 pre-existing issues deferred
+- 2026-03-17: Code review IG-1 resolved — Android build verified. Fixed compileSdk 35→36, gradle.jvmargs 1536M→4G. All 3 APK flavors build successfully
+- 2026-03-17: Code review IG-2 resolved — Runtime verification by developer on iOS simulator. All features functional, no errors. All intent gaps closed
 
 ### File List
 
@@ -397,7 +449,8 @@ Claude Opus 4.6 (1M context)
 - `lib/src/presentation/widgets/info_section.dart` — textScaleFactor → textScaler
 - `android/settings.gradle` — Full rewrite: pluginManagement + plugins block (AGP 8.11.1, Kotlin 2.2.20)
 - `android/build.gradle` — Removed buildscript block, modernized clean task
-- `android/app/build.gradle` — plugins block, compileSdk 35, targetSdk 35, minSdk 21, Java 17, namespace
+- `android/app/build.gradle` — plugins block, compileSdk 36, targetSdk 35, minSdk 21, Java 17, namespace
+- `android/gradle.properties` — JVM heap increased to 4G for Jetify transform
 - `android/gradle/wrapper/gradle-wrapper.properties` — Gradle 7.4 → 8.14
 - `ios/Podfile` — platform :ios, '13.0'
 - `ios/Runner.xcodeproj/project.pbxproj` — IPHONEOS_DEPLOYMENT_TARGET 12.0 → 13.0

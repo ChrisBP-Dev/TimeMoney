@@ -44,7 +44,7 @@ story_location: "{project-root}/_bmad-output/implementation-artifacts"
 development_status:
   # Epic 1: Foundation — SDK & Dependency Modernization
   epic-1: in-progress
-  1-1-sdk-constraint-flutter-dart-version-migration: review
+  1-1-sdk-constraint-flutter-dart-version-migration: done
   1-2-objectbox-migration-data-verification: backlog
   1-3-state-management-fp-dependencies-migration: backlog
   1-4-code-generation-remaining-dependencies: backlog
