@@ -40,14 +40,14 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 | Wage Management | FR7-FR11 | Single-entity CRUD with reactive stream, default value handling |
 | Payment Calculation | FR12-FR14 | Derived/computed state from two data sources, no persistence needed |
 | Localization | FR15-FR17 | ARB-based i18n, context.l10n pattern, zero hardcoded strings |
-| SDK & Build Verification | FR52-FR53 | Migration foundation — everything builds on current SDK |
-| Multi-Platform Support | FR18-FR22 | Platform-aware datasource selection via DI |
-| Multi-Environment Support | FR23-FR25 | Isolated database instances per environment |
-| Data Persistence | FR26-FR30 | Dual datasource (ObjectBox + drift) behind shared Repository interfaces |
-| Architecture & Code Org | FR31-FR37 | Feature-first Clean Architecture, 3-tier DI, layer separation |
-| State Management | FR38-FR42 | Sealed classes for BLoC events/states, exhaustive pattern matching |
-| Testing | FR43-FR47 | Unit, BLoC, widget, golden tests — full coverage from zero baseline |
-| CI/CD & Dev Experience | FR48-FR51 | Automated pipeline, professional README, conventional commits |
+| SDK & Build Verification | FR18-FR19 | Migration foundation — everything builds on current SDK |
+| Multi-Platform Support | FR20-FR24 | Platform-aware datasource selection via DI |
+| Multi-Environment Support | FR25-FR27 | Isolated database instances per environment |
+| Data Persistence | FR28-FR32 | Dual datasource (ObjectBox + drift) behind shared Repository interfaces |
+| Architecture & Code Org | FR33-FR39 | Feature-first Clean Architecture, 3-tier DI, layer separation |
+| State Management | FR40-FR44 | Sealed classes for BLoC events/states, exhaustive pattern matching |
+| Testing | FR45-FR49 | Unit, BLoC, widget, golden tests — full coverage from zero baseline |
+| CI/CD & Dev Experience | FR50-FR53 | Automated pipeline, professional README, conventional commits |
 
 **Non-Functional Requirements:**
 
@@ -1198,35 +1198,35 @@ TimeMoney/
 - `l10n/arb/` — EN/ES ARB files
 - `l10n/l10n.dart` — context.l10n accessor
 
-**FR18-FR22 (Multi-Platform):**
+**FR20-FR24 (Multi-Platform):**
 - `bootstrap.dart` — platform detection via `kIsWeb`
 - `app/view/app_bloc.dart` — platform-aware DI
 - `core/services/` — ObjectBox + drift service initialization
 
-**FR23-FR25 (Multi-Environment):**
+**FR25-FR27 (Multi-Environment):**
 - `main_development.dart`, `main_staging.dart`, `main_production.dart`
 - Each passes environment-specific DB name to bootstrap
 
-**FR26-FR30 (Data Persistence):**
+**FR28-FR32 (Data Persistence):**
 - `features/*/data/datasources/` — ObjectBox + drift datasources
 - `features/*/data/repositories/` — dual implementations
 - `features/*/domain/repositories/` — shared abstract interfaces
 - `core/services/` — Store + Database initialization
 
-**FR31-FR37 (Architecture & Code Organization):**
+**FR33-FR39 (Architecture & Code Organization):**
 - Enforced by the directory structure itself
 - Feature-first with Data/Domain/Presentation layers
 
-**FR38-FR42 (State Management):**
+**FR40-FR44 (State Management):**
 - `features/*/presentation/bloc/` — sealed classes for events/states
 - `core/ui/action_state.dart` — shared ActionState sealed class
 
-**FR43-FR47 (Testing):**
+**FR45-FR49 (Testing):**
 - `test/src/` mirrors `lib/src/` exactly
 - `test/goldens/` for visual regression tests
 - `test/helpers/` for shared test utilities
 
-**FR48-FR51 (CI/CD):**
+**FR50-FR53 (CI/CD):**
 - `.github/workflows/main.yaml` — updated pipeline
 - `README.md` — professional documentation
 
@@ -1330,14 +1330,14 @@ All technology choices are mutually compatible:
 | Wage Management | FR7-FR11 | `features/wage/` — full CRUD + reactive stream + default value (15.0) in entity | ✅ |
 | Payment Calculation | FR12-FR14 | `features/payment/` — CalculatePaymentUseCase + PaymentCubit + PaymentResultPage | ✅ |
 | Localization | FR15-FR17 | `l10n/arb/` — EN/ES ARB files, context.l10n, zero hardcoded strings | ✅ |
-| SDK & Build | FR52-FR53 | Flutter 3.41+ / Dart 3.11+ specified as minimum SDK | ✅ |
-| Multi-Platform | FR18-FR22 | `kIsWeb` platform detection, dual datasources, platform-aware DI | ✅ |
-| Multi-Environment | FR23-FR25 | Three entry points with isolated DB names (test-1, stg-1, prod-1) | ✅ |
-| Data Persistence | FR26-FR30 | ObjectBox + drift datasources, shared Repository interfaces, reactive streams | ✅ |
-| Architecture | FR31-FR37 | Feature-first with Data/Domain/Presentation, 3-tier DI, layer separation | ✅ |
-| State Management | FR38-FR42 | Sealed classes, exhaustive pattern matching, emit.forEach, computed state in PaymentCubit | ✅ |
-| Testing | FR43-FR47 | Test structure defined, coverage targets per layer, golden test strategy | ✅ |
-| CI/CD | FR48-FR51 | Pipeline defined, README planned, conventional commits | ✅ |
+| SDK & Build | FR18-FR19 | Flutter 3.41+ / Dart 3.11+ specified as minimum SDK | ✅ |
+| Multi-Platform | FR20-FR24 | `kIsWeb` platform detection, dual datasources, platform-aware DI | ✅ |
+| Multi-Environment | FR25-FR27 | Three entry points with isolated DB names (test-1, stg-1, prod-1) | ✅ |
+| Data Persistence | FR28-FR32 | ObjectBox + drift datasources, shared Repository interfaces, reactive streams | ✅ |
+| Architecture | FR33-FR39 | Feature-first with Data/Domain/Presentation, 3-tier DI, layer separation | ✅ |
+| State Management | FR40-FR44 | Sealed classes, exhaustive pattern matching, emit.forEach, computed state in PaymentCubit | ✅ |
+| Testing | FR45-FR49 | Test structure defined, coverage targets per layer, golden test strategy | ✅ |
+| CI/CD | FR50-FR53 | Pipeline defined, README planned, conventional commits | ✅ |
 
 **53/53 functional requirements architecturally supported.**
 

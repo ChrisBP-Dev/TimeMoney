@@ -329,63 +329,63 @@ TimeMoney is a Flutter cross-platform application targeting four platforms: iOS,
 
 ### SDK & Build Verification
 
-- **FR52:** System compiles and runs on Flutter 3.41+ / Dart 3.11+ with zero compilation errors
-- **FR53:** Dart 2.x SDK constraint is replaced with Dart 3.11+ constraint and all source files compile under the new SDK
+- **FR18:** System compiles and runs on Flutter 3.41+ / Dart 3.11+ with zero compilation errors
+- **FR19:** Dart 2.x SDK constraint is replaced with Dart 3.11+ constraint and all source files compile under the new SDK
 
 ### Multi-Platform Support
 
-- **FR18:** User can run the app on iOS with all FR1-FR17 capabilities functional
-- **FR19:** User can run the app on Android with all FR1-FR17 capabilities functional
-- **FR20:** User can run the app on Web with all FR1-FR17 capabilities functional using the web-compatible datasource
-- **FR21:** User can run the app on Windows with all FR1-FR17 capabilities functional
-- **FR22:** System selects the appropriate datasource implementation based on the target platform automatically — mobile/desktop datasource for native platforms, web datasource for browser
+- **FR20:** User can run the app on iOS with all FR1-FR17 capabilities functional
+- **FR21:** User can run the app on Android with all FR1-FR17 capabilities functional
+- **FR22:** User can run the app on Web with all FR1-FR17 capabilities functional using the web-compatible datasource
+- **FR23:** User can run the app on Windows with all FR1-FR17 capabilities functional
+- **FR24:** System selects the appropriate datasource implementation based on the target platform automatically — mobile/desktop datasource for native platforms, web datasource for browser
 
 ### Multi-Environment Support
 
-- **FR23:** Developer can run the app in Development environment with isolated database (test-1)
-- **FR24:** Developer can run the app in Staging environment with isolated database (stg-1)
-- **FR25:** Developer can run the app in Production environment with isolated database (prod-1)
+- **FR25:** Developer can run the app in Development environment with isolated database (test-1)
+- **FR26:** Developer can run the app in Staging environment with isolated database (stg-1)
+- **FR27:** Developer can run the app in Production environment with isolated database (prod-1)
 
 ### Data Persistence
 
-- **FR26:** System persists all time entries and wage data locally on-device
-- **FR27:** System provides reactive data streams for both datasource implementations (mobile/desktop and web)
-- **FR28:** Mobile and desktop datasource (ObjectBox) supports iOS, Android, and Windows platforms
-- **FR29:** Web datasource (drift) supports the Web platform with local persistence
-- **FR30:** Both datasource implementations conform to shared Repository interfaces ensuring interchangeability
+- **FR28:** System persists all time entries and wage data locally on-device
+- **FR29:** System provides reactive data streams for both datasource implementations (mobile/desktop and web)
+- **FR30:** Mobile and desktop datasource (ObjectBox) supports iOS, Android, and Windows platforms
+- **FR31:** Web datasource (drift) supports the Web platform with local persistence
+- **FR32:** Both datasource implementations conform to shared Repository interfaces ensuring interchangeability
 
 ### Architecture & Code Organization
 
-- **FR31:** Codebase follows feature-first organization where each feature contains all layers (domain, application, infrastructure, presentation)
-- **FR32:** Domain layer has zero external dependencies — entities and repository interfaces only
-- **FR33:** Application layer contains use cases implementing single-responsibility operations
-- **FR34:** Infrastructure layer contains concrete repository implementations and database entities
-- **FR35:** Presentation layer contains BLoCs, views, and widgets scoped to their feature
-- **FR36:** Shared cross-cutting concerns (failures, services, extensions) reside in a core module
-- **FR37:** Dependency injection follows three-tier pattern: Repositories → Use Cases → BLoCs via BLoC-native providers
+- **FR33:** Codebase follows feature-first organization where each feature contains all layers (domain, application, infrastructure, presentation)
+- **FR34:** Domain layer has zero external dependencies — entities and repository interfaces only
+- **FR35:** Application layer contains use cases implementing single-responsibility operations
+- **FR36:** Infrastructure layer contains concrete repository implementations and database entities
+- **FR37:** Presentation layer contains BLoCs, views, and widgets scoped to their feature
+- **FR38:** Shared cross-cutting concerns (failures, services, extensions) reside in a core module
+- **FR39:** Dependency injection follows three-tier pattern: Repositories → Use Cases → BLoCs via BLoC-native providers
 
 ### State Management
 
-- **FR38:** All BLoCs use sealed classes for events and states with exhaustive pattern matching
-- **FR39:** Domain data classes support copyWith, equality, and JSON serialization via code generation
-- **FR40:** All BLoCs follow the standard state pattern: initial, loading, error, success/data
-- **FR41:** BLoCs with stream data provide a hasDataStream state for reactive UI rendering
-- **FR42:** Payment calculation derives computed state from times list and wage data without user-initiated events
+- **FR40:** All BLoCs use sealed classes for events and states with exhaustive pattern matching
+- **FR41:** Domain data classes support copyWith, equality, and JSON serialization via code generation
+- **FR42:** All BLoCs follow the standard state pattern: initial, loading, error, success/data
+- **FR43:** BLoCs with stream data provide a hasDataStream state for reactive UI rendering
+- **FR44:** Payment calculation derives computed state from times list and wage data without user-initiated events
 
 ### Testing
 
-- **FR43:** Unit tests cover all use cases and repository implementations
-- **FR44:** BLoC tests cover all state management logic using dedicated BLoC testing utilities
-- **FR45:** Widget tests cover presentation layer components
-- **FR46:** Golden tests verify zero visual regression across the modernization
-- **FR47:** All tests are runnable via `flutter test` with coverage reporting
+- **FR45:** Unit tests cover all use cases and repository implementations
+- **FR46:** BLoC tests cover all state management logic using dedicated BLoC testing utilities
+- **FR47:** Widget tests cover presentation layer components
+- **FR48:** Golden tests verify zero visual regression across the modernization
+- **FR49:** All tests are runnable via `flutter test` with coverage reporting
 
 ### CI/CD & Developer Experience
 
-- **FR48:** CI pipeline runs linting, testing, and coverage reporting on every PR
-- **FR49:** CI pipeline verifies builds for all four target platforms
-- **FR50:** README contains project overview, architecture diagram, setup instructions, and contribution guide — scannable within 30 seconds
-- **FR51:** Each commit message follows conventional commit format (type: description) and references the scope item or migration step it implements
+- **FR50:** CI pipeline runs linting, testing, and coverage reporting on every PR
+- **FR51:** CI pipeline verifies builds for all four target platforms
+- **FR52:** README contains project overview, architecture diagram, setup instructions, and contribution guide — scannable within 30 seconds
+- **FR53:** Each commit message follows conventional commit format (type: description) and references the scope item or migration step it implements
 
 ## Non-Functional Requirements
 

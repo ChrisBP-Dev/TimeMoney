@@ -140,25 +140,25 @@ Distillate documents 8 rejected decisions (no get_it, no Riverpod, no Freezed re
 
 **Format Violations:** 2
 - FR17 (line 307): "All user-facing strings are localized" — system constraint with no actor; should be "User can see all interface text in their selected language"
-- FR28-29 (lines 328-329): Technology as subject ("ObjectBox implementation supports...", "drift implementation supports...") — no user/system actor
+- FR30-29 (lines 328-329): Technology as subject ("ObjectBox implementation supports...", "drift implementation supports...") — no user/system actor
 
 **Subjective Adjectives Found:** 2
-- FR18-21 (lines 308-315): "full functionality" — implicitly means "all preceding FRs work" but not explicitly defined as testable criterion
-- FR51 (line 351): "meaningful, traceable messages" — "meaningful" is subjective; consider "each commit references the scope item or FR it implements"
+- FR20-21 (lines 308-315): "full functionality" — implicitly means "all preceding FRs work" but not explicitly defined as testable criterion
+- FR53 (line 351): "meaningful, traceable messages" — "meaningful" is subjective; consider "each commit references the scope item or FR it implements"
 
 **Vague Quantifiers Found:** 0
 
 **Implementation Leakage:** 5 clear violations + 9 contextually acceptable
 - **Clear violations (code-level detail beyond capability):**
-  - FR30 (line 330): Names specific interfaces (TimesRepository, WageHourlyRepository)
-  - FR37 (line 339): Names "flutter_bloc providers" — specific package
-  - FR39 (line 339): "Freezed 3.x is used" — technology prescription, not capability description
-  - FR42 (line 342): Names "ResultPaymentCubit" — specific class name
-  - FR44 (line 344): "using bloc_test" — specific test tool name
+  - FR32 (line 330): Names specific interfaces (TimesRepository, WageHourlyRepository)
+  - FR39 (line 339): Names "flutter_bloc providers" — specific package
+  - FR41 (line 339): "Freezed 3.x is used" — technology prescription, not capability description
+  - FR44 (line 342): Names "ResultPaymentCubit" — specific class name
+  - FR46 (line 344): "using bloc_test" — specific test tool name
 - **Contextually acceptable (technology IS the deliverable for modernization PRD):**
-  - FR22, FR27-29: ObjectBox/drift are the dual-datasource deliverable
-  - FR35, FR38, FR40-41: BLoC patterns are the state management deliverable
-  - FR47: `flutter test` is standard toolchain
+  - FR24, FR29-29: ObjectBox/drift are the dual-datasource deliverable
+  - FR37, FR40, FR42-41: BLoC patterns are the state management deliverable
+  - FR49: `flutter test` is standard toolchain
 
 **FR Violations Total:** 9 (strict count, excluding contextually acceptable references)
 
@@ -192,9 +192,9 @@ Distillate documents 8 rejected decisions (no get_it, no Riverpod, no Freezed re
 **Recommendation:** Address the following high-value improvements:
 1. NFR5: Replace "comparable performance" with a specific metric threshold
 2. NFR1-4: Add measurement methods to performance metrics
-3. FR51: Replace "meaningful" with a testable criterion
-4. FR30, FR42: Remove specific class/interface names — describe capability instead
-5. FR39: Reframe as capability: "Domain data classes support copyWith, equality, and JSON serialization via code generation"
+3. FR53: Replace "meaningful" with a testable criterion
+4. FR32, FR44: Remove specific class/interface names — describe capability instead
+5. FR41: Reframe as capability: "Domain data classes support copyWith, equality, and JSON serialization via code generation"
 
 ## Traceability Validation
 
@@ -210,13 +210,13 @@ Vision (modernization + portfolio + community resource) aligns directly with all
 - Technical Success → Daniel (inspects code quality) + Sofía (studies patterns) ✓
 
 **User Journeys → Functional Requirements:** Intact
-- María Happy Path → FR1-FR17, FR26-FR27 (CRUD, wage, payment, localization, persistence)
-- María Edge Case → FR3-FR5, FR11, FR26-FR27 (update/delete flows, feedback, integrity)
-- Daniel Hiring Manager → FR31-FR51, NFR6-NFR11 (architecture, testing, CI/CD, README, commits)
-- Sofía Flutter Dev → FR22, FR27-FR42 (multi-datasource, architecture, modern patterns)
+- María Happy Path → FR1-FR17, FR28-FR29 (CRUD, wage, payment, localization, persistence)
+- María Edge Case → FR3-FR5, FR11, FR28-FR29 (update/delete flows, feedback, integrity)
+- Daniel Hiring Manager → FR33-FR53, NFR6-NFR11 (architecture, testing, CI/CD, README, commits)
+- Sofía Flutter Dev → FR24, FR29-FR44 (multi-datasource, architecture, modern patterns)
 
 **Scope → FR Alignment:** Mostly Intact
-- Scope items #2-#9 fully covered by FR22-FR51 ✓
+- Scope items #2-#9 fully covered by FR24-FR53 ✓
 - Scope item #1 (SDK & Dependency Modernization): No explicit FR — covered by NFR12-NFR16 (compatibility requirements). Minor gap: consider adding an FR like "System builds and runs on Flutter 3.41+ / Dart 3.11+ SDK"
 
 ### Orphan Elements
@@ -234,19 +234,19 @@ All four journeys have comprehensive FR support.
 
 | Journey / Source | Supporting FRs | Supporting NFRs |
 |---|---|---|
-| María Happy Path | FR1-FR17, FR26-FR27 | NFR1-NFR5, NFR17 |
-| María Edge Case | FR3-FR5, FR11, FR26-FR27 | NFR17, NFR19 |
-| Daniel Hiring Manager | FR31-FR51 | NFR6-NFR11, NFR20-NFR21 |
-| Sofía Flutter Dev | FR22, FR27-FR42 | NFR6-NFR11 |
+| María Happy Path | FR1-FR17, FR28-FR29 | NFR1-NFR5, NFR17 |
+| María Edge Case | FR3-FR5, FR11, FR28-FR29 | NFR17, NFR19 |
+| Daniel Hiring Manager | FR33-FR53 | NFR6-NFR11, NFR20-NFR21 |
+| Sofía Flutter Dev | FR24, FR29-FR44 | NFR6-NFR11 |
 | Scope #1 (SDK Modernization) | (no explicit FR) | NFR12-NFR16 |
-| Scope #2 (Architecture) | FR31-FR37 | — |
-| Scope #3 (Multi-Datasource) | FR22, FR27-FR30 | NFR5 |
-| Scope #4 (Modern Dart) | FR38-FR39 | — |
-| Scope #5 (BLoC 9.x) | FR38, FR40-FR42 | — |
-| Scope #6 (Testing) | FR43-FR47 | NFR20 |
+| Scope #2 (Architecture) | FR33-FR39 | — |
+| Scope #3 (Multi-Datasource) | FR24, FR29-FR32 | NFR5 |
+| Scope #4 (Modern Dart) | FR40-FR41 | — |
+| Scope #5 (BLoC 9.x) | FR40, FR42-FR44 | — |
+| Scope #6 (Testing) | FR45-FR49 | NFR20 |
 | Scope #7 (Code Quality) | — | NFR6-NFR11 |
-| Scope #8 (CI/CD) | FR48-FR49 | NFR21 |
-| Scope #9 (README) | FR50 | — |
+| Scope #8 (CI/CD) | FR50-FR51 | NFR21 |
+| Scope #9 (README) | FR52 | — |
 
 **Total Traceability Issues:** 2 (both minor)
 
@@ -269,26 +269,26 @@ Flutter named throughout but is the product platform — capability-relevant, no
 No backend in this project.
 
 **Databases:** 7 mentions (contextually acceptable)
-- FR22 (line 315), FR27 (line 327), FR28 (line 328), FR29 (line 329), FR30 (line 330): ObjectBox/drift named as datasource implementations
+- FR24 (line 315), FR29 (line 327), FR30 (line 328), FR31 (line 329), FR32 (line 330): ObjectBox/drift named as datasource implementations
 - NFR5 (line 372), NFR18 (line 389): ObjectBox/drift in performance and migration requirements
 - **Assessment:** For a modernization PRD where the multi-datasource architecture IS the key deliverable, naming the specific databases is capability-relevant. These technologies are what differentiates the project.
 
 **Cloud Platforms:** 0 violations
 
 **Infrastructure:** 1 violation
-- FR29 (line 329): "via WebAssembly and OPFS" — these are implementation mechanisms for how drift works on web, not user-facing capabilities. Should read: "drift implementation supports Web platform with local persistence"
+- FR31 (line 329): "via WebAssembly and OPFS" — these are implementation mechanisms for how drift works on web, not user-facing capabilities. Should read: "drift implementation supports Web platform with local persistence"
 
 **Libraries:** 6 violations
-- FR37 (line 339): "flutter_bloc providers" — specific package name. Reframe: "BLoC-native dependency injection"
-- FR39 (line 339): "Freezed 3.x is used" — technology prescription. Reframe: "Domain data classes support copyWith, equality, and JSON serialization via code generation"
-- FR41 (line 341): "BlocSelector optimization" — specific API name. Reframe: "BLoC state management uses selective rebuilds to minimize widget re-renders"
-- FR44 (line 344): "using bloc_test" — specific test package. Reframe: "BLoC tests cover all state management logic using dedicated BLoC testing utilities"
+- FR39 (line 339): "flutter_bloc providers" — specific package name. Reframe: "BLoC-native dependency injection"
+- FR41 (line 339): "Freezed 3.x is used" — technology prescription. Reframe: "Domain data classes support copyWith, equality, and JSON serialization via code generation"
+- FR43 (line 341): "BlocSelector optimization" — specific API name. Reframe: "BLoC state management uses selective rebuilds to minimize widget re-renders"
+- FR46 (line 344): "using bloc_test" — specific test package. Reframe: "BLoC tests cover all state management logic using dedicated BLoC testing utilities"
 - NFR6 (line 376): "very_good_analysis latest rules" — specific linter package. Reframe: "strict Dart analysis rules with zero warnings"
 - NFR9 (line 379): "build_runner, freezed, json_serializable, objectbox_generator" — specific package names. Reframe: "Code generation tools are correctly placed in dev_dependencies"
 
 **Other Implementation Details (class/interface names):** 3 violations
-- FR30 (line 330): "TimesRepository, WageHourlyRepository" — specific interface names. Reframe: "Both datasource implementations conform to shared Repository interfaces"
-- FR42 (line 342): "ResultPaymentCubit" — specific class name. Reframe: "Payment calculation derives computed state from times and wage data without user events"
+- FR32 (line 330): "TimesRepository, WageHourlyRepository" — specific interface names. Reframe: "Both datasource implementations conform to shared Repository interfaces"
+- FR44 (line 342): "ResultPaymentCubit" — specific class name. Reframe: "Payment calculation derives computed state from times and wage data without user events"
 - NFR3 (line 370): "interactive ControlHoursPage" — specific class name. Reframe: "App cold start to interactive main screen"
 
 ### Summary
@@ -302,12 +302,12 @@ No backend in this project.
 **Recommendation:** This is the PRD's weakest area, though significantly mitigated by the project's nature as a technology modernization initiative. Two tiers of action:
 
 **Tier 1 — Clear leakage to fix (remove code-level details):**
-- FR30, FR42, NFR3: Replace specific class/interface names with capability descriptions
-- FR29: Remove WebAssembly/OPFS mechanism details
-- FR39: Reframe from technology prescription to capability description
+- FR32, FR44, NFR3: Replace specific class/interface names with capability descriptions
+- FR31: Remove WebAssembly/OPFS mechanism details
+- FR41: Reframe from technology prescription to capability description
 
 **Tier 2 — Judgment call (technology-as-deliverable):**
-- FR37, FR41, FR44, NFR6, NFR9: Package/API names could be abstracted but may reduce clarity for a modernization PRD where naming the specific technology IS the requirement
+- FR39, FR43, FR46, NFR6, NFR9: Package/API names could be abstracted but may reduce clarity for a modernization PRD where naming the specific technology IS the requirement
 
 **Note:** For a greenfield PRD, this would be a Critical finding. For a brownfield modernization PRD where upgrading to specific technologies IS the scope, the boundary between "implementation detail" and "capability" is inherently blurred. The PRD's approach of naming technologies is defensible but could be refined at the code-level detail edges.
 
@@ -389,40 +389,40 @@ No CLI-specific content in PRD.
 | FR15 | 5 | 5 | 5 | 5 | 5 | 5.0 | |
 | FR16 | 5 | 5 | 5 | 5 | 5 | 5.0 | |
 | FR17 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
-| FR18 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
-| FR19 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
 | FR20 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
 | FR21 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
-| FR22 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
-| FR23 | 5 | 5 | 5 | 4 | 4 | 4.6 | |
-| FR24 | 5 | 5 | 5 | 4 | 4 | 4.6 | |
+| FR22 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
+| FR23 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
+| FR24 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR25 | 5 | 5 | 5 | 4 | 4 | 4.6 | |
-| FR26 | 5 | 5 | 5 | 5 | 5 | 5.0 | |
-| FR27 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
-| FR28 | 4 | 4 | 5 | 4 | 4 | 4.2 | |
-| FR29 | 4 | 4 | 5 | 4 | 4 | 4.2 | |
-| FR30 | 3 | 3 | 5 | 5 | 5 | 4.2 | |
-| FR31 | 5 | 4 | 5 | 5 | 5 | 4.8 | |
-| FR32 | 5 | 5 | 5 | 5 | 5 | 5.0 | |
-| FR33 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
-| FR34 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
+| FR26 | 5 | 5 | 5 | 4 | 4 | 4.6 | |
+| FR27 | 5 | 5 | 5 | 4 | 4 | 4.6 | |
+| FR28 | 5 | 5 | 5 | 5 | 5 | 5.0 | |
+| FR29 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
+| FR30 | 4 | 4 | 5 | 4 | 4 | 4.2 | |
+| FR31 | 4 | 4 | 5 | 4 | 4 | 4.2 | |
+| FR32 | 3 | 3 | 5 | 5 | 5 | 4.2 | |
+| FR33 | 5 | 4 | 5 | 5 | 5 | 4.8 | |
+| FR34 | 5 | 5 | 5 | 5 | 5 | 5.0 | |
 | FR35 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR36 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
-| FR37 | 3 | 3 | 5 | 5 | 5 | 4.2 | |
+| FR37 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR38 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR39 | 3 | 3 | 5 | 5 | 5 | 4.2 | |
 | FR40 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR41 | 3 | 3 | 5 | 5 | 5 | 4.2 | |
-| FR42 | 3 | 3 | 5 | 4 | 5 | 4.0 | |
-| FR43 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
-| FR44 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
+| FR42 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
+| FR43 | 3 | 3 | 5 | 5 | 5 | 4.2 | |
+| FR44 | 3 | 3 | 5 | 4 | 5 | 4.0 | |
 | FR45 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR46 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR47 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR48 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
 | FR49 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
-| FR50 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
-| FR51 | 3 | 2 | 5 | 5 | 5 | 4.0 | X |
+| FR50 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
+| FR51 | 4 | 4 | 5 | 5 | 5 | 4.6 | |
+| FR52 | 4 | 3 | 5 | 5 | 5 | 4.4 | |
+| FR53 | 3 | 2 | 5 | 5 | 5 | 4.0 | X |
 
 **Legend:** S=Specific, M=Measurable, A=Attainable, R=Relevant, T=Traceable | 1=Poor, 3=Acceptable, 5=Excellent
 **Flag:** X = Score < 3 in one or more categories
@@ -431,21 +431,21 @@ No CLI-specific content in PRD.
 
 **Low-Scoring FRs (score < 3 in any category):**
 
-**FR51 (M:2):** "Commit history documents the migration journey with meaningful, traceable messages" — "meaningful" is subjective and not measurable. **Suggested revision:** "Each commit message references the scope item or migration step it implements, following conventional commit format (type: description)"
+**FR53 (M:2):** "Commit history documents the migration journey with meaningful, traceable messages" — "meaningful" is subjective and not measurable. **Suggested revision:** "Each commit message references the scope item or migration step it implements, following conventional commit format (type: description)"
 
 **Borderline FRs (M:3 — acceptable but improvable):**
 
-**FR18-21:** "full functionality" is implicitly defined by all preceding FRs but not explicitly testable in isolation. **Suggested improvement:** Add reference: "User can run the app on [platform] with all FR1-FR17 capabilities functional"
+**FR20-21:** "full functionality" is implicitly defined by all preceding FRs but not explicitly testable in isolation. **Suggested improvement:** Add reference: "User can run the app on [platform] with all FR1-FR17 capabilities functional"
 
-**FR30, FR37, FR39, FR41, FR42:** Score S:3/M:3 due to naming specific classes, interfaces, or packages rather than describing capabilities. These were already flagged in Implementation Leakage Validation. Reframing to capability descriptions would improve both Specificity and Measurability.
+**FR32, FR39, FR41, FR43, FR44:** Score S:3/M:3 due to naming specific classes, interfaces, or packages rather than describing capabilities. These were already flagged in Implementation Leakage Validation. Reframing to capability descriptions would improve both Specificity and Measurability.
 
-**FR50 (M:3):** "communicates project value, architecture, and setup within 30 seconds" — the 30-second metric is good but subjective to measure. **Suggested improvement:** "README contains sections for: project overview, architecture diagram, setup instructions, and contribution guide"
+**FR52 (M:3):** "communicates project value, architecture, and setup within 30 seconds" — the 30-second metric is good but subjective to measure. **Suggested improvement:** "README contains sections for: project overview, architecture diagram, setup instructions, and contribution guide"
 
 ### Overall Assessment
 
 **Severity:** Pass
 
-**Recommendation:** Functional Requirements demonstrate strong SMART quality overall (4.7/5.0 average, 98% acceptable). Only 1 FR (FR51) falls below acceptable threshold on Measurability. The 11 FRs scoring 3 in any category are all at the acceptable boundary and could be strengthened with the targeted improvements above. The core user-facing FRs (FR1-FR17) score exceptionally well — all average ≥ 4.6.
+**Recommendation:** Functional Requirements demonstrate strong SMART quality overall (4.7/5.0 average, 98% acceptable). Only 1 FR (FR53) falls below acceptable threshold on Measurability. The 11 FRs scoring 3 in any category are all at the acceptable boundary and could be strengthened with the targeted improvements above. The core user-facing FRs (FR1-FR17) score exceptionally well — all average ≥ 4.6.
 
 ## Holistic Quality Assessment
 
@@ -464,7 +464,7 @@ No CLI-specific content in PRD.
 
 **Areas for Improvement:**
 - No explicit "Out of Scope" section — exclusions are implied but not formalized.
-- FR31-FR51 blur the line between PRD and architecture document — they describe code organization, DI patterns, and testing strategies that are typically architecture-level decisions.
+- FR33-FR53 blur the line between PRD and architecture document — they describe code organization, DI patterns, and testing strategies that are typically architecture-level decisions.
 - No bridging paragraph between narrative sections (User Journeys) and systematic sections (FRs) — the transition is slightly abrupt.
 
 ### Dual Audience Effectiveness
@@ -478,7 +478,7 @@ No CLI-specific content in PRD.
 **For LLMs:**
 - Machine-readable structure: Excellent — clean markdown, consistent ## headings, numbered FRs/NFRs, tables for structured data, clear frontmatter
 - UX readiness: Adequate — user journeys describe flows, but no UX design is needed (intentional for this project)
-- Architecture readiness: Very good — FR31-FR37 define architecture targets, NFRs provide quality gates, multi-datasource strategy is detailed, dependency chain provides sequencing
+- Architecture readiness: Very good — FR33-FR39 define architecture targets, NFRs provide quality gates, multi-datasource strategy is detailed, dependency chain provides sequencing
 - Epic/Story readiness: Excellent — FRs are granular enough for 1 FR → 1-3 stories; scope items provide natural epic groupings; dependency chain enables sprint sequencing
 
 **Dual Audience Score:** 4/5
@@ -488,7 +488,7 @@ No CLI-specific content in PRD.
 | Principle | Status | Notes |
 |-----------|--------|-------|
 | Information Density | Met | 0 violations — every sentence carries weight |
-| Measurability | Partial | Most FRs/NFRs measurable; NFR5 vague, FR51 subjective, NFR1-4 missing measurement methods |
+| Measurability | Partial | Most FRs/NFRs measurable; NFR5 vague, FR53 subjective, NFR1-4 missing measurement methods |
 | Traceability | Met | Strong chain from vision through requirements; 0 orphan FRs; 2 minor gaps |
 | Domain Awareness | Met | Correctly identified as general/low complexity; domain sections appropriately skipped |
 | Zero Anti-Patterns | Met | No conversational filler, no wordy phrases, no redundant expressions |
@@ -511,19 +511,19 @@ No CLI-specific content in PRD.
 ### Top 3 Improvements
 
 1. **Add "Out of Scope" section and reduce implementation leakage in technical FRs**
-   The product brief explicitly lists 5 exclusions that the PRD mentions implicitly but never formalizes. Adding a 3-line "Out of Scope" subsection closes the most visible structural gap. Simultaneously, reframing 5-7 FRs (FR30, FR37, FR39, FR41, FR42, NFR3) from technology prescriptions to capability descriptions would strengthen BMAD compliance. This is the highest-impact change because it addresses both structural completeness and the PRD's weakest validation area.
+   The product brief explicitly lists 5 exclusions that the PRD mentions implicitly but never formalizes. Adding a 3-line "Out of Scope" subsection closes the most visible structural gap. Simultaneously, reframing 5-7 FRs (FR32, FR39, FR41, FR43, FR44, NFR3) from technology prescriptions to capability descriptions would strengthen BMAD compliance. This is the highest-impact change because it addresses both structural completeness and the PRD's weakest validation area.
 
 2. **Fix NFR5 measurability and add measurement methods to performance NFRs**
    NFR5's "comparable performance" needs a specific metric (e.g., "drift CRUD operations complete within 2x of ObjectBox latency"). NFR1-4 have good metrics (500ms, 100ms, 2s, 50ms) but no measurement methods. Adding "as measured by [method]" to each strengthens the quality gate for downstream testing and CI/CD verification.
 
-3. **Reframe FR51 for measurability and consider a "Key Decisions" section**
-   FR51 is the only FR scoring below acceptable on measurability. Replace "meaningful, traceable" with "each commit follows conventional commit format and references the scope item or FR it implements." Optionally, adding a brief "Key Decisions & Rejected Alternatives" section (from the distillate's 8 rejected items) would benefit downstream architecture agents.
+3. **Reframe FR53 for measurability and consider a "Key Decisions" section**
+   FR53 is the only FR scoring below acceptable on measurability. Replace "meaningful, traceable" with "each commit follows conventional commit format and references the scope item or FR it implements." Optionally, adding a brief "Key Decisions & Rejected Alternatives" section (from the distillate's 8 rejected items) would benefit downstream architecture agents.
 
 ### Summary
 
 **This PRD is:** A well-crafted, information-dense document that effectively serves its dual audience (humans and LLMs) with strong traceability, compelling user journeys, and comprehensive scope coverage — held back from "Excellent" only by implementation leakage in technical FRs (justified by the project's modernization nature) and minor measurability gaps in a handful of requirements.
 
-**To make it great:** Focus on the top 3 improvements above — they address the only structural gap (Out of Scope), the weakest validation area (implementation leakage/measurability), and the single below-threshold FR (FR51).
+**To make it great:** Focus on the top 3 improvements above — they address the only structural gap (Out of Scope), the weakest validation area (implementation leakage/measurability), and the single below-threshold FR (FR53).
 
 ## Completeness Validation
 
@@ -621,9 +621,9 @@ All 9 scope items have supporting FRs. Scope #1 (SDK Modernization) covered by N
 ### Critical Issues: None
 
 ### Warnings: 3
-1. Implementation leakage in technical FRs (FR30, FR37, FR39, FR41, FR42) — code-level detail beyond capability description
+1. Implementation leakage in technical FRs (FR32, FR39, FR41, FR43, FR44) — code-level detail beyond capability description
 2. NFR5 "comparable performance" lacks specific metric
-3. FR51 "meaningful" is subjective — only FR scoring below acceptable on Measurability
+3. FR53 "meaningful" is subjective — only FR scoring below acceptable on Measurability
 
 ### Strengths
 - Excellent information density — zero anti-pattern violations
@@ -644,20 +644,20 @@ All findings from the validation were addressed with the following changes to th
 ### Structural Additions
 1. **Added "Out of Scope" subsection** — 5 explicit exclusions (no new features, no UI/UX redesign, no backend, no auth, no analytics)
 2. **Added "Key Decisions & Rejected Alternatives" table** — 8 decisions with rejected alternatives and rationale (from distillate)
-3. **Added FR52-FR53** (SDK & Build Verification) — closes Scope #1 traceability gap
+3. **Added FR18-FR19** (SDK & Build Verification) — closes Scope #1 traceability gap
 
 ### FR Corrections (Implementation Leakage + Measurability)
 4. **FR17:** Reframed from system constraint to actor pattern: "User can see all interface text in their selected language"
-5. **FR18-21:** Replaced "full functionality" with explicit "all FR1-FR17 capabilities functional"
-6. **FR28:** Reframed: "Mobile and desktop datasource (ObjectBox) supports..." (technology as parenthetical, not subject)
-7. **FR29:** Removed WebAssembly/OPFS implementation details: "Web datasource (drift) supports the Web platform with local persistence"
-8. **FR30:** Removed interface names: "conform to shared Repository interfaces ensuring interchangeability"
-9. **FR37:** Replaced "flutter_bloc providers" with "BLoC-native providers"
-10. **FR39:** Reframed from technology prescription to capability: "Domain data classes support copyWith, equality, and JSON serialization via code generation"
-11. **FR42:** Removed class name: "Payment calculation derives computed state from times list and wage data without user-initiated events"
-12. **FR44:** Replaced "bloc_test" with "dedicated BLoC testing utilities"
-13. **FR50:** Replaced subjective "communicates value" with testable content checklist
-14. **FR51:** Replaced "meaningful, traceable" with "conventional commit format + scope item references"
+5. **FR20-21:** Replaced "full functionality" with explicit "all FR1-FR17 capabilities functional"
+6. **FR30:** Reframed: "Mobile and desktop datasource (ObjectBox) supports..." (technology as parenthetical, not subject)
+7. **FR31:** Removed WebAssembly/OPFS implementation details: "Web datasource (drift) supports the Web platform with local persistence"
+8. **FR32:** Removed interface names: "conform to shared Repository interfaces ensuring interchangeability"
+9. **FR39:** Replaced "flutter_bloc providers" with "BLoC-native providers"
+10. **FR41:** Reframed from technology prescription to capability: "Domain data classes support copyWith, equality, and JSON serialization via code generation"
+11. **FR44:** Removed class name: "Payment calculation derives computed state from times list and wage data without user-initiated events"
+12. **FR46:** Replaced "bloc_test" with "dedicated BLoC testing utilities"
+13. **FR52:** Replaced subjective "communicates value" with testable content checklist
+14. **FR53:** Replaced "meaningful, traceable" with "conventional commit format + scope item references"
 
 ### NFR Corrections (Measurability + Leakage)
 15. **NFR1-4:** Added measurement methods ("as measured by widget test timing assertions", "BLoC test timing", "Flutter DevTools timeline", "unit test benchmarks")
@@ -668,8 +668,8 @@ All findings from the validation were addressed with the following changes to th
 
 ### Impact Assessment
 - **Completeness:** 95% → 100% (Out of Scope + Key Decisions added)
-- **Measurability violations:** 16 → ~2 (NFR14 still names drift; FR22/FR27 name ObjectBox/drift — contextually acceptable)
+- **Measurability violations:** 16 → ~2 (NFR14 still names drift; FR24/FR29 name ObjectBox/drift — contextually acceptable)
 - **Implementation leakage (clear violations):** 10 → ~3 (remaining are technology-as-deliverable references, contextually justified)
-- **SMART FR51:** M:2 → M:5 (now testable with conventional commit format)
-- **Traceability gaps:** 2 → 0 (FR52-53 close Scope #1 gap)
+- **SMART FR53:** M:2 → M:5 (now testable with conventional commit format)
+- **Traceability gaps:** 2 → 0 (FR18-53 close Scope #1 gap)
 - **Estimated revised holistic quality:** 4/5 → 4.5/5 (approaching Excellent)

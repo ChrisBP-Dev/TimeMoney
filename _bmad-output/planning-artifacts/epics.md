@@ -10,7 +10,7 @@ inputDocuments:
   - 'planning-artifacts/prd.md'
   - 'planning-artifacts/architecture.md'
 epicCount: 6
-storyCount: 23
+storyCount: 25
 frCoverage: '53/53'
 ---
 
@@ -41,42 +41,42 @@ FR14: System computes payment using the formula: (total duration in minutes / 60
 FR15: User can use the app in English
 FR16: User can use the app in Spanish
 FR17: User can see all interface text in their selected language — no hardcoded strings in the codebase
-FR18: User can run the app on iOS with all FR1-FR17 capabilities functional
-FR19: User can run the app on Android with all FR1-FR17 capabilities functional
-FR20: User can run the app on Web with all FR1-FR17 capabilities functional using the web-compatible datasource
-FR21: User can run the app on Windows with all FR1-FR17 capabilities functional
-FR22: System selects the appropriate datasource implementation based on the target platform automatically — mobile/desktop datasource for native platforms, web datasource for browser
-FR23: Developer can run the app in Development environment with isolated database (test-1)
-FR24: Developer can run the app in Staging environment with isolated database (stg-1)
-FR25: Developer can run the app in Production environment with isolated database (prod-1)
-FR26: System persists all time entries and wage data locally on-device
-FR27: System provides reactive data streams for both datasource implementations (mobile/desktop and web)
-FR28: Mobile and desktop datasource (ObjectBox) supports iOS, Android, and Windows platforms
-FR29: Web datasource (drift) supports the Web platform with local persistence
-FR30: Both datasource implementations conform to shared Repository interfaces ensuring interchangeability
-FR31: Codebase follows feature-first organization where each feature contains all layers (domain, application, infrastructure, presentation)
-FR32: Domain layer has zero external dependencies — entities and repository interfaces only
-FR33: Application layer contains use cases implementing single-responsibility operations
-FR34: Infrastructure layer contains concrete repository implementations and database entities
-FR35: Presentation layer contains BLoCs, views, and widgets scoped to their feature
-FR36: Shared cross-cutting concerns (failures, services, extensions) reside in a core module
-FR37: Dependency injection follows three-tier pattern: Repositories → Use Cases → BLoCs via BLoC-native providers
-FR38: All BLoCs use sealed classes for events and states with exhaustive pattern matching
-FR39: Domain data classes support copyWith, equality, and JSON serialization via code generation
-FR40: All BLoCs follow the standard state pattern: initial, loading, error, success/data
-FR41: BLoCs with stream data provide a hasDataStream state for reactive UI rendering
-FR42: Payment calculation derives computed state from times list and wage data without user-initiated events
-FR43: Unit tests cover all use cases and repository implementations
-FR44: BLoC tests cover all state management logic using dedicated BLoC testing utilities
-FR45: Widget tests cover presentation layer components
-FR46: Golden tests verify zero visual regression across the modernization
-FR47: All tests are runnable via `flutter test` with coverage reporting
-FR48: CI pipeline runs linting, testing, and coverage reporting on every PR
-FR49: CI pipeline verifies builds for all four target platforms
-FR50: README contains project overview, architecture diagram, setup instructions, and contribution guide — scannable within 30 seconds
-FR51: Each commit message follows conventional commit format (type: description) and references the scope item or migration step it implements
-FR52: System compiles and runs on Flutter 3.41+ / Dart 3.11+ with zero compilation errors
-FR53: Dart 2.x SDK constraint is replaced with Dart 3.11+ constraint and all source files compile under the new SDK
+FR18: System compiles and runs on Flutter 3.41+ / Dart 3.11+ with zero compilation errors
+FR19: Dart 2.x SDK constraint is replaced with Dart 3.11+ constraint and all source files compile under the new SDK
+FR20: User can run the app on iOS with all FR1-FR17 capabilities functional
+FR21: User can run the app on Android with all FR1-FR17 capabilities functional
+FR22: User can run the app on Web with all FR1-FR17 capabilities functional using the web-compatible datasource
+FR23: User can run the app on Windows with all FR1-FR17 capabilities functional
+FR24: System selects the appropriate datasource implementation based on the target platform automatically — mobile/desktop datasource for native platforms, web datasource for browser
+FR25: Developer can run the app in Development environment with isolated database (test-1)
+FR26: Developer can run the app in Staging environment with isolated database (stg-1)
+FR27: Developer can run the app in Production environment with isolated database (prod-1)
+FR28: System persists all time entries and wage data locally on-device
+FR29: System provides reactive data streams for both datasource implementations (mobile/desktop and web)
+FR30: Mobile and desktop datasource (ObjectBox) supports iOS, Android, and Windows platforms
+FR31: Web datasource (drift) supports the Web platform with local persistence
+FR32: Both datasource implementations conform to shared Repository interfaces ensuring interchangeability
+FR33: Codebase follows feature-first organization where each feature contains all layers (domain, application, infrastructure, presentation)
+FR34: Domain layer has zero external dependencies — entities and repository interfaces only
+FR35: Application layer contains use cases implementing single-responsibility operations
+FR36: Infrastructure layer contains concrete repository implementations and database entities
+FR37: Presentation layer contains BLoCs, views, and widgets scoped to their feature
+FR38: Shared cross-cutting concerns (failures, services, extensions) reside in a core module
+FR39: Dependency injection follows three-tier pattern: Repositories → Use Cases → BLoCs via BLoC-native providers
+FR40: All BLoCs use sealed classes for events and states with exhaustive pattern matching
+FR41: Domain data classes support copyWith, equality, and JSON serialization via code generation
+FR42: All BLoCs follow the standard state pattern: initial, loading, error, success/data
+FR43: BLoCs with stream data provide a hasDataStream state for reactive UI rendering
+FR44: Payment calculation derives computed state from times list and wage data without user-initiated events
+FR45: Unit tests cover all use cases and repository implementations
+FR46: BLoC tests cover all state management logic using dedicated BLoC testing utilities
+FR47: Widget tests cover presentation layer components
+FR48: Golden tests verify zero visual regression across the modernization
+FR49: All tests are runnable via `flutter test` with coverage reporting
+FR50: CI pipeline runs linting, testing, and coverage reporting on every PR
+FR51: CI pipeline verifies builds for all four target platforms
+FR52: README contains project overview, architecture diagram, setup instructions, and contribution guide — scannable within 30 seconds
+FR53: Each commit message follows conventional commit format (type: description) and references the scope item or migration step it implements
 
 ### NonFunctional Requirements
 
@@ -160,73 +160,73 @@ FR14: Epic 3 — Payment formula implementation in CalculatePaymentUseCase
 FR15: Epic 4 — English localization verified on modernized codebase
 FR16: Epic 4 — Spanish localization verified on modernized codebase
 FR17: Epic 4 — Zero hardcoded strings via context.l10n pattern
-FR18: Epic 4 — iOS platform verified with ObjectBox datasource
-FR19: Epic 4 — Android platform verified with ObjectBox datasource
-FR20: Epic 4 — Web platform functional with drift datasource
-FR21: Epic 4 — Windows platform verified with ObjectBox datasource
-FR22: Epic 4 — Platform-aware datasource selection via kIsWeb in DI
-FR23: Epic 4 — Development environment with isolated database (test-1)
-FR24: Epic 4 — Staging environment with isolated database (stg-1)
-FR25: Epic 4 — Production environment with isolated database (prod-1)
-FR26: Epic 4 — Local on-device persistence via ObjectBox and drift
-FR27: Epic 4 — Reactive data streams for both datasource implementations
-FR28: Epic 4 — ObjectBox datasource supports iOS, Android, Windows
-FR29: Epic 4 — drift datasource supports Web with WASM + OPFS
-FR30: Epic 4 — Both datasources conform to shared Repository interfaces
-FR31: Epic 2 — Feature-first organization with all layers per feature
-FR32: Epic 2 — Domain layer with zero external dependencies
-FR33: Epic 2 — Application layer with single-responsibility use cases
-FR34: Epic 2 — Infrastructure layer with concrete repository implementations
-FR35: Epic 2 — Presentation layer with BLoCs/widgets scoped to feature
-FR36: Epic 2 — Core module with shared cross-cutting concerns
-FR37: Epic 2 — Three-tier DI pattern via BLoC-native providers
-FR38: Epic 3 — Sealed classes for all BLoC events and states
-FR39: Epic 3 — Domain data classes with Freezed 3.x (copyWith, equality, JSON)
-FR40: Epic 3 — Standard BLoC state pattern (initial/loading/error/success)
-FR41: Epic 3 — hasDataStream state for reactive UI rendering in stream BLoCs
-FR42: Epic 3 — Payment computed state derived from times + wage without user events
-FR43: Epics 3+4 — Unit tests for use cases and repositories written alongside implementation (3.2-3.4, 4.2-4.3)
-FR44: Epic 3 — BLoC tests for all state management logic written alongside BLoC migration (3.2-3.4)
-FR45: Epic 5 — Widget tests for presentation layer components
-FR46: Epic 5 — Golden tests for zero visual regression verification
-FR47: Epic 5 — All tests runnable via flutter test with coverage reporting and overall floor validation
-FR48: Epic 6 — CI pipeline with linting, testing, coverage on every PR
-FR49: Epic 6 — CI build verification for all four target platforms
-FR50: Epic 6 — Professional README (overview, architecture, setup, contribution)
-FR51: Epic 6 — Conventional commit format throughout migration history
-FR52: Epic 1 — Flutter 3.41+ / Dart 3.11+ compilation with zero errors
-FR53: Epic 1 — Dart 3.11+ SDK constraint replacing Dart 2.x
+FR18: Epic 1 — Flutter 3.41+ / Dart 3.11+ compilation with zero errors
+FR19: Epic 1 — Dart 3.11+ SDK constraint replacing Dart 2.x
+FR20: Epic 4 — iOS platform verified with ObjectBox datasource
+FR21: Epic 4 — Android platform verified with ObjectBox datasource
+FR22: Epic 4 — Web platform functional with drift datasource
+FR23: Epic 4 — Windows platform verified with ObjectBox datasource
+FR24: Epic 4 — Platform-aware datasource selection via kIsWeb in DI
+FR25: Epic 4 — Development environment with isolated database (test-1)
+FR26: Epic 4 — Staging environment with isolated database (stg-1)
+FR27: Epic 4 — Production environment with isolated database (prod-1)
+FR28: Epic 4 — Local on-device persistence via ObjectBox and drift
+FR29: Epic 4 — Reactive data streams for both datasource implementations
+FR30: Epic 4 — ObjectBox datasource supports iOS, Android, Windows
+FR31: Epic 4 — drift datasource supports Web with WASM + OPFS
+FR32: Epic 4 — Both datasources conform to shared Repository interfaces
+FR33: Epic 2 — Feature-first organization with all layers per feature
+FR34: Epic 2 — Domain layer with zero external dependencies
+FR35: Epic 2 — Application layer with single-responsibility use cases
+FR36: Epic 2 — Infrastructure layer with concrete repository implementations
+FR37: Epic 2 — Presentation layer with BLoCs/widgets scoped to feature
+FR38: Epic 2 — Core module with shared cross-cutting concerns
+FR39: Epic 2 — Three-tier DI pattern via BLoC-native providers
+FR40: Epic 3 — Sealed classes for all BLoC events and states
+FR41: Epic 3 — Domain data classes with Freezed 3.x (copyWith, equality, JSON)
+FR42: Epic 3 — Standard BLoC state pattern (initial/loading/error/success)
+FR43: Epic 3 — hasDataStream state for reactive UI rendering in stream BLoCs
+FR44: Epic 3 — Payment computed state derived from times + wage without user events
+FR45: Epics 3+4 — Unit tests for use cases and repositories written alongside implementation (3.2-3.5, 4.2-4.3)
+FR46: Epic 3 — BLoC tests for all state management logic written alongside BLoC migration (3.2-3.5)
+FR47: Epic 5 — Widget tests for presentation layer components (5.1, 5.2)
+FR48: Epic 5 — Golden tests for zero visual regression verification (5.3)
+FR49: Epic 5 — All tests runnable via flutter test with coverage reporting and overall floor validation (5.3)
+FR50: Epic 6 — CI pipeline with linting, testing, coverage on every PR
+FR51: Epic 6 — CI build verification for all four target platforms
+FR52: Epic 6 — Professional README (overview, architecture, setup, contribution)
+FR53: Epic 6 — Conventional commit format throughout migration history
 
 ## Epic List
 
 ### Epic 1: Foundation — SDK & Dependency Modernization
 The app compiles and runs on Flutter 3.41+ / Dart 3.11+ with all dependencies upgraded to latest stable versions. Zero functional regressions — all existing features continue working identically. This is the foundation that enables every subsequent modernization epic.
-**FRs covered:** FR52, FR53
+**FRs covered:** FR18, FR19
 **NFRs addressed:** NFR16 (latest dependencies), NFR18 (ObjectBox migration preserves data)
 
 ### Epic 2: Architecture — Feature-First Restructure
 The codebase follows true feature-first Clean Architecture with Data/Domain/Presentation layers inside each feature. Folder spellings corrected. Presentation moved into features. flutter_hooks removed. Core module houses cross-cutting concerns. Daniel sees enterprise-grade structure, Sofía can study the organization.
-**FRs covered:** FR31, FR32, FR33, FR34, FR35, FR36, FR37
+**FRs covered:** FR33, FR34, FR35, FR36, FR37, FR38, FR39
 **NFRs addressed:** NFR8 (naming conventions), NFR9 (correct dependency placement), NFR10 (clean barrel exports)
 
 ### Epic 3: Modernization — State Management, Business Logic & Core Tests
 All business features (time entry CRUD, wage management, payment calculation) use modern Dart 3 patterns. BLoC events/states migrated to sealed classes with exhaustive pattern matching. ActionState, GlobalFailure, ValueFailure modernized to sealed classes. emit.forEach for stream consumption. switch expressions in widget rendering. Freezed 3.x for domain entities. Test infrastructure established. Unit tests and BLoC tests written alongside implementation — BMad aligned. Daniel sees senior-level code quality, Sofía learns transferable patterns.
-**FRs covered:** FR1-FR14, FR38, FR39, FR40, FR41, FR42, FR43 (partial — use cases + ObjectBox repositories), FR44 (BLoC tests)
+**FRs covered:** FR1-FR14, FR40, FR41, FR42, FR43, FR44, FR45 (partial — use cases + ObjectBox repositories), FR46 (BLoC tests)
 **NFRs addressed:** NFR1 (UI response <500ms), NFR2 (stream propagation <100ms), NFR4 (payment calc <50ms), NFR19 (typed failures)
 
 ### Epic 4: Platform — Multi-Datasource, Multi-Platform & Localization
 drift datasource implemented for web platform. ObjectBox datasources modernized in new architecture. Platform-aware DI via kIsWeb. All four platforms (iOS, Android, Web, Windows) verified with full FR1-FR17 functionality. Multi-environment support (dev/staging/prod) with isolated databases for both datasources. EN/ES localization verified on modernized codebase. drift datasource and repository tests written alongside implementation — BMad aligned.
-**FRs covered:** FR15, FR16, FR17, FR18, FR19, FR20, FR21, FR22, FR23, FR24, FR25, FR26, FR27, FR28, FR29, FR30, FR43 (partial — drift repositories)
+**FRs covered:** FR15, FR16, FR17, FR20, FR21, FR22, FR23, FR24, FR25, FR26, FR27, FR28, FR29, FR30, FR31, FR32, FR45 (partial — drift repositories)
 **NFRs addressed:** NFR3 (cold start <2s), NFR5 (web datasource within 2x native), NFR12-NFR15 (platform compatibility), NFR17 (zero data loss), NFR20 (identical test suites across platforms)
 
 ### Epic 5: Quality — Widget Tests, Golden Tests & Coverage Validation
-Widget tests for presentation layer components (80%+ coverage). Golden tests for visual regression proof (HomePage, PaymentResultPage, CRUD dialogs). Coverage gap validation ensuring overall floor 85%+. Unit and BLoC tests were already written alongside implementation in Epics 3-4 — this epic completes the testing pyramid with presentation-layer and visual regression coverage.
-**FRs covered:** FR45, FR46, FR47
+Widget tests for presentation layer components (80%+ coverage) split by feature scope: data features (times, wage) in Story 5.1 and composition features (home, payment, shared) in Story 5.2. Golden tests for visual regression proof (HomePage, PaymentResultPage, CRUD dialogs) in Story 5.3. Coverage gap validation ensuring overall floor 85%+. Unit and BLoC tests were already written alongside implementation in Epics 3-4 — this epic completes the testing pyramid with presentation-layer and visual regression coverage.
+**FRs covered:** FR47, FR48, FR49
 **NFRs addressed:** NFR6 (zero linter warnings), NFR7 (zero dead code), NFR11 (generated files excluded from analysis), NFR20 (identical suites across platforms)
 
 ### Epic 6: Polish — CI/CD Pipeline & Professional Documentation
 GitHub Actions pipeline with linting, testing, coverage reporting, and build verification for all four platforms. Professional README scannable in 30 seconds. Dependabot for automated dependency updates. Code quality final cleanup (zero orphaned code, clean exports). The project is presentation-ready as portfolio piece and open-source reference.
-**FRs covered:** FR48, FR49, FR50, FR51
+**FRs covered:** FR50, FR51, FR52, FR53
 **NFRs addressed:** NFR6 (zero warnings final pass), NFR7 (zero dead code final pass), NFR21 (CI gate before merge)
 
 ## Epic 1: Foundation — SDK & Dependency Modernization
@@ -333,7 +333,7 @@ So that the entire dependency tree is current and the codebase is fully moderniz
 **And** wage management works: view, set initial, update with feedback
 **And** payment calculation works: calculate total, view summary
 **And** localization works: EN/ES switching
-**And** zero functional regressions exist compared to the original codebase (FR52, FR53)
+**And** zero functional regressions exist compared to the original codebase (FR18, FR19)
 
 ## Epic 2: Architecture — Feature-First Restructure
 
@@ -343,7 +343,7 @@ The codebase follows true feature-first Clean Architecture with Data/Domain/Pres
 
 As a developer,
 I want to establish the core module with all shared cross-cutting concerns in their correct locations,
-So that all features have a stable foundation of shared utilities, error types, and services to depend on (FR36).
+So that all features have a stable foundation of shared utilities, error types, and services to depend on (FR38).
 
 **Acceptance Criteria:**
 
@@ -371,7 +371,7 @@ So that all features have a stable foundation of shared utilities, error types, 
 
 As a developer,
 I want to restructure the times feature into a self-contained feature-first module with Data/Domain/Presentation layers,
-So that all time entry code is organized in a single feature directory following Clean Architecture principles (FR31, FR34, FR35).
+So that all time entry code is organized in a single feature directory following Clean Architecture principles (FR33, FR36, FR37).
 
 **Acceptance Criteria:**
 
@@ -389,7 +389,7 @@ So that all time entry code is organized in a single feature directory following
 
 **Given** the domain layer is restructured
 **When** examining `times/domain/` imports
-**Then** the domain layer has zero external dependencies except fpdart (FR32)
+**Then** the domain layer has zero external dependencies except fpdart (FR34)
 **And** domain entities and repository interfaces do not import from Data or Presentation layers
 
 **Given** folder spellings in the original codebase (aplication, infraestructure)
@@ -406,7 +406,7 @@ So that all time entry code is organized in a single feature directory following
 
 As a developer,
 I want to restructure the wage feature into a self-contained feature-first module with Data/Domain/Presentation layers,
-So that all wage management code is organized following the same pattern as the times feature (FR31, FR33).
+So that all wage management code is organized following the same pattern as the times feature (FR33, FR35).
 
 **Acceptance Criteria:**
 
@@ -424,8 +424,8 @@ So that all wage management code is organized following the same pattern as the 
 
 **Given** the wage domain layer
 **When** examining imports
-**Then** `wage/domain/` has zero external dependencies except fpdart (FR32)
-**And** use cases implement single-responsibility operations (FR33)
+**Then** `wage/domain/` has zero external dependencies except fpdart (FR34)
+**And** use cases implement single-responsibility operations (FR35)
 
 **Given** the wage feature restructure is complete
 **When** the app is compiled and launched
@@ -436,7 +436,7 @@ So that all wage management code is organized following the same pattern as the 
 
 As a developer,
 I want to create the payment feature (domain + presentation only) and home feature (presentation shell),
-So that cross-feature composition follows Clean Architecture with proper boundaries and separation (FR31, FR35).
+So that cross-feature composition follows Clean Architecture with proper boundaries and separation (FR33, FR37).
 
 **Acceptance Criteria:**
 
@@ -468,7 +468,7 @@ So that cross-feature composition follows Clean Architecture with proper boundar
 
 As a developer,
 I want to remove the flutter_hooks dependency and extract shared widgets to the shared module,
-So that the codebase uses standard Flutter patterns and shared components are properly organized (FR36, FR37).
+So that the codebase uses standard Flutter patterns and shared components are properly organized (FR38, FR39).
 
 **Acceptance Criteria:**
 
@@ -488,7 +488,7 @@ So that the codebase uses standard Flutter patterns and shared components are pr
 **When** the app bootstrap and DI setup is updated
 **Then** `app/view/app_bloc.dart` uses MultiRepositoryProvider for repository registration
 **And** MultiBlocProvider registers all BLoCs with use cases resolved from RepositoryProviders
-**And** DI follows three-tier pattern: Repositories → Use Cases → BLoCs (FR37)
+**And** DI follows three-tier pattern: Repositories → Use Cases → BLoCs (FR39)
 **And** `context.read<T>()` is used to resolve dependencies, never `context.watch<T>()`
 
 **Given** all restructuring is complete
@@ -505,7 +505,7 @@ All business features (time entry CRUD, wage management, payment calculation) us
 
 As a developer,
 I want to migrate ActionState, GlobalFailure, and ValueFailure to sealed classes, and establish the test infrastructure with core unit tests,
-So that all union types use native sealed classes consistently and the testing foundation is ready for all subsequent stories (FR38).
+So that all union types use native sealed classes consistently and the testing foundation is ready for all subsequent stories (FR40).
 
 **Acceptance Criteria:**
 
@@ -545,11 +545,11 @@ So that all union types use native sealed classes consistently and the testing f
 **When** `flutter analyze` is run
 **Then** zero warnings are produced on core and test files
 
-### Story 3.2: Times Feature — Sealed Class BLoC Migration
+### Story 3.2: Times Feature — List & Create BLoC Migration
 
 As a user,
-I want time entry management to use modern reactive patterns internally,
-So that creating, viewing, editing, and deleting time entries remains fast and reliable with proper visual feedback (FR1-FR6, FR38, FR40, FR41).
+I want to view my time entries in real time and create new ones using modern reactive patterns,
+So that listing and creating time entries remains fast and reliable with proper visual feedback (FR1, FR2, FR5, FR6, FR40, FR43).
 
 **Acceptance Criteria:**
 
@@ -565,45 +565,74 @@ So that creating, viewing, editing, and deleting time entries remains fast and r
 **When** migrated to sealed classes with emit.forEach
 **Then** `sealed class ListTimesEvent` has `ListTimesRequested` variant
 **And** `sealed class ListTimesState` has variants: `ListTimesInitial`, `ListTimesLoading`, `ListTimesLoaded`, `ListTimesEmpty`, `ListTimesError`
-**And** stream consumption uses `emit.forEach` internally — no StreamBuilder in UI (FR6, FR41)
+**And** stream consumption uses `emit.forEach` internally — no StreamBuilder in UI (FR6, FR43)
 **And** the time entry list updates automatically when data changes (FR2)
 
-**Given** DeleteTimeBloc and UpdateTimeBloc use Freezed-generated events and states
-**When** migrated to sealed classes
-**Then** each follows the standard state pattern: initial → loading → success/error → auto-reset (FR40)
-**And** update dialog pre-populates with current values (FR3)
-**And** delete provides ActionState feedback (FR4)
-
-**Given** times presentation widgets render BLoC states
+**Given** list and create presentation widgets render BLoC states
 **When** updated to use pattern matching
-**Then** all `BlocBuilder` widgets use `switch` expressions with exhaustive pattern matching
+**Then** `BlocBuilder` widgets for ListTimesBloc and CreateTimeBloc use `switch` expressions with exhaustive pattern matching
 **And** destructuring extracts state fields: e.g., `ListTimesLoaded(:final times)`
 **And** no `if/else` chains on state types remain
 
-**Given** all times BLoC migrations are complete
+**Given** list and create BLoC migrations are complete
 **When** the app is launched and time entry features exercised
-**Then** user can create time entries (FR1), view real-time list (FR2), edit with pre-populated values (FR3), delete entries (FR4)
-**And** visual feedback shows for every action (FR5)
+**Then** user can create time entries (FR1), view real-time list (FR2)
+**And** visual feedback shows for create action (FR5)
 **And** list updates automatically without manual refresh (FR6)
 
-**Given** times BLoCs have reached their final sealed class form
+**Given** list and create BLoCs have reached their final sealed class form
 **When** unit and BLoC tests are written alongside implementation
 **Then** `test/src/features/times/domain/use_cases/create_time_use_case_test.dart` tests create use case (100% coverage)
-**And** `test/src/features/times/domain/use_cases/delete_time_use_case_test.dart` tests delete use case (100% coverage)
 **And** `test/src/features/times/domain/use_cases/list_times_use_case_test.dart` tests list use case (100% coverage)
-**And** `test/src/features/times/domain/use_cases/update_time_use_case_test.dart` tests update use case (100% coverage)
 **And** `test/src/features/times/data/repositories/objectbox_times_repository_test.dart` tests ObjectBox repository implementation (100% coverage)
 **And** `test/src/features/times/presentation/bloc/create_time_bloc_test.dart` tests all state transitions: initial → loading → success → reset, and initial → loading → error
-**And** `test/src/features/times/presentation/bloc/delete_time_bloc_test.dart` tests all state transitions
 **And** `test/src/features/times/presentation/bloc/list_times_bloc_test.dart` tests stream subscription via emit.forEach, empty state, loaded state, error state
-**And** `test/src/features/times/presentation/bloc/update_time_bloc_test.dart` tests all state transitions
 **And** all tests pass via `flutter test`
 
-### Story 3.3: Wage Feature — Sealed Class BLoC Migration
+### Story 3.3: Times Feature — Update & Delete BLoC Migration
+
+As a user,
+I want to edit and delete existing time entries using modern reactive patterns,
+So that correcting mistakes and removing entries remains fast with proper visual feedback (FR3, FR4, FR5, FR40, FR42).
+
+**Acceptance Criteria:**
+
+**Given** UpdateTimeBloc uses Freezed-generated events and states
+**When** migrated to sealed classes
+**Then** `sealed class UpdateTimeEvent` has appropriate variants for field changes and submission
+**And** `sealed class UpdateTimeState` follows the standard state pattern: initial → loading → success/error → auto-reset (FR42)
+**And** update dialog pre-populates with current values (FR3)
+**And** all variants use `final class` with `const` constructors
+
+**Given** DeleteTimeBloc uses Freezed-generated events and states
+**When** migrated to sealed classes
+**Then** `sealed class DeleteTimeEvent` has appropriate variants
+**And** `sealed class DeleteTimeState` follows the standard state pattern: initial → loading → success/error → auto-reset (FR42)
+**And** delete provides ActionState feedback (FR4)
+
+**Given** update and delete presentation widgets render BLoC states
+**When** updated to use pattern matching
+**Then** `BlocBuilder` widgets for UpdateTimeBloc and DeleteTimeBloc use `switch` expressions with exhaustive pattern matching
+**And** no `if/else` chains on state types remain
+
+**Given** update and delete BLoC migrations are complete
+**When** the app is launched and time entry features exercised
+**Then** user can edit with pre-populated values (FR3), delete entries (FR4)
+**And** visual feedback shows for update and delete actions (FR5)
+
+**Given** update and delete BLoCs have reached their final sealed class form
+**When** unit and BLoC tests are written alongside implementation
+**Then** `test/src/features/times/domain/use_cases/update_time_use_case_test.dart` tests update use case (100% coverage)
+**And** `test/src/features/times/domain/use_cases/delete_time_use_case_test.dart` tests delete use case (100% coverage)
+**And** `test/src/features/times/presentation/bloc/update_time_bloc_test.dart` tests all state transitions
+**And** `test/src/features/times/presentation/bloc/delete_time_bloc_test.dart` tests all state transitions
+**And** all tests pass via `flutter test`
+
+### Story 3.4: Wage Feature — Sealed Class BLoC Migration
 
 As a user,
 I want wage management to use modern reactive patterns internally,
-So that viewing and updating my hourly wage remains fast with real-time feedback (FR7-FR11, FR38, FR40, FR41).
+So that viewing and updating my hourly wage remains fast with real-time feedback (FR7-FR11, FR40, FR42, FR43).
 
 **Acceptance Criteria:**
 
@@ -611,13 +640,13 @@ So that viewing and updating my hourly wage remains fast with real-time feedback
 **When** migrated to sealed classes with emit.forEach
 **Then** `sealed class FetchWageEvent` has `FetchWageRequested` variant
 **And** `sealed class FetchWageState` has variants: `FetchWageInitial`, `FetchWageLoading`, `FetchWageLoaded`, `FetchWageError`
-**And** stream consumption uses `emit.forEach` — no StreamBuilder in UI (FR10, FR41)
+**And** stream consumption uses `emit.forEach` — no StreamBuilder in UI (FR10, FR43)
 **And** wage value updates in real time without manual refresh (FR10)
 
 **Given** UpdateWageBloc uses Freezed-generated events and states
 **When** migrated to sealed classes
 **Then** `sealed class UpdateWageEvent` has appropriate variants for field changes and submission
-**And** `sealed class UpdateWageState` follows the standard pattern: initial → loading → success/error → auto-reset (FR40)
+**And** `sealed class UpdateWageState` follows the standard pattern: initial → loading → success/error → auto-reset (FR42)
 **And** visual feedback shows for wage update actions (FR11)
 
 **Given** SetWageUseCase handles initial wage setting
@@ -644,18 +673,18 @@ So that viewing and updating my hourly wage remains fast with real-time feedback
 **And** `test/src/features/wage/presentation/bloc/update_wage_bloc_test.dart` tests all state transitions: initial → loading → success → reset, and initial → loading → error
 **And** all tests pass via `flutter test`
 
-### Story 3.4: Payment Feature — Cubit Modernization & Cross-Feature Composition
+### Story 3.5: Payment Feature — Cubit Modernization & Cross-Feature Composition
 
 As a user,
 I want to calculate my total payment based on recorded time entries and current hourly wage,
-So that I can see an accurate payment summary with total hours, minutes, rate, and payment amount (FR12-FR14, FR42).
+So that I can see an accurate payment summary with total hours, minutes, rate, and payment amount (FR12-FR14, FR44).
 
 **Acceptance Criteria:**
 
 **Given** PaymentCubit derives state from times list and wage data
 **When** modernized with sealed class states
 **Then** `sealed class PaymentState` has appropriate variants for data availability and calculation result
-**And** payment calculation derives computed state without user-initiated events (FR42)
+**And** payment calculation derives computed state without user-initiated events (FR44)
 **And** PaymentCubit receives times and wage data from HomePage composition
 
 **Given** CalculatePaymentUseCase implements the payment formula
@@ -685,17 +714,17 @@ So that I can see an accurate payment summary with total hours, minutes, rate, a
 **And** payment calculation unit test verifies execution under 50ms (NFR4)
 **And** all tests pass via `flutter test`
 
-### Story 3.5: Domain Entities & Naming Conventions Final Pass
+### Story 3.6: Domain Entities & Naming Conventions Final Pass
 
 As a developer,
 I want to verify Freezed 3.x domain entities and apply final naming conventions across the codebase,
-So that domain data classes support copyWith/equality/JSON and all code follows consistent naming patterns (FR39, NFR8).
+So that domain data classes support copyWith/equality/JSON and all code follows consistent naming patterns (FR41, NFR8).
 
 **Acceptance Criteria:**
 
 **Given** TimeEntry and WageHourly are domain data classes
 **When** verified with Freezed 3.x
-**Then** both entities support `copyWith`, equality comparison, and JSON serialization via generated code (FR39)
+**Then** both entities support `copyWith`, equality comparison, and JSON serialization via generated code (FR41)
 **And** generated files (.freezed.dart, .g.dart) exist and are current
 **And** Freezed is used ONLY for domain data classes — not for BLoC events, states, or failure types
 
@@ -727,7 +756,7 @@ drift datasource implemented for web platform. ObjectBox datasources modernized 
 
 As a developer,
 I want to set up the drift database with table definitions and web-compatible persistence,
-So that the web platform has a fully functional local data layer using SQLite via WASM + OPFS (FR29).
+So that the web platform has a fully functional local data layer using SQLite via WASM + OPFS (FR31).
 
 **Acceptance Criteria:**
 
@@ -744,7 +773,7 @@ So that the web platform has a fully functional local data layer using SQLite vi
 **Given** three environments exist (dev/staging/prod)
 **When** the drift database is initialized
 **Then** environment-aware database naming is applied (test-1, stg-1, prod-1) — matching the ObjectBox pattern
-**And** each environment uses an isolated database instance (FR23, FR24, FR25)
+**And** each environment uses an isolated database instance (FR25, FR26, FR27)
 
 **Given** the drift database setup is complete
 **When** `flutter analyze` is run
@@ -755,19 +784,19 @@ So that the web platform has a fully functional local data layer using SQLite vi
 
 As a user on the web platform,
 I want to create, view, edit, and delete time entries with the same experience as native platforms,
-So that the web app is fully functional for time tracking (FR20, FR27, FR29).
+So that the web app is fully functional for time tracking (FR22, FR29, FR31).
 
 **Acceptance Criteria:**
 
 **Given** the drift database has TimesTable defined
 **When** `TimesDriftDatasource` is implemented in `times/data/datasources/`
 **Then** it provides CRUD operations: insert, select all, update, delete on TimesTable
-**And** it provides a reactive `watchAll()` stream equivalent to ObjectBox's `watch()` (FR27)
+**And** it provides a reactive `watchAll()` stream equivalent to ObjectBox's `watch()` (FR29)
 **And** it works with drift table row types only (not domain entities)
 
 **Given** the drift datasource is available
 **When** `DriftTimesRepository` is implemented in `times/data/repositories/`
-**Then** it implements the abstract `TimesRepository` interface (FR30)
+**Then** it implements the abstract `TimesRepository` interface (FR32)
 **And** it maps between drift table rows and `TimeEntry` domain entities
 **And** all methods return `Either<GlobalFailure, T>` — never throw (NFR19)
 **And** `fetchTimesStream()` returns `Either<GlobalFailure, Stream<List<TimeEntry>>>`
@@ -775,7 +804,7 @@ So that the web app is fully functional for time tracking (FR20, FR27, FR29).
 **Given** both ObjectBox and drift repository implementations exist
 **When** comparing their public API
 **Then** both conform to the identical `TimesRepository` interface
-**And** both provide equivalent reactive stream behavior (FR27)
+**And** both provide equivalent reactive stream behavior (FR29)
 
 **Given** the drift times implementation is complete
 **When** exercised on the web platform
@@ -793,19 +822,19 @@ So that the web app is fully functional for time tracking (FR20, FR27, FR29).
 
 As a user on the web platform,
 I want to view, set, and update my hourly wage with the same experience as native platforms,
-So that wage management is fully functional on the web (FR20, FR27, FR29).
+So that wage management is fully functional on the web (FR22, FR29, FR31).
 
 **Acceptance Criteria:**
 
 **Given** the drift database has WageHourlyTable defined
 **When** `WageDriftDatasource` is implemented in `wage/data/datasources/`
 **Then** it provides operations: insert, select, update on WageHourlyTable
-**And** it provides a reactive `watch()` stream for wage data (FR27)
+**And** it provides a reactive `watch()` stream for wage data (FR29)
 **And** it works with drift table row types only
 
 **Given** the drift datasource is available
 **When** `DriftWageRepository` is implemented in `wage/data/repositories/`
-**Then** it implements the abstract `WageRepository` interface (FR30)
+**Then** it implements the abstract `WageRepository` interface (FR32)
 **And** it maps between drift table rows and `WageHourly` domain entities
 **And** all methods return `Either<GlobalFailure, T>` — never throw (NFR19)
 **And** initial wage defaults to $15.00 when no wage exists (FR8)
@@ -813,7 +842,7 @@ So that wage management is fully functional on the web (FR20, FR27, FR29).
 **Given** both ObjectBox and drift wage repository implementations exist
 **When** comparing their public API
 **Then** both conform to the identical `WageRepository` interface
-**And** both provide equivalent reactive stream behavior (FR27)
+**And** both provide equivalent reactive stream behavior (FR29)
 
 **Given** the drift wage implementation is complete
 **When** exercised on the web platform
@@ -830,7 +859,7 @@ So that wage management is fully functional on the web (FR20, FR27, FR29).
 
 As a developer,
 I want the app to automatically select the correct datasource based on the target platform,
-So that native platforms use ObjectBox and web uses drift without manual configuration (FR22, FR26).
+So that native platforms use ObjectBox and web uses drift without manual configuration (FR24, FR28).
 
 **Acceptance Criteria:**
 
@@ -844,12 +873,12 @@ So that native platforms use ObjectBox and web uses drift without manual configu
 **When** `MultiRepositoryProvider` registers repositories
 **Then** `RepositoryProvider<TimesRepository>` selects `DriftTimesRepository` or `ObjectboxTimesRepository` based on platform
 **And** `RepositoryProvider<WageRepository>` selects `DriftWageRepository` or `ObjectboxWageRepository` based on platform
-**And** use cases are created inline with `context.read<T>()` resolution (FR37)
+**And** use cases are created inline with `context.read<T>()` resolution (FR39)
 
 **Given** three entry points exist (main_development.dart, main_staging.dart, main_production.dart)
 **When** each entry point initializes the app
 **Then** environment-specific database names are passed to bootstrap (test-1, stg-1, prod-1)
-**And** both ObjectBox and drift respect the environment-specific naming (FR23, FR24, FR25)
+**And** both ObjectBox and drift respect the environment-specific naming (FR25, FR26, FR27)
 **And** databases are isolated per environment — no cross-contamination
 
 **Given** the DI setup supports tree-shaking via `kIsWeb`
@@ -861,29 +890,29 @@ So that native platforms use ObjectBox and web uses drift without manual configu
 
 As a user,
 I want the app to work identically on iOS, Android, Web, and Windows with full bilingual support,
-So that I can use TimeMoney on any platform in my preferred language (FR15-FR21, FR28).
+So that I can use TimeMoney on any platform in my preferred language (FR15-FR23, FR30).
 
 **Acceptance Criteria:**
 
 **Given** the multi-datasource architecture is complete
 **When** the app is built and launched on iOS
-**Then** all FR1-FR17 capabilities function correctly using the ObjectBox datasource (FR18)
+**Then** all FR1-FR17 capabilities function correctly using the ObjectBox datasource (FR20)
 **And** iOS deployment target supports iOS 13+ (NFR12)
 
 **Given** the app is built for Android
 **When** launched on an Android device or emulator
-**Then** all FR1-FR17 capabilities function correctly using the ObjectBox datasource (FR19)
+**Then** all FR1-FR17 capabilities function correctly using the ObjectBox datasource (FR21)
 **And** Android minimum SDK supports API 21+ (NFR13)
 
 **Given** the app is built for Web
 **When** launched in Chrome, Firefox, or Safari
-**Then** all FR1-FR17 capabilities function correctly using the drift datasource (FR20)
+**Then** all FR1-FR17 capabilities function correctly using the drift datasource (FR22)
 **And** data persists via OPFS across browser sessions (NFR14)
 **And** CRUD operations complete within 2x the latency of native operations (NFR5)
 
 **Given** the app is built for Windows
 **When** launched on Windows 10+
-**Then** all FR1-FR17 capabilities function correctly using the ObjectBox datasource (FR21)
+**Then** all FR1-FR17 capabilities function correctly using the ObjectBox datasource (FR23)
 **And** Windows build targets MSVC toolchain (NFR15)
 
 **Given** localization is configured with EN/ES ARB files
@@ -904,11 +933,11 @@ So that I can use TimeMoney on any platform in my preferred language (FR15-FR21,
 
 Widget tests for presentation layer components (80%+ coverage). Golden tests for visual regression proof (HomePage, PaymentResultPage, CRUD dialogs). Coverage gap validation ensuring overall floor 85%+. Unit and BLoC tests were already written alongside implementation in Epics 3-4 — this epic completes the testing pyramid with presentation-layer and visual regression coverage.
 
-### Story 5.1: Widget Tests — Presentation Layer Coverage
+### Story 5.1: Times & Wage Feature Widget Tests
 
 As a developer,
-I want comprehensive widget tests for all presentation layer components,
-So that UI rendering, user interactions, and state-driven display are verified automatically (FR45).
+I want comprehensive widget tests for the times and wage feature presentation layers,
+So that UI rendering, user interactions, and state-driven display are verified for the two core data features (FR47).
 
 **Acceptance Criteria:**
 
@@ -925,6 +954,18 @@ So that UI rendering, user interactions, and state-driven display are verified a
 **And** UpdateWagePage dialog is tested with mocked BLoCs for form interaction and submission
 **And** key interaction widgets have tests verifying tap behavior
 
+**Given** times and wage widget tests are complete
+**When** `flutter test` is run
+**Then** all times and wage widget tests pass
+
+### Story 5.2: Home, Payment & Shared Widget Tests
+
+As a developer,
+I want comprehensive widget tests for the home page composition, payment feature, and shared widgets,
+So that the cross-feature composition layer and reusable components are verified automatically (FR47).
+
+**Acceptance Criteria:**
+
 **Given** home and payment features have presentation components
 **When** widget tests are written
 **Then** `test/src/features/home/presentation/pages/home_page_test.dart` verifies composition of times list, wage card, and action buttons
@@ -937,16 +978,16 @@ So that UI rendering, user interactions, and state-driven display are verified a
 **And** `test/src/shared/widgets/info_section_test.dart` verifies empty state display
 **And** all shared widget tests pass
 
-**Given** all widget tests are complete
+**Given** all widget tests across Stories 5.1 and 5.2 are complete
 **When** `flutter test` is run
 **Then** all widget tests pass
-**And** presentation layer coverage reaches 80%+ on non-generated code (FR45)
+**And** presentation layer coverage reaches 80%+ on non-generated code (FR47)
 
-### Story 5.2: Golden Tests & Coverage Validation
+### Story 5.3: Golden Tests & Coverage Validation
 
 As a developer,
 I want golden tests for visual regression proof and validated overall test coverage,
-So that the modernization is provably zero-regression visually and the test suite meets quality targets (FR46, FR47).
+So that the modernization is provably zero-regression visually and the test suite meets quality targets (FR48, FR49).
 
 **Acceptance Criteria:**
 
@@ -962,11 +1003,11 @@ So that the modernization is provably zero-regression visually and the test suit
 **When** golden tests are run via `flutter test --update-goldens`
 **Then** baseline golden images are generated successfully
 **And** subsequent runs via `flutter test` match against baselines using native `matchesGoldenFile`
-**And** no external golden test dependencies are required (FR46)
+**And** no external golden test dependencies are required (FR48)
 
 **Given** all tests across Epics 3, 4, and 5 are complete
 **When** `flutter test --coverage` is run
-**Then** a coverage report is generated successfully (FR47)
+**Then** a coverage report is generated successfully (FR49)
 **And** use case coverage is 100%
 **And** BLoC/Cubit coverage is 100%
 **And** repository implementation coverage is 100%
@@ -992,16 +1033,16 @@ GitHub Actions pipeline with linting, testing, coverage reporting, and build ver
 
 As a developer,
 I want an automated CI/CD pipeline that validates code quality and builds on every PR,
-So that no code is merged without passing lint, test, and build verification for all platforms (FR48, FR49, NFR21).
+So that no code is merged without passing lint, test, and build verification for all platforms (FR50, FR51, NFR21).
 
 **Acceptance Criteria:**
 
 **Given** the project needs automated quality gates
 **When** `.github/workflows/main.yaml` is created or updated
 **Then** the pipeline runs on every pull request to main
-**And** the pipeline executes `flutter analyze` for linting verification (FR48)
-**And** the pipeline executes `flutter test --coverage` for test execution and coverage reporting (FR48)
-**And** the pipeline verifies builds for iOS, Android, Web, and Windows (FR49)
+**And** the pipeline executes `flutter analyze` for linting verification (FR50)
+**And** the pipeline executes `flutter test --coverage` for test execution and coverage reporting (FR50)
+**And** the pipeline verifies builds for iOS, Android, Web, and Windows (FR51)
 **And** the pipeline fails if any step produces errors — blocking merge (NFR21)
 
 **Given** the project benefits from automated dependency updates
@@ -1027,7 +1068,7 @@ So that no code is merged without passing lint, test, and build verification for
 
 As a hiring manager or Flutter developer visiting the repository,
 I want a professional README and pristine code quality,
-So that I can understand the project's architecture and quality within 30 seconds and trust the code as a reference implementation (FR50, FR51).
+So that I can understand the project's architecture and quality within 30 seconds and trust the code as a reference implementation (FR52, FR53).
 
 **Acceptance Criteria:**
 
@@ -1037,11 +1078,11 @@ So that I can understand the project's architecture and quality within 30 second
 **And** it contains an architecture diagram showing feature-first structure with Data/Domain/Presentation layers
 **And** it contains setup instructions (clone, install, run) that work on first attempt
 **And** it contains a contribution guide with coding standards and PR process
-**And** the entire README is scannable within 30 seconds by a hiring manager (FR50)
+**And** the entire README is scannable within 30 seconds by a hiring manager (FR52)
 
 **Given** the migration history should demonstrate engineering discipline
 **When** reviewing the commit history
-**Then** each commit follows conventional commit format: `type: description` (FR51)
+**Then** each commit follows conventional commit format: `type: description` (FR53)
 **And** commits reference the scope item or migration step they implement
 **And** the commit sequence tells a coherent modernization story (SDK → architecture → patterns → platform → testing → polish)
 
