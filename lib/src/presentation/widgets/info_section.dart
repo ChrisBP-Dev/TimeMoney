@@ -57,7 +57,7 @@ class IconText extends StatelessWidget {
         child: Text(
           iconText,
           textAlign: TextAlign.center,
-          textScaleFactor: 1,
+          textScaler: TextScaler.noScaling,
           style: TextStyle(
             fontSize: fontSize,
           ),

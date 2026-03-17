@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:time_money/src/presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.dart';
 
-class WageHourlyField extends HookWidget {
+class WageHourlyField extends StatefulWidget {
   const WageHourlyField({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = useTextEditingController();
+  State<WageHourlyField> createState() => _WageHourlyFieldState();
+}
 
+class _WageHourlyFieldState extends State<WageHourlyField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         const Text('hourly:'),
@@ -20,13 +36,14 @@ class WageHourlyField extends HookWidget {
             return SizedBox(
               width: 70,
               child: TextFormField(
-                controller: controller,
+                controller: _controller,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                onChanged: (value) => context.read<UpdateWageHourlyBloc>().add(
-                      UpdateWageHourlyEvent.changeHourly(value: value),
-                    ),
+                onChanged: (value) =>
+                    context.read<UpdateWageHourlyBloc>().add(
+                          UpdateWageHourlyEvent.changeHourly(value: value),
+                        ),
                 decoration: const InputDecoration(
                   filled: true,
                   border: OutlineInputBorder(),

@@ -15,11 +15,11 @@ class ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return failure.when(
-      internalError: (_, __) => ShowInfoSection(
+      internalError: (failedValue, exception) => ShowInfoSection(
         infoImage: const IconText('⚠️'),
         infoMessage: '''
 Hubo un error interno, por favor asegurese de tener la última versión de la App.
- $_
+ $failedValue
 ''',
         actionWidget: actionWidget,
       ),

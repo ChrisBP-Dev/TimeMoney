@@ -3,7 +3,7 @@ project(time_money LANGUAGES CXX)
 
 set(BINARY_NAME "time_money")
 
-cmake_policy(SET CMP0063 NEW)
+cmake_policy(VERSION 3.14...3.25)
 
 set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 

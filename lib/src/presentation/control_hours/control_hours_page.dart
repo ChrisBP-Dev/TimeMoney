@@ -28,7 +28,10 @@ class ControlHoursPage extends StatelessWidget {
           const Expanded(child: ListTimesScreen()),
           SafeArea(
             child: Container(
-              color: Theme.of(context).colorScheme.background.withOpacity(.2),
+              color: Theme.of(context)
+                  .colorScheme
+                  .surface
+                  .withValues(alpha: .2),
               height: context.getHeight * .13,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
