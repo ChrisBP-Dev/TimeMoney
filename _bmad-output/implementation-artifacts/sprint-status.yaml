@@ -1,0 +1,92 @@
+# generated: 2026-03-17
+# last_updated: 2026-03-17
+# project: TimeMoney
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: {project-root}/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-17
+last_updated: 2026-03-17
+project: TimeMoney
+project_key: NOKEY
+tracking_system: file-system
+story_location: "{project-root}/_bmad-output/implementation-artifacts"
+
+development_status:
+  # Epic 1: Foundation — SDK & Dependency Modernization
+  epic-1: backlog
+  1-1-sdk-constraint-flutter-dart-version-migration: backlog
+  1-2-objectbox-migration-data-verification: backlog
+  1-3-state-management-fp-dependencies-migration: backlog
+  1-4-code-generation-remaining-dependencies: backlog
+  epic-1-retrospective: optional
+
+  # Epic 2: Architecture — Feature-First Restructure
+  epic-2: backlog
+  2-1-core-module-cross-cutting-concerns-setup: backlog
+  2-2-times-feature-feature-first-restructure: backlog
+  2-3-wage-feature-feature-first-restructure: backlog
+  2-4-payment-home-features-feature-first-restructure: backlog
+  2-5-flutter-hooks-removal-shared-widgets-extraction: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Modernization — State Management, Business Logic & Core Tests
+  epic-3: backlog
+  3-1-core-sealed-classes-test-infrastructure-core-tests: backlog
+  3-2-times-feature-list-create-bloc-migration: backlog
+  3-3-times-feature-update-delete-bloc-migration: backlog
+  3-4-wage-feature-sealed-class-bloc-migration: backlog
+  3-5-payment-feature-cubit-modernization-cross-feature-composition: backlog
+  3-6-domain-entities-naming-conventions-final-pass: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Platform — Multi-Datasource, Multi-Platform & Localization
+  epic-4: backlog
+  4-1-drift-database-setup-core-infrastructure: backlog
+  4-2-times-feature-drift-datasource-repository-implementation: backlog
+  4-3-wage-feature-drift-datasource-repository-implementation: backlog
+  4-4-platform-aware-di-multi-environment-configuration: backlog
+  4-5-multi-platform-verification-localization-validation: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Quality — Widget Tests, Golden Tests & Coverage Validation
+  epic-5: backlog
+  5-1-times-wage-feature-widget-tests: backlog
+  5-2-home-payment-shared-widget-tests: backlog
+  5-3-golden-tests-coverage-validation: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Polish — CI/CD Pipeline & Professional Documentation
+  epic-6: backlog
+  6-1-github-actions-ci-cd-pipeline: backlog
+  6-2-professional-readme-final-code-quality-cleanup: backlog
+  epic-6-retrospective: optional
