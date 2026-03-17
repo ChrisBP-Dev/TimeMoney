@@ -94,6 +94,7 @@ unlinked_spec.ds
 **/ios/Flutter/.last_build_id
 **/ios/Flutter/flutter_assets/
 **/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/ephemeral/
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
