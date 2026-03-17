@@ -53,12 +53,13 @@ So that the local database layer is current, existing user data is preserved acr
   - [ ] 2.2 Update `ios/Runner.xcodeproj/project.pbxproj`: change all `IPHONEOS_DEPLOYMENT_TARGET` from `13.0` to `15.0`
   - [ ] 2.3 Run `pod repo update` in `ios/` directory
   - [ ] 2.4 Run `pod update ObjectBox` in `ios/` directory
-  - [ ] 2.5 Verify `flutter build ios --no-codesign --flavor development` succeeds
+  - [ ] 2.5 Verify `ios/Podfile.lock` shows ObjectBox native pod updated to 5.x (was 4.4.1)
+  - [ ] 2.6 Verify `flutter build ios --no-codesign --flavor development` succeeds
 
 - [ ] Task 3: Regenerate ObjectBox code (AC: #1, #5)
   - [ ] 3.1 Run `dart run build_runner build --delete-conflicting-outputs`
-  - [ ] 3.2 Verify `objectbox.g.dart` is regenerated (will have updated generator signatures)
-  - [ ] 3.3 Verify `objectbox-model.json` is preserved (schema has NOT changed — same 2 entities, same properties)
+  - [ ] 3.2 Verify `objectbox.g.dart` is regenerated — compare the generator version comment at the top (should reference objectbox_generator 5.x); `ModelDefinition` and entity bindings remain functionally equivalent
+  - [ ] 3.3 Verify `objectbox-model.json` integrity: entity IDs/UIDs and property IDs/UIDs must be unchanged (same 2 entities, same properties). Only metadata/formatting fields may differ. If entity or property UIDs change, STOP — this indicates a schema migration that could cause data loss
   - [ ] 3.4 Run `flutter analyze` after regeneration — verify zero errors
   - [ ] 3.5 Verify generated code compiles: `flutter build ios --no-codesign --flavor development`
 
@@ -113,17 +114,14 @@ This story is NOT about:
 
 **SDK compatibility:** ObjectBox 5.x requires Dart 3.7+ / Flutter 3.29+. We have Dart 3.11+ / Flutter 3.41+ — fully compatible.
 
-**Breaking changes from 4.x to 5.x:**
+**Breaking changes from 4.x to 5.x (only actionable items — all other 5.x changes have zero impact on TimeMoney):**
 
 | Version | Change | Impact on TimeMoney |
 |---------|--------|-------------------|
-| 5.0.0 | Removed deprecated `contains` for `List<String>` — use `containsElement` | **NONE** — no List<String> properties in TimeBox or WageHourlyBox |
-| 5.0.0 | Android SDK 35 required | **NONE** — already compileSdk 36, targetSdk 35 (Story 1.1) |
-| 5.0.0 | Java 11 required | **NONE** — already Java 17 (Story 1.1) |
 | 5.0.0 | iOS minimum deployment target → 15.0 | **CRITICAL** — must update from 13.0 to 15.0 |
-| 5.1.0 | New flex properties, `dateUtc`/`dateUtcNano` types | **NONE** — new features, no impact on existing code |
 | 5.1.0 | Must run `build_runner build` after update (new generatorVersion param) | **REQUIRED** — regenerate objectbox.g.dart |
-| 5.2.0 | Analyzer 9-10 support, Sync V8 protocol | **NONE** — Sync not used, analyzer compatibility is beneficial |
+
+Non-impacting changes verified safe: `containsElement` rename (no List<String> props), Android SDK 35 (already 36), Java 11 (already 17), new flex/dateUtc types (unused), Sync V8 (unused).
 
 ### build_runner Resolution
 
@@ -147,7 +145,7 @@ The ObjectBox schema is trivially simple:
 - `id`: Int64 (PK, auto-assigned)
 - `value`: Float64
 
-No relations, no indexes, no List<String> properties, no new 5.x features needed. The `objectbox-model.json` should remain structurally identical after regeneration. The `objectbox.g.dart` will be regenerated with updated generator signatures but functionally equivalent code.
+No relations, no indexes, no List<String> properties, no new 5.x features needed. The `objectbox-model.json` should remain structurally identical after regeneration — if entity/property UIDs change, STOP and investigate before proceeding (UID changes indicate schema migration that risks data loss). The `objectbox.g.dart` will be regenerated with updated generator signatures but functionally equivalent code.
 
 ### ObjectBox API Usage — All Compatible with 5.x
 
@@ -185,9 +183,10 @@ pod update ObjectBox
 
 This updates the cached ObjectBox binary framework to the 5.x version for iOS. Without this, the build may use a stale 4.x pod cache.
 
-### Current pubspec.yaml State (Pre-Migration)
+### Current Dependency State (Pre-Migration)
 
 ```yaml
+# pubspec.yaml
 dependencies:
   objectbox: ^4.0.0              # → ^5.2.0
   objectbox_flutter_libs: ^4.0.0 # → ^5.2.0
@@ -196,6 +195,13 @@ dev_dependencies:
   objectbox_generator: ^4.0.0    # → ^5.2.0
   build_runner: ^2.4.14          # BROKEN comment will be removed
 ```
+
+```yaml
+# ios/Podfile.lock (CocoaPods native)
+ObjectBox: 4.4.1                 # will update to 5.x after pod update
+```
+
+Note: `pubspec.lock` is version-controlled (`!pubspec.lock` in .gitignore) — commit its changes alongside `pubspec.yaml`.
 
 ### Files That Will Change
 
