@@ -22,7 +22,7 @@ classification:
 inputDocuments:
   - 'planning-artifacts/product-brief-TimeMoney.md'
   - 'planning-artifacts/product-brief-TimeMoney-distillate.md'
-  - 'project-context.md'
+  - '_bmad-output/project-context.md'
   - 'docs/index.md'
   - 'docs/project-overview.md'
   - 'docs/architecture.md'
@@ -140,6 +140,27 @@ All four user journeys (María happy path, María edge case, Daniel hiring manag
 **Dependency Chain:** SDK upgrade (1) must come first. Architecture restructure (2) and modern patterns (4, 5) follow. Multi-datasource (3) requires stable architecture. Testing (6) requires stable code. Cleanup (7), CI/CD (8), and README (9) are final polish.
 
 **Post-Modernization:** No additional phases planned. Future evolution, if any, would be driven by community feedback or new Flutter/Dart major versions.
+
+### Out of Scope
+
+- New features or functionality changes — this is purely a modernization
+- UI/UX redesign or visual changes — visual design remains as-is
+- Backend, cloud integration, or remote sync
+- Authentication, user accounts, or multi-user support
+- Analytics, monetization, or ads
+
+### Key Decisions & Rejected Alternatives
+
+| Decision | Rejected Alternative | Rationale |
+|---|---|---|
+| Sealed classes for BLoC events/states | Keep Freezed for events/states | Dart 3 native exhaustive matching, no codegen needed |
+| Freezed 3.x for domain data classes | Eliminate Freezed entirely | copyWith, equality, JSON serialization still add value for data classes |
+| flutter_bloc DI (RepositoryProvider/BlocProvider) | get_it + injectable | Over-engineering for project scale (2 features, 7 use cases) |
+| BLoC state management | Riverpod | BLoC has stronger enterprise adoption; deliberate choice, not default |
+| Remove flutter_hooks | Keep flutter_hooks | Minimal usage (5 widgets) doesn't justify the dependency |
+| Correct folder spellings (aplication→application) | Preserve original spellings | Modernization scope explicitly includes correcting naming conventions |
+| Add drift for web | ObjectBox-only (skip web) | Multi-datasource proves Clean Architecture dependency inversion in practice |
+| Replace dartz with fpdart | Keep dartz | fpdart is actively maintained; dartz is abandoned |
 
 ### Risk Mitigation
 
@@ -304,15 +325,20 @@ TimeMoney is a Flutter cross-platform application targeting four platforms: iOS,
 
 - **FR15:** User can use the app in English
 - **FR16:** User can use the app in Spanish
-- **FR17:** All user-facing strings are localized — no hardcoded text
+- **FR17:** User can see all interface text in their selected language — no hardcoded strings in the codebase
+
+### SDK & Build Verification
+
+- **FR52:** System compiles and runs on Flutter 3.41+ / Dart 3.11+ with zero compilation errors
+- **FR53:** Dart 2.x SDK constraint is replaced with Dart 3.11+ constraint and all source files compile under the new SDK
 
 ### Multi-Platform Support
 
-- **FR18:** User can run the app on iOS with full functionality
-- **FR19:** User can run the app on Android with full functionality
-- **FR20:** User can run the app on Web with full functionality via drift datasource
-- **FR21:** User can run the app on Windows with full functionality
-- **FR22:** System selects the appropriate datasource implementation (ObjectBox or drift) based on the target platform automatically
+- **FR18:** User can run the app on iOS with all FR1-FR17 capabilities functional
+- **FR19:** User can run the app on Android with all FR1-FR17 capabilities functional
+- **FR20:** User can run the app on Web with all FR1-FR17 capabilities functional using the web-compatible datasource
+- **FR21:** User can run the app on Windows with all FR1-FR17 capabilities functional
+- **FR22:** System selects the appropriate datasource implementation based on the target platform automatically — mobile/desktop datasource for native platforms, web datasource for browser
 
 ### Multi-Environment Support
 
@@ -323,10 +349,10 @@ TimeMoney is a Flutter cross-platform application targeting four platforms: iOS,
 ### Data Persistence
 
 - **FR26:** System persists all time entries and wage data locally on-device
-- **FR27:** System provides reactive data streams for both ObjectBox and drift implementations
-- **FR28:** ObjectBox implementation supports iOS, Android, and Windows platforms
-- **FR29:** drift implementation supports Web platform via WebAssembly and OPFS
-- **FR30:** Both datasource implementations conform to the same Repository interfaces (TimesRepository, WageHourlyRepository)
+- **FR27:** System provides reactive data streams for both datasource implementations (mobile/desktop and web)
+- **FR28:** Mobile and desktop datasource (ObjectBox) supports iOS, Android, and Windows platforms
+- **FR29:** Web datasource (drift) supports the Web platform with local persistence
+- **FR30:** Both datasource implementations conform to shared Repository interfaces ensuring interchangeability
 
 ### Architecture & Code Organization
 
@@ -336,20 +362,20 @@ TimeMoney is a Flutter cross-platform application targeting four platforms: iOS,
 - **FR34:** Infrastructure layer contains concrete repository implementations and database entities
 - **FR35:** Presentation layer contains BLoCs, views, and widgets scoped to their feature
 - **FR36:** Shared cross-cutting concerns (failures, services, extensions) reside in a core module
-- **FR37:** Dependency injection follows three-tier pattern: Repositories → Use Cases → BLoCs via flutter_bloc providers
+- **FR37:** Dependency injection follows three-tier pattern: Repositories → Use Cases → BLoCs via BLoC-native providers
 
 ### State Management
 
 - **FR38:** All BLoCs use sealed classes for events and states with exhaustive pattern matching
-- **FR39:** Freezed 3.x is used for domain data classes (copyWith, equality, JSON serialization)
+- **FR39:** Domain data classes support copyWith, equality, and JSON serialization via code generation
 - **FR40:** All BLoCs follow the standard state pattern: initial, loading, error, success/data
 - **FR41:** BLoCs with stream data provide a hasDataStream state for reactive UI rendering
-- **FR42:** ResultPaymentCubit derives computed state from times list and wage without events
+- **FR42:** Payment calculation derives computed state from times list and wage data without user-initiated events
 
 ### Testing
 
 - **FR43:** Unit tests cover all use cases and repository implementations
-- **FR44:** BLoC tests cover all state management logic using bloc_test
+- **FR44:** BLoC tests cover all state management logic using dedicated BLoC testing utilities
 - **FR45:** Widget tests cover presentation layer components
 - **FR46:** Golden tests verify zero visual regression across the modernization
 - **FR47:** All tests are runnable via `flutter test` with coverage reporting
@@ -358,33 +384,33 @@ TimeMoney is a Flutter cross-platform application targeting four platforms: iOS,
 
 - **FR48:** CI pipeline runs linting, testing, and coverage reporting on every PR
 - **FR49:** CI pipeline verifies builds for all four target platforms
-- **FR50:** README communicates project value, architecture, and setup within 30 seconds
-- **FR51:** Commit history documents the migration journey with meaningful, traceable messages
+- **FR50:** README contains project overview, architecture diagram, setup instructions, and contribution guide — scannable within 30 seconds
+- **FR51:** Each commit message follows conventional commit format (type: description) and references the scope item or migration step it implements
 
 ## Non-Functional Requirements
 
 ### Performance
 
-- **NFR1:** All user actions (create, update, delete time entry; update wage) must complete and reflect in the UI within 500ms, excluding the intentional ActionState feedback delay.
-- **NFR2:** Reactive data streams must propagate changes to the UI within 100ms of the underlying data mutation.
-- **NFR3:** App cold start (from launch to interactive ControlHoursPage) must complete within 2 seconds on target platforms.
-- **NFR4:** Payment calculation must execute instantaneously (< 50ms) regardless of the number of time entries.
-- **NFR5:** drift (web) datasource must achieve comparable performance to ObjectBox (mobile/desktop) for all CRUD operations at the expected data scale (< 1000 entries).
+- **NFR1:** All user actions (create, update, delete time entry; update wage) must complete and reflect in the UI within 500ms, excluding the intentional ActionState feedback delay, as measured by widget test timing assertions.
+- **NFR2:** Reactive data streams must propagate changes to the UI within 100ms of the underlying data mutation, as measured by BLoC test timing.
+- **NFR3:** App cold start (from launch to interactive main screen) must complete within 2 seconds on target platforms, as measured by Flutter DevTools timeline.
+- **NFR4:** Payment calculation must execute in under 50ms regardless of the number of time entries, as measured by unit test benchmarks.
+- **NFR5:** Web datasource CRUD operations must complete within 2x the latency of mobile/desktop datasource operations at the expected data scale (< 1000 entries), as measured by integration test timing on equivalent hardware.
 
 ### Code Quality
 
-- **NFR6:** Zero linter warnings on all non-generated Dart code under very_good_analysis latest rules.
+- **NFR6:** Zero linter warnings on all non-generated Dart code under strict analysis rules (latest recommended ruleset).
 - **NFR7:** Zero unused imports, unused variables, or dead code in the final codebase.
 - **NFR8:** All public API surfaces follow consistent naming conventions: snake_case files, PascalCase classes, correct layer suffixes (_bloc, _cubit, _use_case, _repository, _view).
-- **NFR9:** No dependency placed in the wrong section — build_runner, freezed, json_serializable, and objectbox_generator must be in dev_dependencies.
+- **NFR9:** No dependency placed in the wrong section — code generation tools and build-time-only packages must be in dev_dependencies, not regular dependencies.
 - **NFR10:** All barrel export files are clean — no circular exports, no re-exports of private APIs.
-- **NFR11:** Generated files (*.freezed.dart, *.g.dart, objectbox.g.dart) are excluded from analysis and never manually edited.
+- **NFR11:** All generated files are excluded from static analysis and never manually edited.
 
 ### Compatibility
 
 - **NFR12:** iOS deployment target supports iOS 13+ (or minimum required by Flutter 3.41+).
 - **NFR13:** Android minimum SDK supports API 21+ (or minimum required by Flutter 3.41+).
-- **NFR14:** Web build functions correctly on modern browsers: Chrome 86+, Firefox 111+, Safari 15.2+ (OPFS requirement for drift).
+- **NFR14:** Web build functions correctly on modern browsers: Chrome 86+, Firefox 111+, Safari 15.2+ (OPFS required for web datasource persistence).
 - **NFR15:** Windows build targets Windows 10+ with MSVC toolchain.
 - **NFR16:** All dependencies are at their latest stable versions as of 2026 with no deprecated API usage.
 
