@@ -62,6 +62,12 @@ void main() {
       expect(failure.stackTrace, st);
     });
 
+    test('InternalError with no stackTrace has null stackTrace', () {
+      const failure = InternalError('err');
+      expect(failure, isA<InternalError>());
+      expect(failure.stackTrace, isNull);
+    });
+
     test('exhaustive switch covers all variants', () {
       const GlobalFailure failure = NotConnection();
       final result = switch (failure) {
@@ -94,6 +100,13 @@ void main() {
         );
         expect(failure, isA<InternalError>());
         expect((failure as InternalError).error, isA<Exception>());
+      });
+
+      test('fromException forwards StackTrace to InternalError', () {
+        final st = StackTrace.current;
+        final failure = GlobalFailure.fromException(Exception('x'), st);
+        expect(failure, isA<InternalError>());
+        expect((failure as InternalError).stackTrace, st);
       });
     });
   });

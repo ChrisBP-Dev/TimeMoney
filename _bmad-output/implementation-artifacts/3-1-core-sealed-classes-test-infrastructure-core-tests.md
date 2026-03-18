@@ -1,6 +1,6 @@
 # Story 3.1: Core Sealed Classes, Test Infrastructure & Core Tests
 
-Status: review
+Status: done
 
 ## Story
 
@@ -36,7 +36,7 @@ So that all union types use native sealed classes consistently and the testing f
 
 5. **Core unit tests rewritten for sealed classes**
    - `test/src/core/ui/action_state_test.dart` — rewrite 12 tests to use `switch`/type checks instead of `.when()`
-   - `test/src/core/errors/failures_test.dart` — rewrite 11 tests to use `switch`/type checks instead of `.when()` (remove `GlobalDefaultFailure` typedef test — typedef no longer exists)
+   - `test/src/core/errors/failures_test.dart` — rewrite 14 tests to use `switch`/type checks instead of `.when()` (remove `GlobalDefaultFailure` typedef test; add exhaustive switch test + 2 tests from code review: null stackTrace, fromException StackTrace forwarding)
    - All core tests pass via `flutter test`
 
 6. **Zero lint compliance**
@@ -95,6 +95,15 @@ So that all union types use native sealed classes consistently and the testing f
   - [x] 6.1 `flutter analyze` — zero warnings
   - [x] 6.2 `flutter test` — all tests pass
   - [x] 6.3 App compiles and runs correctly
+
+- [x] Task 7: Code review (3-layer adversarial — Sonnet 4.6)
+  - [x] 7.1 Blind Hunter — 16 findings, all rejected as noise or false positives
+  - [x] 7.2 Edge Case Hunter — surfaced 2 test coverage gaps (P1, P2) + 8 pre-existing deferred issues
+  - [x] 7.3 Acceptance Auditor — 1 bad_spec (test count 11→14), 5 deferred (BLoC .when() scoped to 3.2–3.4)
+  - [x] 7.4 Apply patch P1: `InternalError` null stackTrace test added to `failures_test.dart`
+  - [x] 7.5 Apply patch P2: `fromException` StackTrace forwarding test added to `failures_test.dart`
+  - [x] 7.6 `flutter test` — 26 tests passed (12 action_state + 14 failures)
+  - [x] 7.7 `flutter analyze` — 0 issues post-patches
 
 ## Dev Notes
 
@@ -411,8 +420,9 @@ Claude Opus 4.6 (1M context)
 ### Debug Log References
 
 - `flutter analyze` — 0 issues on full project
-- `flutter test --test-randomize-ordering-seed random` — 24 tests passed (12 action_state + 12 failures)
+- `flutter test --test-randomize-ordering-seed random` — 26 tests passed (12 action_state + 14 failures)
 - `dart run build_runner build --delete-conflicting-outputs` — 6 outputs regenerated successfully
+- Code review (3-layer adversarial, 2026-03-18) — 2 patches applied, 16 rejected as noise, 10 deferred to stories 3.2–3.5
 
 ### Completion Notes List
 
@@ -424,12 +434,14 @@ Claude Opus 4.6 (1M context)
 - Regenerated 6 BLoC `.freezed.dart` files via build_runner.
 - Created `test/helpers/mocks.dart` with 10 shared mocktail mocks (2 repositories + 8 use cases).
 - Updated `test/helpers/helpers.dart` barrel to export mocks.
-- Rewrote `action_state_test.dart` (12 tests) and `failures_test.dart` (12 tests) using type checks and `switch` expressions. Replaced `GlobalDefaultFailure` typedef test with non-generic verification test.
-- All 24 tests pass. Zero lint warnings.
+- Rewrote `action_state_test.dart` (12 tests) and `failures_test.dart` (14 tests) using type checks and `switch` expressions. Replaced `GlobalDefaultFailure` typedef test with non-generic verification test.
+- Code review (3-layer adversarial): 2 patches applied — `InternalError` null stackTrace test + `fromException` StackTrace forwarding test.
+- All 26 tests pass. Zero lint warnings.
 
 ### Change Log
 
 - 2026-03-18: Story 3.1 implementation complete — sealed class migration for ActionState, GlobalFailure, ValueFailure; test infrastructure created; core tests rewritten
+- 2026-03-18: Code review complete (3-layer adversarial) — 2 patches applied to failures_test.dart (null stackTrace + StackTrace forwarding tests); story promoted to done
 
 ### File List
 
