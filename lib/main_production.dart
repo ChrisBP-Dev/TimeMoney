@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:time_money/app/view/app_bloc.dart';
+import 'package:time_money/app/app.dart';
 import 'package:time_money/bootstrap.dart';
 import 'package:time_money/src/core/services/objectbox_service.dart';
 import 'package:time_money/src/features/times/data/datasources/times_objectbox_datasource.dart';

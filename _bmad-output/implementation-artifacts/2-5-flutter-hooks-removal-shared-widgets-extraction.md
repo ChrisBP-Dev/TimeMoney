@@ -1,6 +1,6 @@
 # Story 2.5: Shared Widgets Extraction & DI Cleanup
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -534,9 +534,18 @@ Claude Opus 4.6 (1M context)
 - AC4 completed: `InjectionRepositories` class deleted; `AppBloc` now accepts `TimesRepository` + `WageRepository` as separate constructor params; `RepositoryProvider.value()` used for both repos in `MultiRepositoryProvider`; use case injections resolve via `context.read<T>()`; `UseCasesInjection.list()` takes no params; `context.watch<T>()` not used anywhere for DI
 - AC5 completed: `flutter analyze` zero warnings, `flutter test` 23/23 pass, `flutter build apk` compiles, zero orphaned imports
 
+### Code Review Record
+
+- 2026-03-18: 3-layer adversarial review (Blind Hunter, Edge Case Hunter, Acceptance Auditor)
+  - Acceptance Auditor: **PASS** — all ACs 1–5 satisfied, W4 ordering correct, zero analyze warnings, 23 tests pass
+  - 1 patch applied: `main_production.dart` import aligned to barrel (`app/app.dart`) matching dev/staging
+  - 7 findings deferred: DI ordering runtime risk (W4 by-design), 3× main_*.dart duplication (pre-existing), error_view circular barrel (spec-mandated), IconText input edge cases (pre-existing), testability trade-off (Epic 5 scope)
+  - 6 findings rejected as noise
+
 ### Change Log
 
 - 2026-03-18: Story 2.5 implemented — shared widgets extraction and DI cleanup
+- 2026-03-18: Code review passed — patch P1 applied (main_production.dart barrel import), story done
 
 ### File List
 
