@@ -14,7 +14,7 @@ part 'update_wage_bloc.freezed.dart';
 
 class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
   UpdateWageBloc(UpdateWageUseCase useCase)
-      : _updateWageHourlyUseCase = useCase,
+      : _updateWageUseCase = useCase,
         super(UpdateWageState.initial()) {
     on<_ChangeHourly>((event, emit) {
       final hourly = double.tryParse(event.value);
@@ -28,7 +28,7 @@ class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
     on<_Update>((event, emit) async {
       emit(state.copyWith(currentState: const ActionState.loading()));
 
-      final result = await _updateWageHourlyUseCase.call(state.wageHourly);
+      final result = await _updateWageUseCase.call(state.wageHourly);
 
       await Future<void>.delayed(AppDurations.actionFeedback);
 
@@ -43,7 +43,7 @@ class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
     });
   }
 
-  final UpdateWageUseCase _updateWageHourlyUseCase;
+  final UpdateWageUseCase _updateWageUseCase;
 
   FutureOr<void> _emitError(Emitter<UpdateWageState> emit) async {
     emit(

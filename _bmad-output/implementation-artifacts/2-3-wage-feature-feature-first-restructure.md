@@ -1,6 +1,6 @@
 # Story 2.3: Wage Feature — Feature-First Restructure
 
-Status: review
+Status: done
 
 ## Story
 
@@ -690,3 +690,48 @@ Claude Opus 4.6 (1M context)
 **Deleted files/folders:**
 - lib/src/features/wage_hourly/ (entire folder tree)
 - lib/src/presentation/control_hours/wage_hourly/ (entire folder tree)
+
+## Code Review Record
+
+### Review Date
+
+2026-03-18
+
+### Review Model
+
+Claude Sonnet 4.6 (3-layer adversarial review)
+
+### Layers Run
+
+- Blind Hunter (adversarial general) — diff only, no project context
+- Edge Case Hunter (path tracing) — diff + project read access
+- Acceptance Auditor — diff + spec
+
+### Acceptance Auditor Verdict
+
+PASS — All ACs satisfied. No violations found. All 17 renames in the Rename Table applied correctly. Target folder structure matches spec exactly. ObjectBox service, DI wiring, barrel exports, and `part` directives all correct. `flutter analyze` clean, 23 tests pass.
+
+### Patch Applied
+
+- **P1:** Renamed private field `_updateWageHourlyUseCase` → `_updateWageUseCase` in `UpdateWageBloc` constructor, `_Update` handler, and field declaration (`update_wage_bloc.dart`). Missed rename from adversarial review — field type was correctly updated but identifier retained the old `Hourly` suffix.
+
+### Deferred Issues (pre-existing, not caused by this story)
+
+- D1: Stream errors after `right(stream)` construction are unhandled — pre-existing FRP pattern across all features
+- D2: `WageObjectboxDatasource.watchAll()` no error guard for inaccessible Box — same gap as old objectbox_service
+- D3: `DataWage.wage()` calls `stream.last` on a non-terminating stream — deadlock risk, Epic 3
+- D4: `emit()` after `Future.delayed` in closed `UpdateWageBloc` — pre-existing, Epic 2-3
+- D5: Commented-out dead code in `fetch_wage_bloc.dart` — pre-existing placeholder D-3, Epic 3
+- D6: `put()` with `id=0` can create duplicate wage records — pre-existing, `wages.last` workaround preserved per spec
+- D7: `setWageHourly()` and `update()` implementations identical — spec-intentional upsert pattern
+- D8: `BlocConsumer` listeners are no-ops — pre-existing D-2, Epic 2-3
+- D9: `WageBlocs`/`WageUseCasesInjections` lack private constructors — pre-existing pattern
+- D10: `WageHourlyDataView` cross-feature dependency on `result_payment_cubit` — spec-acknowledged, Story 2.4
+
+### Review Summary
+
+0 intent_gap · 0 bad_spec · 1 patch (applied) · 10 defer · 4 rejected as noise
+
+### Change Log
+
+- 2026-03-18: Code review passed — 3-layer adversarial review clean, 1 patch applied (field rename), story done
