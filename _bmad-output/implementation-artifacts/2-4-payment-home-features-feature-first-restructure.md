@@ -1,6 +1,6 @@
 # Story 2.4: Payment & Home Features — Feature-First Restructure
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -38,39 +38,39 @@ so that cross-feature composition follows Clean Architecture with proper boundar
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create payment domain layer (AC: #1)
-  - [ ] 1.1 Create `features/payment/domain/use_cases/calculate_payment_use_case.dart` — NEW use case wrapping `CalculatePay` extension
-  - [ ] 1.2 Create `features/payment/domain/use_cases/use_cases.dart` — barrel export
+- [x] Task 1: Create payment domain layer (AC: #1)
+  - [x] 1.1 Create `features/payment/domain/use_cases/calculate_payment_use_case.dart` — NEW use case wrapping `CalculatePay` extension
+  - [x] 1.2 Create `features/payment/domain/use_cases/use_cases.dart` — barrel export
 
-- [ ] Task 2: Move+rename payment presentation layer (AC: #1, #3)
-  - [ ] 2.1 Create `features/payment/presentation/cubit/payment_cubit.dart` — move+rename from `result_payment_cubit.dart`
-  - [ ] 2.2 Create `features/payment/presentation/cubit/payment_state.dart` — move+rename from `result_payment_state.dart`
-  - [ ] 2.3 Update `part` directives: `part 'payment_state.dart'`, `part 'payment_cubit.freezed.dart'` in cubit; `part of 'payment_cubit.dart'` in state
-  - [ ] 2.4 Create `features/payment/presentation/cubit/payment_cubits.dart` — move+rename from `result_payment_cubits.dart`
-  - [ ] 2.5 Create `features/payment/presentation/pages/payment_result_page.dart` — move+rename from `result_screen.dart`
-  - [ ] 2.6 Create barrel exports: `cubit/cubit.dart`, `pages/pages.dart`
+- [x] Task 2: Move+rename payment presentation layer (AC: #1, #3)
+  - [x] 2.1 Create `features/payment/presentation/cubit/payment_cubit.dart` — move+rename from `result_payment_cubit.dart`
+  - [x] 2.2 Create `features/payment/presentation/cubit/payment_state.dart` — move+rename from `result_payment_state.dart`
+  - [x] 2.3 Update `part` directives: `part 'payment_state.dart'`, `part 'payment_cubit.freezed.dart'` in cubit; `part of 'payment_cubit.dart'` in state
+  - [x] 2.4 Create `features/payment/presentation/cubit/payment_cubits.dart` — move+rename from `result_payment_cubits.dart`
+  - [x] 2.5 Create `features/payment/presentation/pages/payment_result_page.dart` — move+rename from `result_screen.dart`
+  - [x] 2.6 Create barrel exports: `cubit/cubit.dart`, `pages/pages.dart`
 
-- [ ] Task 3: Move+rename home feature (AC: #2)
-  - [ ] 3.1 Create `features/home/presentation/pages/home_page.dart` — move+rename from `control_hours_page.dart`
-  - [ ] 3.2 Create `features/home/presentation/widgets/calculate_payment_button.dart` — moved from `result_payment/`
-  - [ ] 3.3 Create barrel exports: `pages/pages.dart`, `widgets/widgets.dart`
+- [x] Task 3: Move+rename home feature (AC: #2)
+  - [x] 3.1 Create `features/home/presentation/pages/home_page.dart` — move+rename from `control_hours_page.dart`
+  - [x] 3.2 Create `features/home/presentation/widgets/calculate_payment_button.dart` — moved from `result_payment/`
+  - [x] 3.3 Create barrel exports: `pages/pages.dart`, `widgets/widgets.dart`
 
-- [ ] Task 4: Update all cross-codebase imports (AC: #3, #4)
-  - [ ] 4.1 Update `lib/app/view/app.dart` (NOTE: outside `lib/src/`) — `ControlHoursPage` → `HomePage`, import from `features/home/`
-  - [ ] 4.2 Update `shared/injections/bloc_injections.dart` — `ResultPaymentCubits` → `PaymentCubits`, import from `features/payment/`
-  - [ ] 4.3 Update `features/times/presentation/widgets/list_times_data_view.dart` — `ResultPaymentCubit` → `PaymentCubit`, import from `features/payment/`
-  - [ ] 4.4 Update `features/wage/presentation/widgets/wage_hourly_data_view.dart` — `ResultPaymentCubit` → `PaymentCubit`, import from `features/payment/`
-  - [ ] 4.5 Verify zero references to old paths: `presentation/control_hours/`, `result_payment_cubit`, `ResultPaymentCubit`, `ResultPaymentScreen`, `ResultPaymentCubits`
+- [x] Task 4: Update all cross-codebase imports (AC: #3, #4)
+  - [x] 4.1 Update `lib/app/view/app.dart` (NOTE: outside `lib/src/`) — `ControlHoursPage` → `HomePage`, import from `features/home/`
+  - [x] 4.2 Update `shared/injections/bloc_injections.dart` — `ResultPaymentCubits` → `PaymentCubits`, import from `features/payment/`
+  - [x] 4.3 Update `features/times/presentation/widgets/list_times_data_view.dart` — `ResultPaymentCubit` → `PaymentCubit`, import from `features/payment/`
+  - [x] 4.4 Update `features/wage/presentation/widgets/wage_hourly_data_view.dart` — `ResultPaymentCubit` → `PaymentCubit`, import from `features/payment/`
+  - [x] 4.5 Verify zero references to old paths: `presentation/control_hours/`, `result_payment_cubit`, `ResultPaymentCubit`, `ResultPaymentScreen`, `ResultPaymentCubits`
 
-- [ ] Task 5: Delete old folders (AC: #4)
-  - [ ] 5.1 Delete `lib/src/presentation/control_hours/` (entire folder tree including result_payment/)
-  - [ ] 5.2 Verify `lib/src/presentation/` only contains `widgets/` folder after deletion
+- [x] Task 5: Delete old folders (AC: #4)
+  - [x] 5.1 Delete `lib/src/presentation/control_hours/` (entire folder tree including result_payment/)
+  - [x] 5.2 Verify `lib/src/presentation/` only contains `widgets/` folder after deletion
 
-- [ ] Task 6: Build & verify (AC: #4)
-  - [ ] 6.1 Run `dart run build_runner build --delete-conflicting-outputs` — regenerate `payment_cubit.freezed.dart`
-  - [ ] 6.2 Run `flutter analyze` — zero issues on ALL project files
-  - [ ] 6.3 Run `flutter test` — all 23 existing tests pass
-  - [ ] 6.4 Run `flutter build apk --debug --flavor development -t lib/main_development.dart` — app compiles
+- [x] Task 6: Build & verify (AC: #4)
+  - [x] 6.1 Run `dart run build_runner build --delete-conflicting-outputs` — regenerate `payment_cubit.freezed.dart`
+  - [x] 6.2 Run `flutter analyze` — zero issues on ALL project files
+  - [x] 6.3 Run `flutter test` — all 23 existing tests pass
+  - [x] 6.4 Run `flutter build apk --debug --flavor development -t lib/main_development.dart` — app compiles
 
 ## Dev Notes
 
@@ -672,10 +672,53 @@ f578c5b docs: create story 2.3
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- Initial `flutter analyze` found 4 info-level issues: 1 `unintended_html_in_doc_comment` in use case doc comment (fixed with backtick escaping), 3 `directives_ordering` in files where new payment import was appended instead of sorted alphabetically. All fixed in single pass — second `flutter analyze` returned zero issues.
+
 ### Completion Notes List
 
+- **Task 1:** Created `CalculatePaymentUseCase` as pure domain use case wrapping `CalculatePay` extension. Const-constructible, no DI needed. Imports only `TimeEntry` from `times/domain/entities/` — compliant with import boundaries.
+- **Task 2:** Moved+renamed all payment presentation files: `ResultPaymentCubit` → `PaymentCubit`, `ResultPaymentState` → `PaymentState`, `ResultPaymentCubits` → `PaymentCubits`, `ResultPaymentScreen` → `PaymentResultPage`. Updated all part directives and Freezed generated class references (`_ResultPaymentState` → `_PaymentState`). Created barrel exports for cubit/ and pages/.
+- **Task 3:** Moved+renamed home feature: `ControlHoursPage` → `HomePage`, `CalculatePaymentButton` moved to home feature widgets. All imports updated to use new payment feature paths. Created barrel exports for pages/ and widgets/.
+- **Task 4:** Updated all 4 external files: `app.dart` (ControlHoursPage → HomePage), `bloc_injections.dart` (ResultPaymentCubits → PaymentCubits), `list_times_data_view.dart` (ResultPaymentCubit → PaymentCubit), `wage_hourly_data_view.dart` (ResultPaymentCubit → PaymentCubit). Verified zero references to old paths remain in codebase.
+- **Task 5:** Deleted entire `lib/src/presentation/control_hours/` folder tree. Verified `lib/src/presentation/` only contains `widgets/`.
+- **Task 6:** build_runner generated `payment_cubit.freezed.dart` (2 outputs, 8s). `flutter analyze` — No issues found. `flutter test` — 23/23 passed. `flutter build apk --debug` — compiled successfully.
+
+### Change Log
+
+- 2026-03-18: Story 2.4 implemented — created payment feature (domain + presentation), home feature (presentation shell), renamed all ResultPayment* → Payment*, ControlHoursPage → HomePage, updated all cross-codebase imports, deleted old presentation/control_hours/ folder.
+
 ### File List
+
+**New files (12):**
+- `lib/src/features/payment/domain/use_cases/calculate_payment_use_case.dart`
+- `lib/src/features/payment/domain/use_cases/use_cases.dart`
+- `lib/src/features/payment/presentation/cubit/payment_cubit.dart`
+- `lib/src/features/payment/presentation/cubit/payment_state.dart`
+- `lib/src/features/payment/presentation/cubit/payment_cubit.freezed.dart` (generated)
+- `lib/src/features/payment/presentation/cubit/payment_cubits.dart`
+- `lib/src/features/payment/presentation/cubit/cubit.dart`
+- `lib/src/features/payment/presentation/pages/payment_result_page.dart`
+- `lib/src/features/payment/presentation/pages/pages.dart`
+- `lib/src/features/home/presentation/pages/home_page.dart`
+- `lib/src/features/home/presentation/pages/pages.dart`
+- `lib/src/features/home/presentation/widgets/calculate_payment_button.dart`
+- `lib/src/features/home/presentation/widgets/widgets.dart`
+
+**Modified files (4):**
+- `lib/app/view/app.dart` — import + ControlHoursPage → HomePage
+- `lib/src/shared/injections/bloc_injections.dart` — import + ResultPaymentCubits → PaymentCubits
+- `lib/src/features/times/presentation/widgets/list_times_data_view.dart` — import + ResultPaymentCubit → PaymentCubit
+- `lib/src/features/wage/presentation/widgets/wage_hourly_data_view.dart` — import + ResultPaymentCubit → PaymentCubit
+
+**Deleted files (6):**
+- `lib/src/presentation/control_hours/control_hours_page.dart`
+- `lib/src/presentation/control_hours/result_payment/calculate_payment_button.dart`
+- `lib/src/presentation/control_hours/result_payment/result_screen.dart`
+- `lib/src/presentation/control_hours/result_payment/result_payment_cubits.dart`
+- `lib/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.dart`
+- `lib/src/presentation/control_hours/result_payment/cubit/result_payment_state.dart`
+- `lib/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.freezed.dart`

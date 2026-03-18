@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:time_money/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.dart';
-import 'package:time_money/src/presentation/control_hours/result_payment/result_screen.dart';
+import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
+import 'package:time_money/src/features/payment/presentation/pages/payment_result_page.dart';
 
 class CalculatePaymentButton extends StatelessWidget {
   const CalculatePaymentButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ResultPaymentCubit, ResultPaymentState>(
+    return BlocConsumer<PaymentCubit, PaymentState>(
       listener: (context, state) => state,
       builder: (context, state) {
         return FloatingActionButton.extended(
@@ -19,7 +19,7 @@ class CalculatePaymentButton extends StatelessWidget {
               : () {
                   unawaited(showDialog<void>(
                     context: context,
-                    builder: (_) => ResultPaymentScreen(
+                    builder: (_) => PaymentResultPage(
                       times: state.times,
                       wageHourly: state.wageHourly,
                     ),

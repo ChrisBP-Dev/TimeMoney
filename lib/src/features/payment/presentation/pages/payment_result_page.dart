@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
-class ResultPaymentScreen extends StatelessWidget {
-  const ResultPaymentScreen({
+class PaymentResultPage extends StatelessWidget {
+  const PaymentResultPage({
     required this.times,
     required this.wageHourly,
     super.key,

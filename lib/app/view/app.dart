@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:time_money/l10n/l10n.dart';
-import 'package:time_money/src/presentation/control_hours/control_hours_page.dart';
+import 'package:time_money/src/features/home/presentation/pages/home_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -16,7 +16,7 @@ class App extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const ControlHoursPage(),
+      home: const HomePage(),
     );
   }
 }

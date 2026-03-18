@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:time_money/src/core/extensions/screen_size.dart';
+import 'package:time_money/src/features/home/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/times/presentation/pages/list_times_screen.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/wage/presentation/pages/fetch_wage_screen.dart';
-import 'package:time_money/src/presentation/control_hours/result_payment/calculate_payment_button.dart';
 
-class ControlHoursPage extends StatelessWidget {
-  const ControlHoursPage({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

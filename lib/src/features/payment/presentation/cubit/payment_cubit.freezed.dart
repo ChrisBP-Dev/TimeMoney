@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'result_payment_cubit.dart';
+part of 'payment_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -12,20 +12,20 @@ part of 'result_payment_cubit.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$ResultPaymentState {
+mixin _$PaymentState {
 
  List<TimeEntry> get times; double get wageHourly;
-/// Create a copy of ResultPaymentState
+/// Create a copy of PaymentState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$ResultPaymentStateCopyWith<ResultPaymentState> get copyWith => _$ResultPaymentStateCopyWithImpl<ResultPaymentState>(this as ResultPaymentState, _$identity);
+$PaymentStateCopyWith<PaymentState> get copyWith => _$PaymentStateCopyWithImpl<PaymentState>(this as PaymentState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultPaymentState&&const DeepCollectionEquality().equals(other.times, times)&&(identical(other.wageHourly, wageHourly) || other.wageHourly == wageHourly));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentState&&const DeepCollectionEquality().equals(other.times, times)&&(identical(other.wageHourly, wageHourly) || other.wageHourly == wageHourly));
 }
 
 
@@ -34,15 +34,15 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'ResultPaymentState(times: $times, wageHourly: $wageHourly)';
+  return 'PaymentState(times: $times, wageHourly: $wageHourly)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $ResultPaymentStateCopyWith<$Res>  {
-  factory $ResultPaymentStateCopyWith(ResultPaymentState value, $Res Function(ResultPaymentState) _then) = _$ResultPaymentStateCopyWithImpl;
+abstract mixin class $PaymentStateCopyWith<$Res>  {
+  factory $PaymentStateCopyWith(PaymentState value, $Res Function(PaymentState) _then) = _$PaymentStateCopyWithImpl;
 @useResult
 $Res call({
  List<TimeEntry> times, double wageHourly
@@ -53,14 +53,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$ResultPaymentStateCopyWithImpl<$Res>
-    implements $ResultPaymentStateCopyWith<$Res> {
-  _$ResultPaymentStateCopyWithImpl(this._self, this._then);
+class _$PaymentStateCopyWithImpl<$Res>
+    implements $PaymentStateCopyWith<$Res> {
+  _$PaymentStateCopyWithImpl(this._self, this._then);
 
-  final ResultPaymentState _self;
-  final $Res Function(ResultPaymentState) _then;
+  final PaymentState _self;
+  final $Res Function(PaymentState) _then;
 
-/// Create a copy of ResultPaymentState
+/// Create a copy of PaymentState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? times = null,Object? wageHourly = null,}) {
   return _then(_self.copyWith(
@@ -73,8 +73,8 @@ as double,
 }
 
 
-/// Adds pattern-matching-related methods to [ResultPaymentState].
-extension ResultPaymentStatePatterns on ResultPaymentState {
+/// Adds pattern-matching-related methods to [PaymentState].
+extension PaymentStatePatterns on PaymentState {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -87,10 +87,10 @@ extension ResultPaymentStatePatterns on ResultPaymentState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ResultPaymentState value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PaymentState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _ResultPaymentState() when $default != null:
+case _PaymentState() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -109,10 +109,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ResultPaymentState value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PaymentState value)  $default,){
 final _that = this;
 switch (_that) {
-case _ResultPaymentState():
+case _PaymentState():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -130,10 +130,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ResultPaymentState value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PaymentState value)?  $default,){
 final _that = this;
 switch (_that) {
-case _ResultPaymentState() when $default != null:
+case _PaymentState() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -153,7 +153,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TimeEntry> times,  double wageHourly)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _ResultPaymentState() when $default != null:
+case _PaymentState() when $default != null:
 return $default(_that.times,_that.wageHourly);case _:
   return orElse();
 
@@ -174,7 +174,7 @@ return $default(_that.times,_that.wageHourly);case _:
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TimeEntry> times,  double wageHourly)  $default,) {final _that = this;
 switch (_that) {
-case _ResultPaymentState():
+case _PaymentState():
 return $default(_that.times,_that.wageHourly);case _:
   throw StateError('Unexpected subclass');
 
@@ -194,7 +194,7 @@ return $default(_that.times,_that.wageHourly);case _:
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TimeEntry> times,  double wageHourly)?  $default,) {final _that = this;
 switch (_that) {
-case _ResultPaymentState() when $default != null:
+case _PaymentState() when $default != null:
 return $default(_that.times,_that.wageHourly);case _:
   return null;
 
@@ -206,8 +206,8 @@ return $default(_that.times,_that.wageHourly);case _:
 /// @nodoc
 
 
-class _ResultPaymentState implements ResultPaymentState {
-  const _ResultPaymentState({final  List<TimeEntry> times = const [], this.wageHourly = 0.0}): _times = times;
+class _PaymentState implements PaymentState {
+  const _PaymentState({final  List<TimeEntry> times = const [], this.wageHourly = 0.0}): _times = times;
   
 
  final  List<TimeEntry> _times;
@@ -219,17 +219,17 @@ class _ResultPaymentState implements ResultPaymentState {
 
 @override@JsonKey() final  double wageHourly;
 
-/// Create a copy of ResultPaymentState
+/// Create a copy of PaymentState
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ResultPaymentStateCopyWith<_ResultPaymentState> get copyWith => __$ResultPaymentStateCopyWithImpl<_ResultPaymentState>(this, _$identity);
+_$PaymentStateCopyWith<_PaymentState> get copyWith => __$PaymentStateCopyWithImpl<_PaymentState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ResultPaymentState&&const DeepCollectionEquality().equals(other._times, _times)&&(identical(other.wageHourly, wageHourly) || other.wageHourly == wageHourly));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentState&&const DeepCollectionEquality().equals(other._times, _times)&&(identical(other.wageHourly, wageHourly) || other.wageHourly == wageHourly));
 }
 
 
@@ -238,15 +238,15 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'ResultPaymentState(times: $times, wageHourly: $wageHourly)';
+  return 'PaymentState(times: $times, wageHourly: $wageHourly)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ResultPaymentStateCopyWith<$Res> implements $ResultPaymentStateCopyWith<$Res> {
-  factory _$ResultPaymentStateCopyWith(_ResultPaymentState value, $Res Function(_ResultPaymentState) _then) = __$ResultPaymentStateCopyWithImpl;
+abstract mixin class _$PaymentStateCopyWith<$Res> implements $PaymentStateCopyWith<$Res> {
+  factory _$PaymentStateCopyWith(_PaymentState value, $Res Function(_PaymentState) _then) = __$PaymentStateCopyWithImpl;
 @override @useResult
 $Res call({
  List<TimeEntry> times, double wageHourly
@@ -257,17 +257,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$ResultPaymentStateCopyWithImpl<$Res>
-    implements _$ResultPaymentStateCopyWith<$Res> {
-  __$ResultPaymentStateCopyWithImpl(this._self, this._then);
+class __$PaymentStateCopyWithImpl<$Res>
+    implements _$PaymentStateCopyWith<$Res> {
+  __$PaymentStateCopyWithImpl(this._self, this._then);
 
-  final _ResultPaymentState _self;
-  final $Res Function(_ResultPaymentState) _then;
+  final _PaymentState _self;
+  final $Res Function(_PaymentState) _then;
 
-/// Create a copy of ResultPaymentState
+/// Create a copy of PaymentState
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? times = null,Object? wageHourly = null,}) {
-  return _then(_ResultPaymentState(
+  return _then(_PaymentState(
 times: null == times ? _self._times : times // ignore: cast_nullable_to_non_nullable
 as List<TimeEntry>,wageHourly: null == wageHourly ? _self.wageHourly : wageHourly // ignore: cast_nullable_to_non_nullable
 as double,
