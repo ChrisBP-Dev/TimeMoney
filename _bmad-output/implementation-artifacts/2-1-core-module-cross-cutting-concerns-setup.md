@@ -1,6 +1,6 @@
 # Story 2.1: Core Module & Cross-Cutting Concerns Setup
 
-Status: review
+Status: done
 
 ## Story
 
@@ -196,31 +196,24 @@ await Future<void>.delayed(AppDurations.actionFeedback);
 ```
 Files: `create_time_bloc.dart`, `update_time_bloc.dart`, `delete_time_bloc.dart`, `update_wage_hourly_bloc.dart`
 
-**Pattern 2 — Chained `.whenComplete()` (2 widget files):**
+**Pattern 2 — Widget files with `.whenComplete()` or `.then()` + Navigator (4 widget files):**
 ```dart
-// OLD:
+// OLD (whenComplete variant):
 await Consts.delayed.whenComplete(
   () => Navigator.of(context).pop(),
 );
-// NEW:
-await Future<void>.delayed(AppDurations.actionFeedback).whenComplete(
-  () => Navigator.of(context).pop(),
-);
-```
-Files: `create_time_button.dart`, `update_time_button.dart`
-
-**Pattern 3 — Chained `.then()` (2 widget files):**
-```dart
-// OLD:
+// OLD (then variant):
 await Consts.delayed.then(
   (value) => Navigator.of(context).pop(),
 );
-// NEW:
-await Future<void>.delayed(AppDurations.actionFeedback).then(
-  (value) => Navigator.of(context).pop(),
-);
+// NEW (both variants — context.mounted guard required by VGA 10.x):
+await Future<void>.delayed(AppDurations.actionFeedback);
+if (!context.mounted) return;
+Navigator.of(context).pop();
 ```
-Files: `delete_time_button.dart`, `set_wage_button.dart`
+Files: `create_time_button.dart`, `update_time_button.dart`, `delete_time_button.dart`, `set_wage_button.dart`
+
+> **Spec Amendment (code review BS-1):** Original Patterns 2/3 prescribed `.whenComplete()`/`.then()` chains that use `BuildContext` across async gaps, triggering `use_build_context_synchronously` (VGA 10.x). The `context.mounted` guard is the Flutter-recommended approach and the only way to satisfy AC #3 (zero warnings). Patterns merged into a single pattern.
 
 **Verification:** After migration, grep for `Consts` across `lib/` — zero results expected. Also remove `import 'dart:async';` from `consts.dart` consumers only if no other async usage remains in each file.
 
@@ -287,7 +280,9 @@ The `ObjectBox` class in `objectbox_service.dart` keeps ALL current methods (cre
 
 ### Pre-Existing Info-Level Hints
 
-VGA 10.x introduced 17 info-level hints across the codebase. If you encounter them in files you're modifying (updating imports), fix them. Do NOT go hunting for hints in files you're not touching.
+VGA 10.x introduced 17 info-level hints across the codebase. Fix all info-level hints encountered in files you're modifying (updating imports). **AC #3 takes precedence:** if files outside the import update checklist have pre-existing hints, they must also be fixed to achieve "zero warnings on ALL project files." Safe fixes only (const promotions, redundant argument removal) — no behavioral changes.
+
+> **Spec Amendment (code review BS-2):** Original guidance "Do NOT go hunting for hints in files you're not touching" conflicted with AC #3's absolute zero-warning requirement. Clarified that AC #3 has precedence. The agent correctly fixed 6 additional files to achieve zero issues.
 
 ### Exhaustive Import Update Checklist
 
@@ -439,6 +434,7 @@ Claude Opus 4.6 (1M context)
 
 - 2026-03-18: Story 2.1 implementation complete — core module reorganized with barrel exports, AppDurations, drift placeholder, 23 unit tests, and 36 import updates across codebase
 - 2026-03-18: Fixed all remaining 13 pre-existing info-level hints + 7 test code hints — flutter analyze now reports "No issues found!" (0 total)
+- 2026-03-18: Code review passed — 3-layer adversarial review (Blind Hunter + Edge Case Hunter + Acceptance Auditor). 21 raw findings → 9 rejected as noise, 2 bad_spec (amended in-place), 1 patch (fixed: GlobalDefaultFailure typedef test), 6 deferred (pre-existing). Spec amended for BS-1 (Patterns 2/3 context.mounted) and BS-2 (AC #3 precedence over hint-hunting constraint). 23/23 tests pass, zero lint issues confirmed post-fix.
 
 ### File List
 

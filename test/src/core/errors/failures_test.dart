@@ -116,8 +116,9 @@ void main() {
 
   group('GlobalDefaultFailure typedef', () {
     test('resolves to GlobalFailure<dynamic>', () {
-      const failure = GlobalFailure<dynamic>.notConnection();
+      const failure = GlobalDefaultFailure.notConnection();
 
+      expect(failure, isA<GlobalDefaultFailure>());
       expect(failure, isA<GlobalFailure<dynamic>>());
     });
   });
