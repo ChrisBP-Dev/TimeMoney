@@ -56,7 +56,7 @@ so that cross-feature composition follows Clean Architecture with proper boundar
   - [ ] 3.3 Create barrel exports: `pages/pages.dart`, `widgets/widgets.dart`
 
 - [ ] Task 4: Update all cross-codebase imports (AC: #3, #4)
-  - [ ] 4.1 Update `app/view/app.dart` — `ControlHoursPage` → `HomePage`, import from `features/home/`
+  - [ ] 4.1 Update `lib/app/view/app.dart` (NOTE: outside `lib/src/`) — `ControlHoursPage` → `HomePage`, import from `features/home/`
   - [ ] 4.2 Update `shared/injections/bloc_injections.dart` — `ResultPaymentCubits` → `PaymentCubits`, import from `features/payment/`
   - [ ] 4.3 Update `features/times/presentation/widgets/list_times_data_view.dart` — `ResultPaymentCubit` → `PaymentCubit`, import from `features/payment/`
   - [ ] 4.4 Update `features/wage/presentation/widgets/wage_hourly_data_view.dart` — `ResultPaymentCubit` → `PaymentCubit`, import from `features/payment/`
@@ -493,11 +493,41 @@ Changes from original:
 
 **Pattern 4: `presentation/control_hours/control_hours_page.dart` → `features/home/presentation/pages/home_page.dart` (1 file):**
 
-1. `app/view/app.dart` — update import + `ControlHoursPage` → `HomePage`
+1. `lib/app/view/app.dart` (NOTE: outside `lib/src/`) — update import + `ControlHoursPage` → `HomePage`
 
 **Pattern 5: `calculate_payment_button.dart` internal import in ControlHoursPage (moving file):**
 
 1. `home_page.dart` (moving file) — replace `presentation/control_hours/result_payment/calculate_payment_button.dart` with `features/home/presentation/widgets/widgets.dart`
+
+### Exact Import Diffs for Non-Moved Files
+
+**`lib/app/view/app.dart`** (NOTE: file is at `lib/app/`, outside `lib/src/`):
+```diff
+- import 'package:time_money/src/presentation/control_hours/control_hours_page.dart';
++ import 'package:time_money/src/features/home/presentation/pages/home_page.dart';
+```
+Class: `ControlHoursPage` → `HomePage` (in `home:` property)
+
+**`lib/src/shared/injections/bloc_injections.dart`:**
+```diff
+- import 'package:time_money/src/presentation/control_hours/result_payment/result_payment_cubits.dart';
++ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubits.dart';
+```
+Class: `ResultPaymentCubits` → `PaymentCubits`
+
+**`lib/src/features/times/presentation/widgets/list_times_data_view.dart`:**
+```diff
+- import 'package:time_money/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.dart';
++ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
+```
+Class: `ResultPaymentCubit` → `PaymentCubit` (in `context.read<>()`)
+
+**`lib/src/features/wage/presentation/widgets/wage_hourly_data_view.dart`:**
+```diff
+- import 'package:time_money/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.dart';
++ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
+```
+Class: `ResultPaymentCubit` → `PaymentCubit` (in `context.read<>()`)
 
 ### CRITICAL WARNINGS
 
@@ -524,15 +554,7 @@ Verified: no files under `test/` import `result_payment`, `control_hours`, `Resu
 
 ### Key Differences from Stories 2.2/2.3
 
-| Aspect | Story 2.2/2.3 | Story 2.4 |
-|--------|--------------|-----------|
-| Feature layers | Data + Domain + Presentation (3 layers) | Payment: Domain + Presentation (2 layers). Home: Presentation only (1 layer) |
-| Datasource | New ObjectBox datasource created | No datasources — payment has no persistence |
-| Repository | Refactored repository implementation | No repository — payment derives from other features |
-| Entity rename | ModelTime → TimeEntry (2.2) | No entity changes |
-| ObjectBox service | Modified to remove feature code | No changes |
-| Entry points | Updated DI wiring | No changes — no new repos |
-| File count | ~35 new files (2.2), ~35 new files (2.3) | ~12 new files (simpler) |
+Simpler than previous stories: ~12 new files (vs ~35), no datasources/repositories/entity renames, no ObjectBox service or entry point changes. Payment has only 2 layers (domain+presentation), home has only 1 layer (presentation).
 
 ### Barrel Export Contents
 
@@ -583,7 +605,7 @@ Same as Stories 2.2/2.3:
 8. Apply class renames across all moved files
 9. Update all remaining import paths in existing files
 10. Create barrel exports
-11. Delete old empty folders (`presentation/control_hours/`)
+11. Delete old folders (entire `presentation/control_hours/` tree including generated `.freezed.dart` files)
 12. Run build_runner
 13. Run flutter analyze, fix any issues
 14. Run flutter test
@@ -600,13 +622,7 @@ Same rules as Stories 2.2/2.3:
 
 ### Project Structure Notes
 
-- After this story, `features/` contains FOUR features: `times/`, `wage/`, `payment/`, `home/`
-- `times/` and `wage/` are full 3-layer features (data/domain/presentation)
-- `payment/` is a 2-layer feature (domain/presentation) — no data layer because calculation derives from other features
-- `home/` is a 1-layer feature (presentation only) — pure composition shell
-- `presentation/` directory still exists with `widgets/` (shared widgets) — moves to `shared/` in Story 2.5
-- `shared/injections/` stays structurally unchanged — only import paths and class references update
-- DI restructuring to BLoC-native pattern is Story 2.5
+After this story: `features/` contains 4 features (`times/`, `wage/`, `payment/`, `home/`). `presentation/` retains only `widgets/` (shared widgets move to `shared/` in Story 2.5). `shared/injections/` unchanged structurally — only import paths and class refs update. DI restructuring deferred to Story 2.5.
 
 ### References
 
