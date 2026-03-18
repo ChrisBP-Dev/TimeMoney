@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:time_money/src/features/times/domain/model_time.dart';
+import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
 class ResultPaymentScreen extends StatelessWidget {
   const ResultPaymentScreen({
@@ -8,7 +8,7 @@ class ResultPaymentScreen extends StatelessWidget {
     super.key,
   });
 
-  final List<ModelTime> times;
+  final List<TimeEntry> times;
   final double wageHourly;
 
   @override

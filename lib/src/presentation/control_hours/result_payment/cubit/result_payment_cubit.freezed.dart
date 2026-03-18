@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ResultPaymentState {
 
- List<ModelTime> get times; double get wageHourly;
+ List<TimeEntry> get times; double get wageHourly;
 /// Create a copy of ResultPaymentState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $ResultPaymentStateCopyWith<$Res>  {
   factory $ResultPaymentStateCopyWith(ResultPaymentState value, $Res Function(ResultPaymentState) _then) = _$ResultPaymentStateCopyWithImpl;
 @useResult
 $Res call({
- List<ModelTime> times, double wageHourly
+ List<TimeEntry> times, double wageHourly
 });
 
 
@@ -65,7 +65,7 @@ class _$ResultPaymentStateCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? times = null,Object? wageHourly = null,}) {
   return _then(_self.copyWith(
 times: null == times ? _self.times : times // ignore: cast_nullable_to_non_nullable
-as List<ModelTime>,wageHourly: null == wageHourly ? _self.wageHourly : wageHourly // ignore: cast_nullable_to_non_nullable
+as List<TimeEntry>,wageHourly: null == wageHourly ? _self.wageHourly : wageHourly // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -151,7 +151,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ModelTime> times,  double wageHourly)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TimeEntry> times,  double wageHourly)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ResultPaymentState() when $default != null:
 return $default(_that.times,_that.wageHourly);case _:
@@ -172,7 +172,7 @@ return $default(_that.times,_that.wageHourly);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ModelTime> times,  double wageHourly)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TimeEntry> times,  double wageHourly)  $default,) {final _that = this;
 switch (_that) {
 case _ResultPaymentState():
 return $default(_that.times,_that.wageHourly);case _:
@@ -192,7 +192,7 @@ return $default(_that.times,_that.wageHourly);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ModelTime> times,  double wageHourly)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TimeEntry> times,  double wageHourly)?  $default,) {final _that = this;
 switch (_that) {
 case _ResultPaymentState() when $default != null:
 return $default(_that.times,_that.wageHourly);case _:
@@ -207,11 +207,11 @@ return $default(_that.times,_that.wageHourly);case _:
 
 
 class _ResultPaymentState implements ResultPaymentState {
-  const _ResultPaymentState({final  List<ModelTime> times = const [], this.wageHourly = 0.0}): _times = times;
+  const _ResultPaymentState({final  List<TimeEntry> times = const [], this.wageHourly = 0.0}): _times = times;
   
 
- final  List<ModelTime> _times;
-@override@JsonKey() List<ModelTime> get times {
+ final  List<TimeEntry> _times;
+@override@JsonKey() List<TimeEntry> get times {
   if (_times is EqualUnmodifiableListView) return _times;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_times);
@@ -249,7 +249,7 @@ abstract mixin class _$ResultPaymentStateCopyWith<$Res> implements $ResultPaymen
   factory _$ResultPaymentStateCopyWith(_ResultPaymentState value, $Res Function(_ResultPaymentState) _then) = __$ResultPaymentStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<ModelTime> times, double wageHourly
+ List<TimeEntry> times, double wageHourly
 });
 
 
@@ -269,7 +269,7 @@ class __$ResultPaymentStateCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? times = null,Object? wageHourly = null,}) {
   return _then(_ResultPaymentState(
 times: null == times ? _self._times : times // ignore: cast_nullable_to_non_nullable
-as List<ModelTime>,wageHourly: null == wageHourly ? _self.wageHourly : wageHourly // ignore: cast_nullable_to_non_nullable
+as List<TimeEntry>,wageHourly: null == wageHourly ? _self.wageHourly : wageHourly // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }

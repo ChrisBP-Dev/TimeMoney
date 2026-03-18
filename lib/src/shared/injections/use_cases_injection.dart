@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:time_money/src/features/times/aplication/aplications.dart';
+import 'package:time_money/src/features/times/times_injection.dart';
 import 'package:time_money/src/features/wage_hourly/aplication/wage_hourly_use_cases_injections.dart';
 import 'package:time_money/src/shared/injections/injection_repositories.dart';
 

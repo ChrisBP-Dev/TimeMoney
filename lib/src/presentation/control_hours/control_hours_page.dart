@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:time_money/src/core/extensions/screen_size.dart';
+import 'package:time_money/src/features/times/presentation/pages/list_times_screen.dart';
+import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 import 'package:time_money/src/presentation/control_hours/result_payment/calculate_payment_button.dart';
-import 'package:time_money/src/presentation/control_hours/times/create_time/widgets/widgets.dart';
-import 'package:time_money/src/presentation/control_hours/times/list_times/list_times_screen.dart';
 import 'package:time_money/src/presentation/control_hours/wage_hourly/fetch_wage/fetch_wage_screen.dart';
 
 class ControlHoursPage extends StatelessWidget {
@@ -12,7 +12,6 @@ class ControlHoursPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(FocusManager.instance.primaryFocus?.hasFocus);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

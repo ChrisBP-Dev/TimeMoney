@@ -14,7 +14,7 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
-import 'src/features/times/infraestructure/timebox.dart';
+import 'src/features/times/data/models/time_box.dart';
 import 'src/features/wage_hourly/infraestructure/wage_hourly_box.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
