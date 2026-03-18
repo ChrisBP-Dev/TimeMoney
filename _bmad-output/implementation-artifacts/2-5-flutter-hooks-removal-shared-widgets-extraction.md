@@ -1,6 +1,6 @@
 # Story 2.5: Shared Widgets Extraction & DI Cleanup
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -50,33 +50,33 @@ so that the codebase uses properly organized shared components and the DI tree i
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create shared/widgets/ and move widgets (AC: #2, #3)
-  - [ ] 1.1 Create `lib/src/shared/widgets/` directory
-  - [ ] 1.2 Move `presentation/widgets/catch_error_builder.dart` → `shared/widgets/catch_error_builder.dart` (no changes needed — pure Flutter, no internal imports)
-  - [ ] 1.3 Move `presentation/widgets/info_section.dart` → `shared/widgets/info_section.dart` — but REMOVE the `IconText` class from this file
-  - [ ] 1.4 Create `shared/widgets/icon_text.dart` — extract `IconText` class from `info_section.dart` into its own file
-  - [ ] 1.5 Move `presentation/widgets/views/error_view.dart` → `shared/widgets/error_view.dart` — update internal import from `presentation/widgets/info_section.dart` to `shared/widgets/info_section.dart`
-  - [ ] 1.6 Create `shared/widgets/widgets.dart` barrel — exports all 4 widget files
-  - [ ] 1.7 Delete `custom_card.dart` (dead code — verified: zero feature imports)
+- [x] Task 1: Create shared/widgets/ and move widgets (AC: #2, #3)
+  - [x] 1.1 Create `lib/src/shared/widgets/` directory
+  - [x] 1.2 Move `presentation/widgets/catch_error_builder.dart` → `shared/widgets/catch_error_builder.dart` (no changes needed — pure Flutter, no internal imports)
+  - [x] 1.3 Move `presentation/widgets/info_section.dart` → `shared/widgets/info_section.dart` — but REMOVE the `IconText` class from this file
+  - [x] 1.4 Create `shared/widgets/icon_text.dart` — extract `IconText` class from `info_section.dart` into its own file
+  - [x] 1.5 Move `presentation/widgets/views/error_view.dart` → `shared/widgets/error_view.dart` — update internal import from `presentation/widgets/info_section.dart` to `shared/widgets/info_section.dart`
+  - [x] 1.6 Create `shared/widgets/widgets.dart` barrel — exports all 4 widget files
+  - [x] 1.7 Delete `custom_card.dart` (dead code — verified: zero feature imports)
 
-- [ ] Task 2: Update all cross-codebase imports (AC: #2) — apply Pattern 1 from "Exhaustive Import Update Checklist" below to all 6 feature files
+- [x] Task 2: Update all cross-codebase imports (AC: #2) — apply Pattern 1 from "Exhaustive Import Update Checklist" below to all 6 feature files
 
-- [ ] Task 3: Delete old presentation folder (AC: #2, #3)
-  - [ ] 3.1 Delete entire `lib/src/presentation/` folder tree (widgets.dart barrel, catch_error_builder.dart, custom_card.dart, info_section.dart, views/error_view.dart)
-  - [ ] 3.2 Verify `lib/src/presentation/` no longer exists
+- [x] Task 3: Delete old presentation folder (AC: #2, #3)
+  - [x] 3.1 Delete entire `lib/src/presentation/` folder tree (widgets.dart barrel, catch_error_builder.dart, custom_card.dart, info_section.dart, views/error_view.dart)
+  - [x] 3.2 Verify `lib/src/presentation/` no longer exists
 
-- [ ] Task 4: Restructure DI to explicit RepositoryProviders (AC: #4)
-  - [ ] 4.1 Update `lib/app/view/app_bloc.dart` — replace `InjectionRepositories injection` with `TimesRepository timesRepository` + `WageRepository wageHourlyRepository`. Add `RepositoryProvider<TimesRepository>.value(value: timesRepository)` and `RepositoryProvider<WageRepository>.value(value: wageHourlyRepository)` to `MultiRepositoryProvider.providers` list before use case providers. Change `UseCasesInjection.list(injection)` → `UseCasesInjection.list()`
-  - [ ] 4.2 Update `lib/src/shared/injections/use_cases_injection.dart` — remove `InjectionRepositories` parameter from `list()`. Keep delegating to feature-specific injections but without passing injection object.
-  - [ ] 4.3 Update `lib/src/features/times/times_injection.dart` — remove `InjectionRepositories` parameter. Use case creation uses `context.read<TimesRepository>()` instead of `injection.timesRepository`
-  - [ ] 4.4 Update `lib/src/features/wage/wage_injection.dart` — remove `InjectionRepositories` parameter. Use case creation uses `context.read<WageRepository>()` instead of `injection.wageHourlyRepository`
-  - [ ] 4.5 Delete `lib/src/shared/injections/injection_repositories.dart`
-  - [ ] 4.6 Update all 3 `main_*.dart` entry points — replace `InjectionRepositories(...)` with direct repository parameters to `AppBloc`
+- [x] Task 4: Restructure DI to explicit RepositoryProviders (AC: #4)
+  - [x] 4.1 Update `lib/app/view/app_bloc.dart` — replace `InjectionRepositories injection` with `TimesRepository timesRepository` + `WageRepository wageHourlyRepository`. Add `RepositoryProvider<TimesRepository>.value(value: timesRepository)` and `RepositoryProvider<WageRepository>.value(value: wageHourlyRepository)` to `MultiRepositoryProvider.providers` list before use case providers. Change `UseCasesInjection.list(injection)` → `UseCasesInjection.list()`
+  - [x] 4.2 Update `lib/src/shared/injections/use_cases_injection.dart` — remove `InjectionRepositories` parameter from `list()`. Keep delegating to feature-specific injections but without passing injection object.
+  - [x] 4.3 Update `lib/src/features/times/times_injection.dart` — remove `InjectionRepositories` parameter. Use case creation uses `context.read<TimesRepository>()` instead of `injection.timesRepository`
+  - [x] 4.4 Update `lib/src/features/wage/wage_injection.dart` — remove `InjectionRepositories` parameter. Use case creation uses `context.read<WageRepository>()` instead of `injection.wageHourlyRepository`
+  - [x] 4.5 Delete `lib/src/shared/injections/injection_repositories.dart`
+  - [x] 4.6 Update all 3 `main_*.dart` entry points — replace `InjectionRepositories(...)` with direct repository parameters to `AppBloc`
 
-- [ ] Task 5: Build & verify (AC: #1, #5)
-  - [ ] 5.1 Run `flutter analyze` — zero issues on ALL project files
-  - [ ] 5.2 Run `flutter test` — all 23 existing tests pass
-  - [ ] 5.3 Run `flutter build apk --debug --flavor development -t lib/main_development.dart` — app compiles
+- [x] Task 5: Build & verify (AC: #1, #5)
+  - [x] 5.1 Run `flutter analyze` — zero issues on ALL project files
+  - [x] 5.2 Run `flutter test` — all 23 existing tests pass
+  - [x] 5.3 Run `flutter build apk --debug --flavor development -t lib/main_development.dart` — app compiles
 
 ## Dev Notes
 
@@ -518,10 +518,50 @@ c98dff6 chore: code review passed for story 2.4
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- `flutter analyze` — zero issues (ran in 2.8s)
+- `flutter test` — 23/23 tests passed
+- `flutter build apk --debug --flavor development` — built successfully (5.9s)
+
 ### Completion Notes List
 
+- AC1 verified: zero `flutter_hooks` references in pubspec.yaml, pubspec.lock, or any .dart file
+- AC2 completed: 4 shared widgets extracted to `lib/src/shared/widgets/` with barrel export; `IconText` extracted from `info_section.dart` into own file; `error_view.dart` import updated to use shared barrel; all 6 feature file imports updated from `presentation/widgets/widgets.dart` → `shared/widgets/widgets.dart`
+- AC3 completed: `custom_card.dart` (dead code) deleted along with entire `lib/src/presentation/` folder
+- AC4 completed: `InjectionRepositories` class deleted; `AppBloc` now accepts `TimesRepository` + `WageRepository` as separate constructor params; `RepositoryProvider.value()` used for both repos in `MultiRepositoryProvider`; use case injections resolve via `context.read<T>()`; `UseCasesInjection.list()` takes no params; `context.watch<T>()` not used anywhere for DI
+- AC5 completed: `flutter analyze` zero warnings, `flutter test` 23/23 pass, `flutter build apk` compiles, zero orphaned imports
+
+### Change Log
+
+- 2026-03-18: Story 2.5 implemented — shared widgets extraction and DI cleanup
+
 ### File List
+
+**New files:**
+- lib/src/shared/widgets/catch_error_builder.dart
+- lib/src/shared/widgets/info_section.dart
+- lib/src/shared/widgets/icon_text.dart
+- lib/src/shared/widgets/error_view.dart
+- lib/src/shared/widgets/widgets.dart
+
+**Modified files:**
+- lib/app/view/app_bloc.dart
+- lib/src/shared/injections/use_cases_injection.dart
+- lib/src/features/times/times_injection.dart
+- lib/src/features/wage/wage_injection.dart
+- lib/main_development.dart
+- lib/main_staging.dart
+- lib/main_production.dart
+- lib/src/features/times/presentation/widgets/list_times_data_view.dart
+- lib/src/features/times/presentation/widgets/list_times_other_view.dart
+- lib/src/features/times/presentation/widgets/error_list_times_view.dart
+- lib/src/features/wage/presentation/widgets/wage_hourly_data_view.dart
+- lib/src/features/wage/presentation/widgets/wage_hourly_other_view.dart
+- lib/src/features/wage/presentation/widgets/error_fetch_wage_hourly_view.dart
+
+**Deleted files:**
+- lib/src/presentation/ (entire folder: widgets.dart, catch_error_builder.dart, custom_card.dart, info_section.dart, views/error_view.dart)
+- lib/src/shared/injections/injection_repositories.dart

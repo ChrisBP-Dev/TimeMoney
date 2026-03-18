@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:time_money/src/presentation/widgets/widgets.dart';
+import 'package:time_money/src/shared/widgets/widgets.dart';
 
 class ShimmerListTimesView extends StatelessWidget {
   const ShimmerListTimesView({super.key});

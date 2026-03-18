@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
-import 'package:time_money/src/presentation/widgets/widgets.dart';
+import 'package:time_money/src/shared/widgets/widgets.dart';
 
 class ListTimesDataView extends StatelessWidget {
   const ListTimesDataView({

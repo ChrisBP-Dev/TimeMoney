@@ -8,7 +8,6 @@ import 'package:time_money/src/features/times/data/repositories/objectbox_times_
 import 'package:time_money/src/features/wage/data/datasources/wage_objectbox_datasource.dart';
 import 'package:time_money/src/features/wage/data/models/wage_hourly_box.dart';
 import 'package:time_money/src/features/wage/data/repositories/objectbox_wage_repository.dart';
-import 'package:time_money/src/shared/injections/injection_repositories.dart';
 
 late final ObjectBox objectbox;
 Future<void> main() async {
@@ -17,13 +16,11 @@ Future<void> main() async {
 
   await bootstrap(
     () => AppBloc(
-      injection: InjectionRepositories(
-        timesRepository: ObjectboxTimesRepository(
-          TimesObjectboxDatasource(objectbox.store.box<TimeBox>()),
-        ),
-        wageHourlyRepository: ObjectboxWageRepository(
-          WageObjectboxDatasource(objectbox.store.box<WageHourlyBox>()),
-        ),
+      timesRepository: ObjectboxTimesRepository(
+        TimesObjectboxDatasource(objectbox.store.box<TimeBox>()),
+      ),
+      wageHourlyRepository: ObjectboxWageRepository(
+        WageObjectboxDatasource(objectbox.store.box<WageHourlyBox>()),
       ),
     ),
   );
