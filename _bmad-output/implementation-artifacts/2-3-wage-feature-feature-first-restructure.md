@@ -45,7 +45,7 @@ so that all wage management code is organized following the same pattern as the 
   - [ ] 1.2 Verify `part` directives remain: `wage_hourly.freezed.dart`, `wage_hourly.g.dart`
   - [ ] 1.3 Create `domain/repositories/` — move+rename `wage_hourly_repository.dart` → `wage_repository.dart`, rename class `WageHourlyRepository` → `WageRepository`
   - [ ] 1.4 Rename typedefs: `FetchTimesResultStream` → `FetchWageResultStream`, `SetWageHourlyResult` → `SetWageResult`, `UpdateWageHourlyResult` → `UpdateWageResult`
-  - [ ] 1.5 Create `domain/use_cases/` — move+rename all 3 use case files: `FetchWageHourlyUseCase` → `FetchWageUseCase`, `SetWageHourlyUseCase` → `SetWageUseCase`, `UpdateWageHourlyUseCase` → `UpdateWageUseCase`
+  - [ ] 1.5 Create `domain/use_cases/` — move+rename all 3 use case files: `FetchWageHourlyUseCase` → `FetchWageUseCase`, `SetWageHourlyUseCase` → `SetWageUseCase`, `UpdateWageHourlyUseCase` → `UpdateWageUseCase`. **PRESERVE:** `SetWageUseCase.call()` takes NO parameters — it internally creates `const defaultWageHourly = WageHourly()` (default $15.00) and passes it to `_repository.setWageHourly(defaultWageHourly)`. This embedded default-creation behavior must be preserved exactly.
   - [ ] 1.6 Delete `aplication/` folder
 
 - [ ] Task 2: Create data layer (AC: #1, #3)
@@ -210,6 +210,33 @@ lib/src/features/wage/
 └── wage_injection.dart                          ← renamed from aplication/wage_hourly_use_cases_injections.dart
 ```
 
+### WageBlocs Implementation (Renamed from WageHourlyBlocs)
+
+```dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/src/features/wage/domain/use_cases/fetch_wage_use_case.dart';
+import 'package:time_money/src/features/wage/domain/use_cases/update_wage_use_case.dart';
+import 'package:time_money/src/features/wage/presentation/bloc/fetch_wage_bloc.dart';
+import 'package:time_money/src/features/wage/presentation/bloc/update_wage_bloc.dart';
+
+class WageBlocs {
+  static List<BlocProvider> list() => [
+        BlocProvider<FetchWageBloc>(
+          create: (context) => FetchWageBloc(
+            context.read<FetchWageUseCase>(),
+          ),
+        ),
+        BlocProvider<UpdateWageBloc>(
+          create: (context) => UpdateWageBloc(
+            context.read<UpdateWageUseCase>(),
+          ),
+        ),
+      ];
+}
+```
+
+Note: The `context.read<>()` type parameters change from `FetchWageHourlyUseCase` → `FetchWageUseCase` and `UpdateWageHourlyUseCase` → `UpdateWageUseCase`.
+
 ### WageObjectboxDatasource Implementation (NEW)
 
 ```dart
@@ -336,6 +363,8 @@ typedef UpdateWageResult = Future<Either<GlobalDefaultFailure, WageHourly>>;
 ```
 
 **CRITICAL: The `FetchTimesResultStream` name in wage was a pre-existing naming collision with the times feature's typedef of the same name.** Renaming to `FetchWageResultStream` resolves this. This was flagged as W1 in Story 2.2.
+
+**Note:** The typedefs use `GlobalDefaultFailure` (which is `GlobalFailure<dynamic>`). This is equivalent to the times feature's explicit `GlobalFailure<dynamic>`. Do NOT change the typedef type — keep `GlobalDefaultFailure` as-is. The `GlobalFailure.fromException(e)` call in `ObjectboxWageRepository` is compatible because `GlobalDefaultFailure` is a typedef alias for `GlobalFailure<dynamic>`.
 
 ### ObjectBox Service Modification
 
@@ -524,14 +553,7 @@ Story 2.2 had a massive entity rename (`ModelTime` → `TimeEntry`) that rippled
 
 ### Architecture Compliance
 
-- **Import style:** Always absolute `package:time_money/src/...` — NEVER relative
-- **Import order (VGA 10.x):** (1) `dart:` (2) `package:` third-party (3) `package:time_money/` project
-- **Layer dependencies:** Domain ← Data, Domain ← Presentation. Data and Presentation never import each other.
-- **Datasource rule:** Works with DB models only (WageHourlyBox). No Either wrapping. May throw exceptions.
-- **Repository rule:** Catches all datasource exceptions. Returns `Either<GlobalFailure, T>`. Maps DB models ↔ domain entities.
-- **Barrel files:** ONLY re-exports. No circular exports.
-- **const constructors** wherever possible
-- **`on Object catch (e)`** — not bare `catch (e)` (VGA 10.x requirement)
+Same rules as Story 2.2. Key reminders: absolute imports only (`package:time_money/src/...`), VGA 10.x import order, `on Object catch (e)` pattern, const constructors, barrel files with re-exports only.
 
 ### References
 
