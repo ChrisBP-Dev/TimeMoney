@@ -75,5 +75,23 @@ void main() {
         const ListTimesError(NotConnection()),
       ],
     );
+
+    blocTest<ListTimesBloc, ListTimesState>(
+      'emits [loading, error] when stream itself emits an error event '
+      '(emit.forEach onError path)',
+      build: () {
+        when(() => mockUseCase.call()).thenReturn(
+          Right<GlobalFailure, Stream<List<TimeEntry>>>(
+            Stream<List<TimeEntry>>.error(Exception('db crash')),
+          ),
+        );
+        return ListTimesBloc(mockUseCase);
+      },
+      act: (bloc) => bloc.add(const ListTimesRequested()),
+      expect: () => [
+        const ListTimesLoading(),
+        isA<ListTimesError>(),
+      ],
+    );
   });
 }

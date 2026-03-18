@@ -23,7 +23,8 @@ void main() {
   });
 
   group('fetchTimesStream', () {
-    test('returns Right with mapped stream on success', () {
+    test('returns Right with correctly mapped TimeEntry stream on success',
+        () async {
       final boxes = [TimeBox(hour: 1, minutes: 30)];
       when(() => mockDatasource.watchAll())
           .thenAnswer((_) => Stream.value(boxes));
@@ -31,6 +32,9 @@ void main() {
       final result = repository.fetchTimesStream();
 
       expect(result.isRight(), true);
+      final stream = result.getOrElse((_) => throw Exception());
+      final items = await stream.first;
+      expect(items, [const TimeEntry(hour: 1, minutes: 30)]);
     });
 
     test('returns Left with GlobalFailure on exception', () {

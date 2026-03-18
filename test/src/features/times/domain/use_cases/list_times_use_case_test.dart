@@ -19,7 +19,7 @@ void main() {
   const testTime = TimeEntry(hour: 1, minutes: 30);
 
   group('ListTimesUseCase', () {
-    test('returns Right with Stream on success', () {
+    test('forwards the repository stream unchanged on success', () async {
       final stream = Stream.value([testTime]);
       when(() => mockRepository.fetchTimesStream()).thenReturn(
         Right<GlobalFailure, Stream<List<TimeEntry>>>(stream),
@@ -28,10 +28,12 @@ void main() {
       final result = useCase.call();
 
       expect(result.isRight(), true);
+      final returnedStream = result.getOrElse((_) => throw Exception());
+      expect(await returnedStream.first, [testTime]);
       verify(() => mockRepository.fetchTimesStream()).called(1);
     });
 
-    test('returns Left with GlobalFailure on error', () {
+    test('returns Left with the exact GlobalFailure on error', () {
       when(() => mockRepository.fetchTimesStream()).thenReturn(
         const Left<GlobalFailure, Stream<List<TimeEntry>>>(
           NotConnection(),
@@ -40,7 +42,10 @@ void main() {
 
       final result = useCase.call();
 
-      expect(result.isLeft(), true);
+      expect(
+        result,
+        const Left<GlobalFailure, Stream<List<TimeEntry>>>(NotConnection()),
+      );
       verify(() => mockRepository.fetchTimesStream()).called(1);
     });
   });

@@ -45,25 +45,30 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
     CreateTimeSubmitted event,
     Emitter<CreateTimeState> emit,
   ) async {
-    emit(CreateTimeLoading(hour: state.hour, minutes: state.minutes));
+    final hour = state.hour;
+    final minutes = state.minutes;
+
+    emit(CreateTimeLoading(hour: hour, minutes: minutes));
     await Future<void>.delayed(AppDurations.actionFeedback);
 
-    if (state.minutes == 0 && state.hour == 0) return _emitError(emit);
+    if (minutes == 0 && hour == 0) return _emitError(emit);
 
-    final time = TimeEntry(hour: state.hour, minutes: state.minutes);
+    final time = TimeEntry(hour: hour, minutes: minutes);
     final result = await _createTimeUseCase.call(time);
 
     result.fold(
-      (failure) => emit(
-        CreateTimeError(failure, hour: state.hour, minutes: state.minutes),
-      ),
-      (timeEntry) => emit(
-        CreateTimeSuccess(timeEntry, hour: state.hour, minutes: state.minutes),
-      ),
+      (failure) => emit(CreateTimeError(failure, hour: hour, minutes: minutes)),
+      (timeEntry) =>
+          emit(CreateTimeSuccess(timeEntry, hour: hour, minutes: minutes)),
     );
 
     await Future<void>.delayed(AppDurations.actionFeedback);
-    emit(const CreateTimeInitial());
+    // Success: clear form. Use-case error: restore values so user can retry.
+    emit(
+      state is CreateTimeSuccess
+          ? const CreateTimeInitial()
+          : CreateTimeInitial(hour: hour, minutes: minutes),
+    );
   }
 
   void _onReset(CreateTimeReset event, Emitter<CreateTimeState> emit) {
@@ -71,14 +76,16 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
   }
 
   FutureOr<void> _emitError(Emitter<CreateTimeState> emit) async {
+    final hour = state.hour;
+    final minutes = state.minutes;
     emit(
       CreateTimeError(
         const InternalError('invalid number'),
-        hour: state.hour,
-        minutes: state.minutes,
+        hour: hour,
+        minutes: minutes,
       ),
     );
     await Future<void>.delayed(AppDurations.actionFeedback);
-    emit(CreateTimeInitial(hour: state.hour, minutes: state.minutes));
+    emit(CreateTimeInitial(hour: hour, minutes: minutes));
   }
 }

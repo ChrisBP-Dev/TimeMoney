@@ -1,6 +1,6 @@
 # Story 3.2: Times Feature — List & Create BLoC Migration
 
-Status: review
+Status: done
 
 ## Story
 
@@ -994,6 +994,15 @@ Claude Opus 4.6 (1M context)
 ### Change Log
 
 - 2026-03-18: Story 3.2 implementation complete — ListTimesBloc and CreateTimeBloc migrated to sealed classes, consumer widgets updated, 21 new tests added
+- 2026-03-18: Code review passed — patches applied:
+  - P-1: Captured `hour`/`minutes` into locals before first `await` in `_onSubmitted` and `_emitError` (stale state race fix)
+  - P-2: Fixed `listenWhen` in hour/minutes fields — added `previous is! CreateTimeInitial` guard to prevent false-positive controller clear when user types '0'
+  - P-3: Added missing `emit.forEach` `onError` stream-level error test to `list_times_bloc_test.dart`
+  - P-4: Strengthened use case test assertions to verify exact `Left`/`Right` values, not just `isLeft()`/`isRight()`
+  - P-5: Strengthened repository `fetchTimesStream` test to verify `TimeBox`→`TimeEntry` mapping via stream consumption
+  - BS-1: Changed `create_time_button.dart` from `BlocBuilder` + manual delay+pop to `BlocConsumer` with `listenWhen: current is CreateTimeSuccess` → `Navigator.pop()`; removes timing race
+  - BS-3: After use-case error, `_onSubmitted` now restores `CreateTimeInitial(hour: hour, minutes: minutes)` so user can retry; only success path clears form to zero
+  - 48 tests pass, zero lint warnings
 
 ### File List
 

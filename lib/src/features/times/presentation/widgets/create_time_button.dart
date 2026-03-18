@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:time_money/src/core/constants/app_durations.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 
 class CreateTimeButton extends StatelessWidget {
@@ -8,14 +7,12 @@ class CreateTimeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CreateTimeBloc, CreateTimeState>(
+    return BlocConsumer<CreateTimeBloc, CreateTimeState>(
+      listenWhen: (previous, current) => current is CreateTimeSuccess,
+      listener: (context, state) => Navigator.of(context).pop(),
       builder: (context, state) => FilledButton(
-        onPressed: () async {
-          context.read<CreateTimeBloc>().add(const CreateTimeSubmitted());
-          await Future<void>.delayed(AppDurations.actionFeedback);
-          if (!context.mounted) return;
-          Navigator.of(context).pop();
-        },
+        onPressed: () =>
+            context.read<CreateTimeBloc>().add(const CreateTimeSubmitted()),
         child: switch (state) {
           CreateTimeInitial() => const Text('Create'),
           CreateTimeLoading() => const SizedBox(

@@ -31,7 +31,8 @@ class _CreateMinutesFieldState extends State<CreateMinutesField> {
       listenWhen: (previous, current) =>
           current is CreateTimeInitial &&
           current.hour == 0 &&
-          current.minutes == 0,
+          current.minutes == 0 &&
+          previous is! CreateTimeInitial,
       listener: (context, state) => _controller.clear(),
       child: CustomCreateField(
         title: 'Minutes',

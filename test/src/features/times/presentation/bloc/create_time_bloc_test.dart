@@ -116,7 +116,8 @@ void main() {
     );
 
     blocTest<CreateTimeBloc, CreateTimeState>(
-      'emits [loading, error, initial] on failed submit',
+      'emits [loading, error, initial-with-values] on failed submit '
+      '(preserves user input for retry)',
       build: () {
         when(() => mockUseCase.call(any<TimeEntry>())).thenAnswer(
           (_) async => const Left<GlobalFailure, TimeEntry>(
@@ -135,7 +136,7 @@ void main() {
           hour: 1,
           minutes: 30,
         ),
-        const CreateTimeInitial(),
+        const CreateTimeInitial(hour: 1, minutes: 30),
       ],
     );
 

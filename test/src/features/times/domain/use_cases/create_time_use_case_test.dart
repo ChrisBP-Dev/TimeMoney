@@ -33,7 +33,7 @@ void main() {
       verify(() => mockRepository.create(testTime)).called(1);
     });
 
-    test('returns Left with GlobalFailure on error', () async {
+    test('returns Left with the exact GlobalFailure on error', () async {
       when(() => mockRepository.create(testTime)).thenAnswer(
         (_) async => const Left<GlobalFailure, TimeEntry>(
           NotConnection(),
@@ -42,7 +42,10 @@ void main() {
 
       final result = await useCase.call(testTime);
 
-      expect(result.isLeft(), true);
+      expect(
+        result,
+        const Left<GlobalFailure, TimeEntry>(NotConnection()),
+      );
       verify(() => mockRepository.create(testTime)).called(1);
     });
   });
