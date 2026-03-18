@@ -58,14 +58,14 @@ So that listing and creating time entries remains fast and reliable with proper 
   - [ ] 2.4 Delete `lib/src/features/times/presentation/bloc/create_time_bloc.freezed.dart`
 
 - [ ] Task 3: Update consumer widgets (AC: #3)
-  - [ ] 3.1 `list_times_screen.dart` → `.when()` → `switch`, add PaymentCubit update in listener, `ListTimesEvent.getTimes()` → `ListTimesRequested()`, `hasDataStream` → `ListTimesLoaded`
-  - [ ] 3.2 `list_times_data_view.dart` → remove `StreamBuilder`/`CatchErrorBuilder`, param `Stream<List<TimeEntry>>` → `List<TimeEntry>`, remove PaymentCubit import/call, remove empty check
-  - [ ] 3.3 `create_time_button.dart` → `BlocConsumer` → `BlocBuilder` (D-2), `state.currentState` → `state` switch, `CreateTimeEvent.create()` → `CreateTimeSubmitted()`
-  - [ ] 3.4 `create_hour_field.dart` → `BlocConsumer` → `BlocListener` (D-1/D-2), `CreateTimeEvent.changeHour(...)` → `CreateTimeHourChanged(...)`, add controller clear on reset
-  - [ ] 3.5 `create_minutes_field.dart` → same pattern as 3.4
+  - [ ] 3.1 `lib/src/features/times/presentation/pages/list_times_screen.dart` → `.when()` → `switch`, add PaymentCubit update in listener, `ListTimesEvent.getTimes()` → `ListTimesRequested()`, `hasDataStream` → `ListTimesLoaded`; preserve existing `_ActionWidget` private class unchanged
+  - [ ] 3.2 `lib/src/features/times/presentation/widgets/list_times_data_view.dart` → remove `StreamBuilder`/`CatchErrorBuilder`, param `Stream<List<TimeEntry>>` → `List<TimeEntry>`, remove PaymentCubit import/call, remove empty check; remove unused imports (PaymentCubit via direct import, CatchErrorBuilder and EmptyListTimesView via `shared/widgets/widgets.dart` barrel)
+  - [ ] 3.3 `lib/src/features/times/presentation/widgets/create_time_button.dart` → `BlocConsumer` → `BlocBuilder` (D-2), `state.currentState` → `state` switch, `CreateTimeEvent.create()` → `CreateTimeSubmitted()`
+  - [ ] 3.4 `lib/src/features/times/presentation/widgets/create_hour_field.dart` → `BlocConsumer` → `BlocListener` (D-1/D-2), `CreateTimeEvent.changeHour(...)` → `CreateTimeHourChanged(...)`, add controller clear on reset
+  - [ ] 3.5 `lib/src/features/times/presentation/widgets/create_minutes_field.dart` → same pattern as 3.4
 
 - [ ] Task 4: Build verification (AC: #4)
-  - [ ] 4.1 Run `dart run build_runner build --delete-conflicting-outputs` (regenerate remaining Freezed files — delete/update BLoCs still use Freezed)
+  - [ ] 4.1 Run `dart run build_runner build --delete-conflicting-outputs` — this regenerates `delete_time_bloc.freezed.dart` and `update_time_bloc.freezed.dart` (those BLoCs still use Freezed, scoped to 3.3). Do NOT delete those generated files.
   - [ ] 4.2 `flutter analyze` — zero warnings
   - [ ] 4.3 `flutter test` — existing 26 core tests pass
 
@@ -460,7 +460,7 @@ Data-carrying state variants MUST override `==` and `hashCode` for `bloc_test` c
 
 ### Consumer Update Reference
 
-**File: `list_times_screen.dart`**
+**File: `lib/src/features/times/presentation/pages/list_times_screen.dart`** (NOTE: in `pages/`, NOT `widgets/`)
 ```dart
 // BEFORE
 BlocConsumer<ListTimesBloc, ListTimesState>(
@@ -497,9 +497,10 @@ BlocConsumer<ListTimesBloc, ListTimesState>(
   },
 )
 // ADD import: package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart
+// PRESERVE: the existing `_ActionWidget` private class — no changes needed
 ```
 
-**File: `list_times_data_view.dart`**
+**File: `lib/src/features/times/presentation/widgets/list_times_data_view.dart`**
 ```dart
 // BEFORE — StreamBuilder, CatchErrorBuilder, PaymentCubit call, empty check
 class ListTimesDataView extends StatelessWidget {
@@ -538,10 +539,10 @@ class ListTimesDataView extends StatelessWidget {
     );
   }
 }
-// REMOVE imports: PaymentCubit, CatchErrorBuilder, EmptyListTimesView (if only used here)
+// REMOVE imports: PaymentCubit (direct import), CatchErrorBuilder and EmptyListTimesView (via shared/widgets/widgets.dart barrel — remove barrel import if no other shared widgets used, otherwise just stop using those types)
 ```
 
-**File: `create_time_button.dart`**
+**File: `lib/src/features/times/presentation/widgets/create_time_button.dart`**
 ```dart
 // BEFORE — BlocConsumer no-op listener, state.currentState switch
 BlocConsumer<CreateTimeBloc, CreateTimeState>(
@@ -583,7 +584,7 @@ BlocBuilder<CreateTimeBloc, CreateTimeState>(
 // REMOVE import: action_state.dart (no longer needed — switching on CreateTimeState, not ActionState)
 ```
 
-**File: `create_hour_field.dart`**
+**File: `lib/src/features/times/presentation/widgets/create_hour_field.dart`**
 ```dart
 // BEFORE — BlocConsumer no-op listener, Freezed event constructor
 BlocConsumer<CreateTimeBloc, CreateTimeState>(
@@ -612,7 +613,7 @@ BlocListener<CreateTimeBloc, CreateTimeState>(
 )
 ```
 
-**File: `create_minutes_field.dart`** — same pattern as `create_hour_field.dart` with `CreateTimeMinutesChanged`.
+**File: `lib/src/features/times/presentation/widgets/create_minutes_field.dart`** — same pattern as `create_hour_field.dart` with `CreateTimeMinutesChanged`.
 
 ### Stream Consumption: emit.forEach Pattern
 
@@ -733,6 +734,11 @@ void main() {
   late MockTimesObjectboxDatasource mockDatasource;
   late ObjectboxTimesRepository repository;
 
+  setUpAll(() {
+    // Required for mocktail's any() matcher with custom types
+    registerFallbackValue(TimeBox(hour: 0, minutes: 0));
+  });
+
   setUp(() {
     mockDatasource = MockTimesObjectboxDatasource();
     repository = ObjectboxTimesRepository(mockDatasource);
@@ -778,7 +784,7 @@ void main() {
       expect(result.isLeft(), true);
     });
   });
-  // Similarly for delete, update
+  // NOTE: delete/update tests are deferred to Story 3.3 — only test fetchTimesStream and create in this story
 }
 ```
 
@@ -912,8 +918,9 @@ When event/state files change from `part of 'bloc.dart'` to standalone files, th
 - **NEVER** use relative imports — always `package:time_money/src/...`
 - **NEVER** skip `AppDurations.actionFeedback` delay between action state transitions — UI animations depend on it
 
-### Files NOT to Touch (Scoped to Other Stories)
+### Files NOT to Touch (Scoped to Other Stories or Unchanged)
 
+- `times_blocs.dart` (`lib/src/features/times/presentation/bloc/times_blocs.dart`) — BlocProvider factory; BLoC constructors stay the same (accept use case), no changes needed
 - `delete_time_bloc.dart` / `delete_time_event.dart` / `delete_time_state.dart` — Story 3.3
 - `update_time_bloc.dart` / `update_time_event.dart` / `update_time_state.dart` — Story 3.3
 - All wage feature files — Story 3.4
