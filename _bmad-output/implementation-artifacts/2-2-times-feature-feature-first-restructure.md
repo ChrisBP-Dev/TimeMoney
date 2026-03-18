@@ -49,7 +49,7 @@ so that all time entry code is organized in a single feature directory following
   - [ ] 1.6 Delete `aplication/` folder and its barrel `aplications.dart`
 
 - [ ] Task 2: Create data layer (AC: #1, #3)
-  - [ ] 2.1 Create `data/models/` — move `infraestructure/timebox.dart` → `data/models/time_box.dart`
+  - [ ] 2.1 Create `data/models/` — move `infraestructure/timebox.dart` → `data/models/time_box.dart`; preserve `@Entity()` annotation, `@Id()` field, and `toString()` override
   - [ ] 2.2 Rename extension `ConvertModelTime.toFreezedModelTime` → `toTimeEntry`, and `ConvertModelTimeBox on ModelTime` → `on TimeEntry`
   - [ ] 2.3 Create `data/datasources/times_objectbox_datasource.dart` (NEW — see Dev Notes)
   - [ ] 2.4 Create `data/repositories/` — refactor `i_times_objectbox_repository.dart` → `objectbox_times_repository.dart` (see Dev Notes)
@@ -57,10 +57,10 @@ so that all time entry code is organized in a single feature directory following
 
 - [ ] Task 3: Move presentation into feature (AC: #1)
   - [ ] 3.1 Create `presentation/bloc/` — move all 12 BLoC source files (4 blocs × {bloc, event, state}) + `times_blocs.dart`
-  - [ ] 3.2 Create `presentation/pages/` — move `create_time_view.dart` → `create_time_page.dart`, `update_view.dart` → `update_time_page.dart`, `list_times_screen.dart`
+  - [ ] 3.2 Create `presentation/pages/` — move `create_time_view.dart` → `create_time_page.dart`, `update_view.dart` → `update_time_page.dart`, `list_times_screen.dart` (keep as `list_times_screen.dart` — do NOT rename to `_page.dart` to minimize scope)
   - [ ] 3.3 Rename classes: `CreateTimeView` → `CreateTimePage`, `UpdateView` → `UpdateTimePage`
-  - [ ] 3.4 Create `presentation/widgets/` — flatten ALL widget files from create_time/widgets/, delete_time/widgets/, list_times/widgets/, update_time/widgets/ into single widgets/ folder
-  - [ ] 3.5 Move view files from `list_times/views/` into `presentation/widgets/` (error_list_times_view, list_times_data_view, list_times_other_view)
+  - [ ] 3.4 Create `presentation/widgets/` — flatten ALL widget files from create_time/widgets/, delete_time/widgets/, list_times/widgets/, update_time/widgets/ into single widgets/ folder; delete the 4 old `widgets.dart` barrel files from each subfolder
+  - [ ] 3.5 Move view files from `list_times/views/` into `presentation/widgets/` (error_list_times_view, list_times_data_view, list_times_other_view); delete `views/views.dart` barrel; update `list_times_screen.dart` and `list_times_data_view.dart` to import from the new `widgets/widgets.dart` barrel instead of the old `views/views.dart`
   - [ ] 3.6 Delete `presentation/control_hours/times/` folder (entire tree)
 
 - [ ] Task 4: Update ObjectBox service (AC: #1)
@@ -292,23 +292,45 @@ class ObjectboxTimesRepository implements TimesRepository {
 **Class rename in `time_entry.dart`:**
 ```dart
 // BEFORE:
+part 'model_time.freezed.dart';
+part 'model_time.g.dart';
+
 @freezed
-class ModelTime with _$ModelTime {
+abstract class ModelTime with _$ModelTime {
   const ModelTime._();
-  const factory ModelTime({...}) = _ModelTime;
-  // ...
+  const factory ModelTime({
+    required int hour,
+    required int minutes,
+    @Default(0) int id,
+  }) = _ModelTime;
+
+  factory ModelTime.fromJson(Map<String, dynamic> json) => _$ModelTimeFromJson(json);
+
+  Duration get toDuration => Duration(hours: hour, minutes: minutes);
 }
 extension CalculatePay on List<ModelTime> { ... }
 
 // AFTER:
+part 'time_entry.freezed.dart';
+part 'time_entry.g.dart';
+
 @freezed
-class TimeEntry with _$TimeEntry {
+abstract class TimeEntry with _$TimeEntry {
   const TimeEntry._();
-  const factory TimeEntry({...}) = _TimeEntry;
-  // ...
+  const factory TimeEntry({
+    required int hour,
+    required int minutes,
+    @Default(0) int id,
+  }) = _TimeEntry;
+
+  factory TimeEntry.fromJson(Map<String, dynamic> json) => _$TimeEntryFromJson(json);
+
+  Duration get toDuration => Duration(hours: hour, minutes: minutes);
 }
 extension CalculatePay on List<TimeEntry> { ... }
 ```
+
+**Preserve ALL existing members:** `fromJson` factory, `toDuration` getter, `CalculatePay` extension (with `calculatePayment`, `totalMinutes`, `totalHours`).
 
 **Extension rename in `time_box.dart`:**
 ```dart
@@ -317,7 +339,7 @@ extension ConvertModelTime on TimeBox {
   ModelTime get toFreezedModelTime => ModelTime(hour: hour, minutes: minutes, id: id);
 }
 extension ConvertModelTimeBox on ModelTime {
-  TimeBox get toTimeBox => TimeBox(hour: hour, minutes: minutes)..id = id;
+  TimeBox get toTimeBox => TimeBox(id: id, hour: hour, minutes: minutes);
 }
 
 // AFTER:
@@ -331,6 +353,8 @@ extension ConvertTimeBox on TimeEntry {
 
 **Ripple effect — ALL files referencing `ModelTime` must change to `TimeEntry`:**
 This affects BLoC states (`ActionState<ModelTime>` → `ActionState<TimeEntry>`), use case return types, repository typedefs, widget parameters, and page arguments. Search-and-replace `ModelTime` → `TimeEntry` across the entire codebase after moving files.
+
+**Preserve custom methods in state files:** `list_times_state.dart` has a custom `list()` method with signature `Future<List<ModelTime>?> list() async => when(...)` — this must become `Future<List<TimeEntry>?> list()`. The global `ModelTime` → `TimeEntry` search-replace handles this automatically.
 
 ### Repository Typedef Updates
 
@@ -406,7 +430,7 @@ Similarly, `result_payment_cubit.dart` and `result_screen.dart` import `ModelTim
 `wage_hourly_repository.dart` defines its own `typedef FetchTimesResultStream` (for `Either<GlobalDefaultFailure, Stream<WageHourly>>`). Do NOT rename or touch this typedef during the `ModelTime` → `TimeEntry` search-replace. Only change the times feature's version in `times_repository.dart`.
 
 **W2: Part files contain `ModelTime` references.**
-`result_payment_state.dart` (`part of result_payment_cubit.dart`) contains `List<ModelTime> times`. BLoC state/event `.dart` files that are `part of` their BLoC files also contain `ModelTime`. The class rename must cover ALL part files, not just files with `import` statements. After renaming, run `build_runner` to regenerate `.freezed.dart` files.
+`result_payment_state.dart` (`part of result_payment_cubit.dart`) contains `List<ModelTime> times`. BLoC state/event `.dart` files that are `part of` their BLoC files also contain `ModelTime`. Verified part files with `ModelTime`: `create_time_state.dart` (`ActionState<ModelTime>`), `update_time_state.dart` (`ActionState<ModelTime>`, `ModelTime?`), `list_times_state.dart` (`Stream<List<ModelTime>>`), `delete_time_event.dart` (`required ModelTime time`), `update_time_event.dart` (`required ModelTime time`). Note: `delete_time_state.dart` and `create_time_event.dart` do NOT contain `ModelTime`. The class rename must cover ALL part files, not just files with `import` statements. After renaming, run `build_runner` to regenerate `.freezed.dart` files.
 
 **W3: Entry point files construct the repository directly.**
 `main_development.dart`, `main_staging.dart`, `main_production.dart` construct `ITimesObjectboxRepository(objectbox)` directly. These are NOT in the import update checklist patterns below because they also need NEW imports for `TimesObjectboxDatasource`, `TimeBox`, and `ObjectboxTimesRepository`. See "DI Wiring Update" section.
@@ -452,13 +476,17 @@ All paths relative to `lib/src/`. Grep patterns and expected file counts verifie
 5. `features/times/aplication/update_time_use_case.dart`
 6. `shared/injections/injection_repositories.dart`
 
-**Pattern 3: `features/times/aplication/aplications.dart` → use_cases barrel (6 files):**
+**Pattern 3: `features/times/aplication/aplications.dart` → use_cases barrel (6 files using barrel import):**
 1. `shared/injections/use_cases_injection.dart`
 2. `presentation/control_hours/times/times_blocs.dart`
 3. `features/times/aplication/times_use_cases_injection.dart`
 4. `presentation/control_hours/times/delete_time/bloc/delete_time_bloc.dart`
 5. `presentation/control_hours/times/update_time/bloc/update_time_bloc.dart`
 6. `presentation/control_hours/times/list_times/bloc/list_times_bloc.dart`
+
+**Pattern 3b: `features/times/aplication/create_time_use_case.dart` direct import (1 file):**
+Note: `create_time_bloc.dart` imports `create_time_use_case.dart` directly (NOT via the `aplications.dart` barrel). This import also needs updating to the new use_cases path.
+1. `presentation/control_hours/times/create_time/bloc/create_time_bloc.dart`
 
 **Pattern 4: `features/times/infraestructure/timebox.dart` → `features/times/data/models/time_box.dart` (2 files):**
 1. `features/times/infraestructure/i_times_objectbox_repository.dart`
@@ -468,6 +496,10 @@ All paths relative to `lib/src/`. Grep patterns and expected file counts verifie
 1. `presentation/control_hours/control_hours_page.dart` — imports list_times_screen, create_time widgets
 2. `shared/injections/bloc_injections.dart` — imports times_blocs.dart
 
+**Pattern 5b: `list_times/views/views.dart` barrel (2 internal consumers — update during move):**
+1. `presentation/control_hours/times/list_times/list_times_screen.dart` — replace `views/views.dart` import with new `widgets/widgets.dart` barrel
+2. `presentation/control_hours/times/list_times/views/list_times_data_view.dart` — replace `views/views.dart` import with new `widgets/widgets.dart` barrel
+
 **Pattern 6: `features/times/infraestructure/i_times_objectbox_repository.dart` → removed (3 files):**
 1. `../../main_development.dart` (lib/main_development.dart) — replace with new imports + construction
 2. `../../main_staging.dart` (lib/main_staging.dart) — same
@@ -476,7 +508,7 @@ All paths relative to `lib/src/`. Grep patterns and expected file counts verifie
 **Pattern 7: Class name `ModelTime` → `TimeEntry` (global search-replace after file moves):**
 Every `.dart` file in `lib/` that contains `ModelTime` must be updated to `TimeEntry`. This includes:
 - Source files with `import` statements (19 files in Pattern 1)
-- Part files without imports: `result_payment_state.dart`, `create_time_state.dart`, `update_time_state.dart`, `delete_time_state.dart`, `list_times_state.dart`, `create_time_event.dart`, `update_time_event.dart`
+- Part files without imports: `result_payment_state.dart`, `create_time_state.dart`, `update_time_state.dart`, `list_times_state.dart`, `delete_time_event.dart`, `update_time_event.dart`
 - DO NOT touch `ModelTime` references in `.freezed.dart` or `.g.dart` files — `build_runner` regenerates those
 
 ### Barrel Export Rules
