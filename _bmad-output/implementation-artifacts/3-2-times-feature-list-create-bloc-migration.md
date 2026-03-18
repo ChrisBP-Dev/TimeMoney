@@ -1,6 +1,6 @@
 # Story 3.2: Times Feature — List & Create BLoC Migration
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -45,44 +45,44 @@ So that listing and creating time entries remains fast and reliable with proper 
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Migrate ListTimesBloc to sealed classes (AC: #2, #3)
-  - [ ] 1.1 Convert `list_times_event.dart` → standalone sealed class (remove `part of`, Freezed)
-  - [ ] 1.2 Convert `list_times_state.dart` → standalone sealed class with 5 variants + `==`/`hashCode` on data variants; delete `DataListTime` extension
-  - [ ] 1.3 Convert `list_times_bloc.dart` → import+re-export event/state files, use `emit.forEach` for stream, remove Freezed imports/`part` directives
-  - [ ] 1.4 Delete `lib/src/features/times/presentation/bloc/list_times_bloc.freezed.dart`
+- [x] Task 1: Migrate ListTimesBloc to sealed classes (AC: #2, #3)
+  - [x] 1.1 Convert `list_times_event.dart` → standalone sealed class (remove `part of`, Freezed)
+  - [x] 1.2 Convert `list_times_state.dart` → standalone sealed class with 5 variants + `==`/`hashCode` on data variants; delete `DataListTime` extension
+  - [x] 1.3 Convert `list_times_bloc.dart` → import+re-export event/state files, use `emit.forEach` for stream, remove Freezed imports/`part` directives
+  - [x] 1.4 Delete `lib/src/features/times/presentation/bloc/list_times_bloc.freezed.dart`
 
-- [ ] Task 2: Migrate CreateTimeBloc to sealed classes (AC: #1, #3)
-  - [ ] 2.1 Convert `create_time_event.dart` → standalone sealed class with 4 variants
-  - [ ] 2.2 Convert `create_time_state.dart` → standalone sealed class with form data on base + 4 variants + `==`/`hashCode`
-  - [ ] 2.3 Convert `create_time_bloc.dart` → import+re-export event/state files, register `on<CreateTimeReset>` handler (D-5 fix), replace all `state.copyWith(...)` with explicit state construction
-  - [ ] 2.4 Delete `lib/src/features/times/presentation/bloc/create_time_bloc.freezed.dart`
+- [x] Task 2: Migrate CreateTimeBloc to sealed classes (AC: #1, #3)
+  - [x] 2.1 Convert `create_time_event.dart` → standalone sealed class with 4 variants
+  - [x] 2.2 Convert `create_time_state.dart` → standalone sealed class with form data on base + 4 variants + `==`/`hashCode`
+  - [x] 2.3 Convert `create_time_bloc.dart` → import+re-export event/state files, register `on<CreateTimeReset>` handler (D-5 fix), replace all `state.copyWith(...)` with explicit state construction
+  - [x] 2.4 Delete `lib/src/features/times/presentation/bloc/create_time_bloc.freezed.dart`
 
-- [ ] Task 3: Update consumer widgets (AC: #3)
-  - [ ] 3.1 `lib/src/features/times/presentation/pages/list_times_screen.dart` → `.when()` → `switch`, add PaymentCubit update in listener, `ListTimesEvent.getTimes()` → `ListTimesRequested()`, `hasDataStream` → `ListTimesLoaded`; preserve existing `_ActionWidget` private class unchanged
-  - [ ] 3.2 `lib/src/features/times/presentation/widgets/list_times_data_view.dart` → remove `StreamBuilder`/`CatchErrorBuilder`, param `Stream<List<TimeEntry>>` → `List<TimeEntry>`, remove PaymentCubit import/call, remove empty check; remove unused imports (PaymentCubit via direct import, CatchErrorBuilder and EmptyListTimesView via `shared/widgets/widgets.dart` barrel)
-  - [ ] 3.3 `lib/src/features/times/presentation/widgets/create_time_button.dart` → `BlocConsumer` → `BlocBuilder` (D-2), `state.currentState` → `state` switch, `CreateTimeEvent.create()` → `CreateTimeSubmitted()`
-  - [ ] 3.4 `lib/src/features/times/presentation/widgets/create_hour_field.dart` → `BlocConsumer` → `BlocListener` (D-1/D-2), `CreateTimeEvent.changeHour(...)` → `CreateTimeHourChanged(...)`, add controller clear on reset
-  - [ ] 3.5 `lib/src/features/times/presentation/widgets/create_minutes_field.dart` → same pattern as 3.4
+- [x] Task 3: Update consumer widgets (AC: #3)
+  - [x] 3.1 `lib/src/features/times/presentation/pages/list_times_screen.dart` → `.when()` → `switch`, add PaymentCubit update in listener, `ListTimesEvent.getTimes()` → `ListTimesRequested()`, `hasDataStream` → `ListTimesLoaded`; preserve existing `_ActionWidget` private class unchanged
+  - [x] 3.2 `lib/src/features/times/presentation/widgets/list_times_data_view.dart` → remove `StreamBuilder`/`CatchErrorBuilder`, param `Stream<List<TimeEntry>>` → `List<TimeEntry>`, remove PaymentCubit import/call, remove empty check; remove unused imports (PaymentCubit via direct import, CatchErrorBuilder and EmptyListTimesView via `shared/widgets/widgets.dart` barrel)
+  - [x] 3.3 `lib/src/features/times/presentation/widgets/create_time_button.dart` → `BlocConsumer` → `BlocBuilder` (D-2), `state.currentState` → `state` switch, `CreateTimeEvent.create()` → `CreateTimeSubmitted()`
+  - [x] 3.4 `lib/src/features/times/presentation/widgets/create_hour_field.dart` → `BlocConsumer` → `BlocListener` (D-1/D-2), `CreateTimeEvent.changeHour(...)` → `CreateTimeHourChanged(...)`, add controller clear on reset
+  - [x] 3.5 `lib/src/features/times/presentation/widgets/create_minutes_field.dart` → same pattern as 3.4
 
-- [ ] Task 4: Build verification (AC: #4)
-  - [ ] 4.1 Run `dart run build_runner build --delete-conflicting-outputs` — this regenerates `delete_time_bloc.freezed.dart` and `update_time_bloc.freezed.dart` (those BLoCs still use Freezed, scoped to 3.3). Do NOT delete those generated files.
-  - [ ] 4.2 `flutter analyze` — zero warnings
-  - [ ] 4.3 `flutter test` — existing 26 core tests pass
+- [x] Task 4: Build verification (AC: #4)
+  - [x] 4.1 Run `dart run build_runner build --delete-conflicting-outputs` — this regenerates `delete_time_bloc.freezed.dart` and `update_time_bloc.freezed.dart` (those BLoCs still use Freezed, scoped to 3.3). Do NOT delete those generated files.
+  - [x] 4.2 `flutter analyze` — zero warnings
+  - [x] 4.3 `flutter test` — existing 26 core tests pass
 
-- [ ] Task 5: Write use case tests (AC: #5)
-  - [ ] 5.1 `test/src/features/times/domain/use_cases/create_time_use_case_test.dart`
-  - [ ] 5.2 `test/src/features/times/domain/use_cases/list_times_use_case_test.dart`
+- [x] Task 5: Write use case tests (AC: #5)
+  - [x] 5.1 `test/src/features/times/domain/use_cases/create_time_use_case_test.dart`
+  - [x] 5.2 `test/src/features/times/domain/use_cases/list_times_use_case_test.dart`
 
-- [ ] Task 6: Write repository test (AC: #5)
-  - [ ] 6.1 `test/src/features/times/data/repositories/objectbox_times_repository_test.dart`
+- [x] Task 6: Write repository test (AC: #5)
+  - [x] 6.1 `test/src/features/times/data/repositories/objectbox_times_repository_test.dart`
 
-- [ ] Task 7: Write BLoC tests (AC: #5)
-  - [ ] 7.1 `test/src/features/times/presentation/bloc/create_time_bloc_test.dart`
-  - [ ] 7.2 `test/src/features/times/presentation/bloc/list_times_bloc_test.dart`
+- [x] Task 7: Write BLoC tests (AC: #5)
+  - [x] 7.1 `test/src/features/times/presentation/bloc/create_time_bloc_test.dart`
+  - [x] 7.2 `test/src/features/times/presentation/bloc/list_times_bloc_test.dart`
 
-- [ ] Task 8: Final verification (AC: #4, #6)
-  - [ ] 8.1 `flutter analyze` — zero warnings
-  - [ ] 8.2 `flutter test` — all tests pass (core + new)
+- [x] Task 8: Final verification (AC: #4, #6)
+  - [x] 8.1 `flutter analyze` — zero warnings
+  - [x] 8.2 `flutter test` — all tests pass (core + new)
 
 ## Dev Notes
 
@@ -973,12 +973,50 @@ Confirm in `pubspec.yaml`:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- `flutter analyze` — zero warnings on all modified/new files
+- `flutter test` — 47 tests pass (26 existing + 21 new), zero regressions
+- `dart run build_runner build` — 0 outputs written (remaining Freezed BLoCs regenerated successfully)
+- `@immutable` annotation required on sealed base classes to satisfy `avoid_equals_and_hash_code_on_mutable_classes` lint — resolved via `flutter/foundation.dart` import
+
 ### Completion Notes List
+
+- Migrated ListTimesBloc: Freezed → sealed classes, `part of` → standalone files, `emit.forEach` for internal stream consumption
+- Migrated CreateTimeBloc: Freezed → sealed classes, form data on sealed base, explicit state construction, D-5 fix (added `on<CreateTimeReset>` handler)
+- Updated 5 consumer widgets: `list_times_screen.dart` (switch + PaymentCubit listener), `list_times_data_view.dart` (removed StreamBuilder/CatchErrorBuilder/PaymentCubit), `create_time_button.dart` (BlocBuilder), `create_hour_field.dart` (BlocListener + controller sync), `create_minutes_field.dart` (same pattern)
+- Tech debt addressed: D-1 (TextEditingController sync), D-2 (no-op listeners removed), D-5 (reset handler added)
+- Tests: 2 use case tests, 4 repository tests, 9 CreateTimeBloc tests, 4 ListTimesBloc tests — all covering success/error/edge cases
+- All data-carrying state variants have `@immutable` annotation via sealed base + `==`/`hashCode` overrides
 
 ### Change Log
 
+- 2026-03-18: Story 3.2 implementation complete — ListTimesBloc and CreateTimeBloc migrated to sealed classes, consumer widgets updated, 21 new tests added
+
 ### File List
+
+**Modified:**
+- lib/src/features/times/presentation/bloc/list_times_event.dart
+- lib/src/features/times/presentation/bloc/list_times_state.dart
+- lib/src/features/times/presentation/bloc/list_times_bloc.dart
+- lib/src/features/times/presentation/bloc/create_time_event.dart
+- lib/src/features/times/presentation/bloc/create_time_state.dart
+- lib/src/features/times/presentation/bloc/create_time_bloc.dart
+- lib/src/features/times/presentation/pages/list_times_screen.dart
+- lib/src/features/times/presentation/widgets/list_times_data_view.dart
+- lib/src/features/times/presentation/widgets/create_time_button.dart
+- lib/src/features/times/presentation/widgets/create_hour_field.dart
+- lib/src/features/times/presentation/widgets/create_minutes_field.dart
+
+**Deleted:**
+- lib/src/features/times/presentation/bloc/list_times_bloc.freezed.dart
+- lib/src/features/times/presentation/bloc/create_time_bloc.freezed.dart
+
+**Created:**
+- test/src/features/times/domain/use_cases/create_time_use_case_test.dart
+- test/src/features/times/domain/use_cases/list_times_use_case_test.dart
+- test/src/features/times/data/repositories/objectbox_times_repository_test.dart
+- test/src/features/times/presentation/bloc/create_time_bloc_test.dart
+- test/src/features/times/presentation/bloc/list_times_bloc_test.dart

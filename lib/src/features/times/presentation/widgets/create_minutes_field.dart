@@ -27,17 +27,19 @@ class _CreateMinutesFieldState extends State<CreateMinutesField> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CreateTimeBloc, CreateTimeState>(
-      listener: (context, state) => state,
-      builder: (context, state) {
-        return CustomCreateField(
-          title: 'Minutes',
-          controller: _controller,
-          onChanged: (value) => context.read<CreateTimeBloc>().add(
-                CreateTimeEvent.changeMinutes(value: value),
-              ),
-        );
-      },
+    return BlocListener<CreateTimeBloc, CreateTimeState>(
+      listenWhen: (previous, current) =>
+          current is CreateTimeInitial &&
+          current.hour == 0 &&
+          current.minutes == 0,
+      listener: (context, state) => _controller.clear(),
+      child: CustomCreateField(
+        title: 'Minutes',
+        controller: _controller,
+        onChanged: (value) => context.read<CreateTimeBloc>().add(
+              CreateTimeMinutesChanged(value: value),
+            ),
+      ),
     );
   }
 }

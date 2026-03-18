@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/core/constants/app_durations.dart';
-import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 
 class CreateTimeButton extends StatelessWidget {
@@ -9,27 +8,23 @@ class CreateTimeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CreateTimeBloc, CreateTimeState>(
-      listener: (context, state) => state,
-      builder: (_, state) => FilledButton(
+    return BlocBuilder<CreateTimeBloc, CreateTimeState>(
+      builder: (context, state) => FilledButton(
         onPressed: () async {
-          context.read<CreateTimeBloc>().add(
-                const CreateTimeEvent.create(),
-              );
-
+          context.read<CreateTimeBloc>().add(const CreateTimeSubmitted());
           await Future<void>.delayed(AppDurations.actionFeedback);
           if (!context.mounted) return;
           Navigator.of(context).pop();
         },
-        child: switch (state.currentState) {
-          ActionInitial() => const Text('Create'),
-          ActionLoading() => const SizedBox(
+        child: switch (state) {
+          CreateTimeInitial() => const Text('Create'),
+          CreateTimeLoading() => const SizedBox(
               height: 20,
               width: 20,
               child: CircularProgressIndicator(color: Colors.white),
             ),
-          ActionSuccess() => const Text('Success'),
-          ActionError() => const Text('Error'),
+          CreateTimeSuccess() => const Text('Success'),
+          CreateTimeError() => const Text('Error'),
         },
       ),
     );

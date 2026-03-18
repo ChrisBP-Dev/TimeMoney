@@ -1,6 +1,7 @@
-part of 'list_times_bloc.dart';
+sealed class ListTimesEvent {
+  const ListTimesEvent();
+}
 
-@freezed
-abstract class ListTimesEvent with _$ListTimesEvent {
-  const factory ListTimesEvent.getTimes() = _GetTimes;
+final class ListTimesRequested extends ListTimesEvent {
+  const ListTimesRequested();
 }

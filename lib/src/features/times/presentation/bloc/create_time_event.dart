@@ -1,15 +1,21 @@
-part of 'create_time_bloc.dart';
+sealed class CreateTimeEvent {
+  const CreateTimeEvent();
+}
 
-@freezed
-abstract class CreateTimeEvent with _$CreateTimeEvent {
-  const factory CreateTimeEvent.changeHour({
-    required String value,
-  }) = _ChangeHour;
+final class CreateTimeHourChanged extends CreateTimeEvent {
+  const CreateTimeHourChanged({required this.value});
+  final String value;
+}
 
-  const factory CreateTimeEvent.changeMinutes({
-    required String value,
-  }) = _ChangeMinutes;
+final class CreateTimeMinutesChanged extends CreateTimeEvent {
+  const CreateTimeMinutesChanged({required this.value});
+  final String value;
+}
 
-  const factory CreateTimeEvent.create() = _Create;
-  const factory CreateTimeEvent.reset() = _Reset;
+final class CreateTimeSubmitted extends CreateTimeEvent {
+  const CreateTimeSubmitted();
+}
+
+final class CreateTimeReset extends CreateTimeEvent {
+  const CreateTimeReset();
 }

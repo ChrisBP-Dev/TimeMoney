@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:time_money/src/features/times/presentation/bloc/list_times_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
@@ -9,21 +10,22 @@ class ListTimesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ListTimesBloc, ListTimesState>(
-      listener: (context, state) => state,
-      bloc: context.read<ListTimesBloc>()..add(const ListTimesEvent.getTimes()),
-      builder: (context, state) {
-        return state.when(
-          initial: ShimmerListTimesView.new,
-          loading: ShimmerListTimesView.new,
-          empty: () => const EmptyListTimesView(
-            actionWidget: _ActionWidget(),
-          ),
-          error: (err) => ErrorListTimesView(
-            err,
+      listener: (context, state) {
+        if (state case ListTimesLoaded(:final times)) {
+          context.read<PaymentCubit>().setList(times);
+        }
+      },
+      bloc: context.read<ListTimesBloc>()..add(const ListTimesRequested()),
+      builder: (context, state) => switch (state) {
+        ListTimesInitial() => const ShimmerListTimesView(),
+        ListTimesLoading() => const ShimmerListTimesView(),
+        ListTimesEmpty() =>
+          const EmptyListTimesView(actionWidget: _ActionWidget()),
+        ListTimesError(:final failure) => ErrorListTimesView(
+            failure,
             actionWidget: const _ActionWidget(),
           ),
-          hasDataStream: (goals) => ListTimesDataView(goalsStream: goals),
-        );
+        ListTimesLoaded(:final times) => ListTimesDataView(times: times),
       },
     );
   }
