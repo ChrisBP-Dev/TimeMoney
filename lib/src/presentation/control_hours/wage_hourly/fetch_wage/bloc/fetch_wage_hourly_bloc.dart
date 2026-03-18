@@ -1,5 +1,3 @@
-// ignore_for_file: lines_longer_than_80_chars
-
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:time_money/src/core/failures/failures.dart';

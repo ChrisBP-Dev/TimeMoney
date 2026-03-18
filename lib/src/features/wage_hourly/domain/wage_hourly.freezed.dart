@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,161 +9,272 @@ part of 'wage_hourly.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-WageHourly _$WageHourlyFromJson(Map<String, dynamic> json) {
-  return _WageHourly.fromJson(json);
-}
 
 /// @nodoc
 mixin _$WageHourly {
-  int get id => throw _privateConstructorUsedError;
-  double get value => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $WageHourlyCopyWith<WageHourly> get copyWith =>
-      throw _privateConstructorUsedError;
+ int get id; double get value;
+/// Create a copy of WageHourly
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$WageHourlyCopyWith<WageHourly> get copyWith => _$WageHourlyCopyWithImpl<WageHourly>(this as WageHourly, _$identity);
+
+  /// Serializes this WageHourly to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WageHourly&&(identical(other.id, id) || other.id == id)&&(identical(other.value, value) || other.value == value));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,value);
+
+@override
+String toString() {
+  return 'WageHourly(id: $id, value: $value)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $WageHourlyCopyWith<$Res> {
-  factory $WageHourlyCopyWith(
-          WageHourly value, $Res Function(WageHourly) then) =
-      _$WageHourlyCopyWithImpl<$Res, WageHourly>;
-  @useResult
-  $Res call({int id, double value});
-}
+abstract mixin class $WageHourlyCopyWith<$Res>  {
+  factory $WageHourlyCopyWith(WageHourly value, $Res Function(WageHourly) _then) = _$WageHourlyCopyWithImpl;
+@useResult
+$Res call({
+ int id, double value
+});
 
+
+
+
+}
 /// @nodoc
-class _$WageHourlyCopyWithImpl<$Res, $Val extends WageHourly>
+class _$WageHourlyCopyWithImpl<$Res>
     implements $WageHourlyCopyWith<$Res> {
-  _$WageHourlyCopyWithImpl(this._value, this._then);
+  _$WageHourlyCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final WageHourly _self;
+  final $Res Function(WageHourly) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? value = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      value: null == value
-          ? _value.value
-          : value // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
-  }
+/// Create a copy of WageHourly
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? value = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
 }
 
-/// @nodoc
-abstract class _$$_WageHourlyCopyWith<$Res>
-    implements $WageHourlyCopyWith<$Res> {
-  factory _$$_WageHourlyCopyWith(
-          _$_WageHourly value, $Res Function(_$_WageHourly) then) =
-      __$$_WageHourlyCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({int id, double value});
 }
 
-/// @nodoc
-class __$$_WageHourlyCopyWithImpl<$Res>
-    extends _$WageHourlyCopyWithImpl<$Res, _$_WageHourly>
-    implements _$$_WageHourlyCopyWith<$Res> {
-  __$$_WageHourlyCopyWithImpl(
-      _$_WageHourly _value, $Res Function(_$_WageHourly) _then)
-      : super(_value, _then);
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? value = null,
-  }) {
-    return _then(_$_WageHourly(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      value: null == value
-          ? _value.value
-          : value // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
-  }
+/// Adds pattern-matching-related methods to [WageHourly].
+extension WageHourlyPatterns on WageHourly {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _WageHourly value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _WageHourly() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _WageHourly value)  $default,){
+final _that = this;
+switch (_that) {
+case _WageHourly():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _WageHourly value)?  $default,){
+final _that = this;
+switch (_that) {
+case _WageHourly() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  double value)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _WageHourly() when $default != null:
+return $default(_that.id,_that.value);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  double value)  $default,) {final _that = this;
+switch (_that) {
+case _WageHourly():
+return $default(_that.id,_that.value);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  double value)?  $default,) {final _that = this;
+switch (_that) {
+case _WageHourly() when $default != null:
+return $default(_that.id,_that.value);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$_WageHourly implements _WageHourly {
-  const _$_WageHourly({this.id = 0, this.value = 15.0});
 
-  factory _$_WageHourly.fromJson(Map<String, dynamic> json) =>
-      _$$_WageHourlyFromJson(json);
+class _WageHourly implements WageHourly {
+  const _WageHourly({this.id = 0, this.value = 15.0});
+  factory _WageHourly.fromJson(Map<String, dynamic> json) => _$WageHourlyFromJson(json);
 
-  @override
-  @JsonKey()
-  final int id;
-  @override
-  @JsonKey()
-  final double value;
+@override@JsonKey() final  int id;
+@override@JsonKey() final  double value;
 
-  @override
-  String toString() {
-    return 'WageHourly(id: $id, value: $value)';
-  }
+/// Create a copy of WageHourly
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$WageHourlyCopyWith<_WageHourly> get copyWith => __$WageHourlyCopyWithImpl<_WageHourly>(this, _$identity);
 
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_WageHourly &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.value, value) || other.value == value));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType, id, value);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_WageHourlyCopyWith<_$_WageHourly> get copyWith =>
-      __$$_WageHourlyCopyWithImpl<_$_WageHourly>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$_WageHourlyToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$WageHourlyToJson(this, );
 }
 
-abstract class _WageHourly implements WageHourly {
-  const factory _WageHourly({final int id, final double value}) = _$_WageHourly;
-
-  factory _WageHourly.fromJson(Map<String, dynamic> json) =
-      _$_WageHourly.fromJson;
-
-  @override
-  int get id;
-  @override
-  double get value;
-  @override
-  @JsonKey(ignore: true)
-  _$$_WageHourlyCopyWith<_$_WageHourly> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WageHourly&&(identical(other.id, id) || other.id == id)&&(identical(other.value, value) || other.value == value));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,value);
+
+@override
+String toString() {
+  return 'WageHourly(id: $id, value: $value)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$WageHourlyCopyWith<$Res> implements $WageHourlyCopyWith<$Res> {
+  factory _$WageHourlyCopyWith(_WageHourly value, $Res Function(_WageHourly) _then) = __$WageHourlyCopyWithImpl;
+@override @useResult
+$Res call({
+ int id, double value
+});
+
+
+
+
+}
+/// @nodoc
+class __$WageHourlyCopyWithImpl<$Res>
+    implements _$WageHourlyCopyWith<$Res> {
+  __$WageHourlyCopyWithImpl(this._self, this._then);
+
+  final _WageHourly _self;
+  final $Res Function(_WageHourly) _then;
+
+/// Create a copy of WageHourly
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? value = null,}) {
+  return _then(_WageHourly(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+
+}
+
+// dart format on

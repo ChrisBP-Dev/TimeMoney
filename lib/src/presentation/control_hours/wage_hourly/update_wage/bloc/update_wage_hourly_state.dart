@@ -1,7 +1,7 @@
 part of 'update_wage_hourly_bloc.dart';
 
 @freezed
-class UpdateWageHourlyState with _$UpdateWageHourlyState {
+abstract class UpdateWageHourlyState with _$UpdateWageHourlyState {
   const factory UpdateWageHourlyState({
     @Default(WageHourly())
         WageHourly wageHourly,

@@ -1,5 +1,3 @@
-// ignore_for_file: lines_longer_than_80_chars
-
 import 'package:fpdart/fpdart.dart';
 import 'package:time_money/src/core/failures/failures.dart';
 import 'package:time_money/src/features/times/domain/model_time.dart';

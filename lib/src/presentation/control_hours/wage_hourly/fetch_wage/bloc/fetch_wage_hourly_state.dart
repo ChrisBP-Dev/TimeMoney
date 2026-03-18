@@ -1,7 +1,7 @@
 part of 'fetch_wage_hourly_bloc.dart';
 
 @freezed
-class FetchWageHourlyState with _$FetchWageHourlyState {
+abstract class FetchWageHourlyState with _$FetchWageHourlyState {
   const factory FetchWageHourlyState.initial() = _Initial;
   const factory FetchWageHourlyState.loading() = _Loading;
   const factory FetchWageHourlyState.empty() = _Empty;

@@ -15,7 +15,7 @@ class ITimesObjectboxRepository implements TimesRepository {
     try {
       _objectbox.time.put(time.toTimeBox);
       return right(time);
-    } catch (e) {
+    } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
   }
@@ -25,7 +25,7 @@ class ITimesObjectboxRepository implements TimesRepository {
     try {
       _objectbox.time.remove(time.id);
       return right(unit);
-    } catch (e) {
+    } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
   }
@@ -35,7 +35,7 @@ class ITimesObjectboxRepository implements TimesRepository {
     try {
       _objectbox.time.put(time.toTimeBox);
       return right(time);
-    } catch (e) {
+    } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
   }
@@ -44,7 +44,7 @@ class ITimesObjectboxRepository implements TimesRepository {
   FetchTimesResultStream fetchTimesStream() {
     try {
       return right(_objectbox.getTimesStream());
-    } catch (e) {
+    } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
   }

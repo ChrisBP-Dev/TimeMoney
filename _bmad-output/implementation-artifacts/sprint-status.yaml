@@ -36,7 +36,7 @@
 
 generated: 2026-03-17
 last_updated: 2026-03-17
-# ↑ story 1.4 ready-for-dev
+# ↑ story 1.4 review
 project: TimeMoney
 project_key: NOKEY
 tracking_system: file-system
@@ -48,7 +48,7 @@ development_status:
   1-1-sdk-constraint-flutter-dart-version-migration: done
   1-2-objectbox-migration-data-verification: done
   1-3-state-management-fp-dependencies-migration: done
-  1-4-code-generation-remaining-dependencies: ready-for-dev
+  1-4-code-generation-remaining-dependencies: review
   epic-1-retrospective: optional
 
   # Epic 2: Architecture — Feature-First Restructure

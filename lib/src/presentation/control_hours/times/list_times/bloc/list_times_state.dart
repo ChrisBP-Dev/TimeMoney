@@ -1,7 +1,7 @@
 part of 'list_times_bloc.dart';
 
 @freezed
-class ListTimesState with _$ListTimesState {
+abstract class ListTimesState with _$ListTimesState {
   const factory ListTimesState.initial() = _Initial;
   const factory ListTimesState.loading() = _Loading;
   const factory ListTimesState.empty() = _Empty;

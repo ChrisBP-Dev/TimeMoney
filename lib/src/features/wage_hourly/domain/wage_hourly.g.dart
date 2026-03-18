@@ -6,11 +6,10 @@ part of 'wage_hourly.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_WageHourly _$$_WageHourlyFromJson(Map<String, dynamic> json) =>
-    _$_WageHourly(
-      id: (json['id'] as num?)?.toInt() ?? 0,
-      value: (json['value'] as num?)?.toDouble() ?? 15.0,
-    );
+_WageHourly _$WageHourlyFromJson(Map<String, dynamic> json) => _WageHourly(
+  id: (json['id'] as num?)?.toInt() ?? 0,
+  value: (json['value'] as num?)?.toDouble() ?? 15.0,
+);
 
-Map<String, dynamic> _$$_WageHourlyToJson(_$_WageHourly instance) =>
+Map<String, dynamic> _$WageHourlyToJson(_WageHourly instance) =>
     <String, dynamic>{'id': instance.id, 'value': instance.value};

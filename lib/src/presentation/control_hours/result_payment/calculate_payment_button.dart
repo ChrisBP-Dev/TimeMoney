@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.dart';
@@ -15,13 +17,13 @@ class CalculatePaymentButton extends StatelessWidget {
           onPressed: state.times.isEmpty
               ? null
               : () {
-                  showDialog<void>(
+                  unawaited(showDialog<void>(
                     context: context,
                     builder: (_) => ResultPaymentScreen(
                       times: state.times,
                       wageHourly: state.wageHourly,
                     ),
-                  );
+                  ));
                 },
           label: const Text(
             'Calculate Payment',

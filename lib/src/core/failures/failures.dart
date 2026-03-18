@@ -8,7 +8,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'failures.freezed.dart';
 
 @freezed
-class ValueFailure<T> with _$ValueFailure<T> {
+abstract class ValueFailure<T> with _$ValueFailure<T> {
   const factory ValueFailure.characterLimitExceeded({required T failedValue}) =
       CharacterLimitExceeded<T>;
   const factory ValueFailure.shortOrNullCharacters({required T failedValue}) =
@@ -18,7 +18,7 @@ class ValueFailure<T> with _$ValueFailure<T> {
 }
 
 @freezed
-class GlobalFailure<F> with _$GlobalFailure<F> {
+abstract class GlobalFailure<F> with _$GlobalFailure<F> {
   const factory GlobalFailure.serverError(F failure) = ServerError<F>;
   const factory GlobalFailure.notConnection() = NotConnection<F>;
   const factory GlobalFailure.timeOutExceeded() = TimeOutExceeded<F>;

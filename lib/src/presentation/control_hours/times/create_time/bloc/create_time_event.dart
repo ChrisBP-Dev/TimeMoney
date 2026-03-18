@@ -1,7 +1,7 @@
 part of 'create_time_bloc.dart';
 
 @freezed
-class CreateTimeEvent with _$CreateTimeEvent {
+abstract class CreateTimeEvent with _$CreateTimeEvent {
   const factory CreateTimeEvent.changeHour({
     required String value,
   }) = _ChangeHour;

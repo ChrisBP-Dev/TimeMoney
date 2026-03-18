@@ -13,7 +13,7 @@ class IWageHourlyObjectboxRepository extends WageHourlyRepository {
   FetchTimesResultStream fetchWageHourly() {
     try {
       return right(_objectbox.getWageHourlyStream());
-    } catch (e) {
+    } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
   }
@@ -23,7 +23,7 @@ class IWageHourlyObjectboxRepository extends WageHourlyRepository {
     try {
       _objectbox.wageHourly.put(wageHourly.toWageHourlyBox);
       return right(wageHourly);
-    } catch (e) {
+    } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
   }
@@ -33,7 +33,7 @@ class IWageHourlyObjectboxRepository extends WageHourlyRepository {
     try {
       _objectbox.wageHourly.put(wageHourly.toWageHourlyBox);
       return right(wageHourly);
-    } catch (e) {
+    } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
   }

@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,763 +9,661 @@ part of 'create_time_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
 /// @nodoc
 mixin _$CreateTimeEvent {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String value) changeHour,
-    required TResult Function(String value) changeMinutes,
-    required TResult Function() create,
-    required TResult Function() reset,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String value)? changeHour,
-    TResult? Function(String value)? changeMinutes,
-    TResult? Function()? create,
-    TResult? Function()? reset,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String value)? changeHour,
-    TResult Function(String value)? changeMinutes,
-    TResult Function()? create,
-    TResult Function()? reset,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_ChangeHour value) changeHour,
-    required TResult Function(_ChangeMinutes value) changeMinutes,
-    required TResult Function(_Create value) create,
-    required TResult Function(_Reset value) reset,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_ChangeHour value)? changeHour,
-    TResult? Function(_ChangeMinutes value)? changeMinutes,
-    TResult? Function(_Create value)? create,
-    TResult? Function(_Reset value)? reset,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_ChangeHour value)? changeHour,
-    TResult Function(_ChangeMinutes value)? changeMinutes,
-    TResult Function(_Create value)? create,
-    TResult Function(_Reset value)? reset,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateTimeEvent);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CreateTimeEvent()';
+}
+
+
 }
 
 /// @nodoc
-abstract class $CreateTimeEventCopyWith<$Res> {
-  factory $CreateTimeEventCopyWith(
-          CreateTimeEvent value, $Res Function(CreateTimeEvent) then) =
-      _$CreateTimeEventCopyWithImpl<$Res, CreateTimeEvent>;
+class $CreateTimeEventCopyWith<$Res>  {
+$CreateTimeEventCopyWith(CreateTimeEvent _, $Res Function(CreateTimeEvent) __);
 }
 
-/// @nodoc
-class _$CreateTimeEventCopyWithImpl<$Res, $Val extends CreateTimeEvent>
-    implements $CreateTimeEventCopyWith<$Res> {
-  _$CreateTimeEventCopyWithImpl(this._value, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+/// Adds pattern-matching-related methods to [CreateTimeEvent].
+extension CreateTimeEventPatterns on CreateTimeEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _ChangeHour value)?  changeHour,TResult Function( _ChangeMinutes value)?  changeMinutes,TResult Function( _Create value)?  create,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ChangeHour() when changeHour != null:
+return changeHour(_that);case _ChangeMinutes() when changeMinutes != null:
+return changeMinutes(_that);case _Create() when create != null:
+return create(_that);case _Reset() when reset != null:
+return reset(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _ChangeHour value)  changeHour,required TResult Function( _ChangeMinutes value)  changeMinutes,required TResult Function( _Create value)  create,required TResult Function( _Reset value)  reset,}){
+final _that = this;
+switch (_that) {
+case _ChangeHour():
+return changeHour(_that);case _ChangeMinutes():
+return changeMinutes(_that);case _Create():
+return create(_that);case _Reset():
+return reset(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _ChangeHour value)?  changeHour,TResult? Function( _ChangeMinutes value)?  changeMinutes,TResult? Function( _Create value)?  create,TResult? Function( _Reset value)?  reset,}){
+final _that = this;
+switch (_that) {
+case _ChangeHour() when changeHour != null:
+return changeHour(_that);case _ChangeMinutes() when changeMinutes != null:
+return changeMinutes(_that);case _Create() when create != null:
+return create(_that);case _Reset() when reset != null:
+return reset(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String value)?  changeHour,TResult Function( String value)?  changeMinutes,TResult Function()?  create,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ChangeHour() when changeHour != null:
+return changeHour(_that.value);case _ChangeMinutes() when changeMinutes != null:
+return changeMinutes(_that.value);case _Create() when create != null:
+return create();case _Reset() when reset != null:
+return reset();case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String value)  changeHour,required TResult Function( String value)  changeMinutes,required TResult Function()  create,required TResult Function()  reset,}) {final _that = this;
+switch (_that) {
+case _ChangeHour():
+return changeHour(_that.value);case _ChangeMinutes():
+return changeMinutes(_that.value);case _Create():
+return create();case _Reset():
+return reset();case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String value)?  changeHour,TResult? Function( String value)?  changeMinutes,TResult? Function()?  create,TResult? Function()?  reset,}) {final _that = this;
+switch (_that) {
+case _ChangeHour() when changeHour != null:
+return changeHour(_that.value);case _ChangeMinutes() when changeMinutes != null:
+return changeMinutes(_that.value);case _Create() when create != null:
+return create();case _Reset() when reset != null:
+return reset();case _:
+  return null;
+
+}
 }
 
-/// @nodoc
-abstract class _$$_ChangeHourCopyWith<$Res> {
-  factory _$$_ChangeHourCopyWith(
-          _$_ChangeHour value, $Res Function(_$_ChangeHour) then) =
-      __$$_ChangeHourCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String value});
-}
-
-/// @nodoc
-class __$$_ChangeHourCopyWithImpl<$Res>
-    extends _$CreateTimeEventCopyWithImpl<$Res, _$_ChangeHour>
-    implements _$$_ChangeHourCopyWith<$Res> {
-  __$$_ChangeHourCopyWithImpl(
-      _$_ChangeHour _value, $Res Function(_$_ChangeHour) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? value = null,
-  }) {
-    return _then(_$_ChangeHour(
-      value: null == value
-          ? _value.value
-          : value // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$_ChangeHour implements _ChangeHour {
-  const _$_ChangeHour({required this.value});
-
-  @override
-  final String value;
-
-  @override
-  String toString() {
-    return 'CreateTimeEvent.changeHour(value: $value)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_ChangeHour &&
-            (identical(other.value, value) || other.value == value));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, value);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_ChangeHourCopyWith<_$_ChangeHour> get copyWith =>
-      __$$_ChangeHourCopyWithImpl<_$_ChangeHour>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String value) changeHour,
-    required TResult Function(String value) changeMinutes,
-    required TResult Function() create,
-    required TResult Function() reset,
-  }) {
-    return changeHour(value);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String value)? changeHour,
-    TResult? Function(String value)? changeMinutes,
-    TResult? Function()? create,
-    TResult? Function()? reset,
-  }) {
-    return changeHour?.call(value);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String value)? changeHour,
-    TResult Function(String value)? changeMinutes,
-    TResult Function()? create,
-    TResult Function()? reset,
-    required TResult orElse(),
-  }) {
-    if (changeHour != null) {
-      return changeHour(value);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_ChangeHour value) changeHour,
-    required TResult Function(_ChangeMinutes value) changeMinutes,
-    required TResult Function(_Create value) create,
-    required TResult Function(_Reset value) reset,
-  }) {
-    return changeHour(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_ChangeHour value)? changeHour,
-    TResult? Function(_ChangeMinutes value)? changeMinutes,
-    TResult? Function(_Create value)? create,
-    TResult? Function(_Reset value)? reset,
-  }) {
-    return changeHour?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_ChangeHour value)? changeHour,
-    TResult Function(_ChangeMinutes value)? changeMinutes,
-    TResult Function(_Create value)? create,
-    TResult Function(_Reset value)? reset,
-    required TResult orElse(),
-  }) {
-    if (changeHour != null) {
-      return changeHour(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _ChangeHour implements CreateTimeEvent {
-  const factory _ChangeHour({required final String value}) = _$_ChangeHour;
-
-  String get value;
-  @JsonKey(ignore: true)
-  _$$_ChangeHourCopyWith<_$_ChangeHour> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$_ChangeMinutesCopyWith<$Res> {
-  factory _$$_ChangeMinutesCopyWith(
-          _$_ChangeMinutes value, $Res Function(_$_ChangeMinutes) then) =
-      __$$_ChangeMinutesCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String value});
-}
-
-/// @nodoc
-class __$$_ChangeMinutesCopyWithImpl<$Res>
-    extends _$CreateTimeEventCopyWithImpl<$Res, _$_ChangeMinutes>
-    implements _$$_ChangeMinutesCopyWith<$Res> {
-  __$$_ChangeMinutesCopyWithImpl(
-      _$_ChangeMinutes _value, $Res Function(_$_ChangeMinutes) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? value = null,
-  }) {
-    return _then(_$_ChangeMinutes(
-      value: null == value
-          ? _value.value
-          : value // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
 }
 
 /// @nodoc
 
-class _$_ChangeMinutes implements _ChangeMinutes {
-  const _$_ChangeMinutes({required this.value});
 
-  @override
-  final String value;
+class _ChangeHour implements CreateTimeEvent {
+  const _ChangeHour({required this.value});
+  
 
-  @override
-  String toString() {
-    return 'CreateTimeEvent.changeMinutes(value: $value)';
-  }
+ final  String value;
 
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_ChangeMinutes &&
-            (identical(other.value, value) || other.value == value));
-  }
+/// Create a copy of CreateTimeEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ChangeHourCopyWith<_ChangeHour> get copyWith => __$ChangeHourCopyWithImpl<_ChangeHour>(this, _$identity);
 
-  @override
-  int get hashCode => Object.hash(runtimeType, value);
 
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_ChangeMinutesCopyWith<_$_ChangeMinutes> get copyWith =>
-      __$$_ChangeMinutesCopyWithImpl<_$_ChangeMinutes>(this, _$identity);
 
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String value) changeHour,
-    required TResult Function(String value) changeMinutes,
-    required TResult Function() create,
-    required TResult Function() reset,
-  }) {
-    return changeMinutes(value);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String value)? changeHour,
-    TResult? Function(String value)? changeMinutes,
-    TResult? Function()? create,
-    TResult? Function()? reset,
-  }) {
-    return changeMinutes?.call(value);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String value)? changeHour,
-    TResult Function(String value)? changeMinutes,
-    TResult Function()? create,
-    TResult Function()? reset,
-    required TResult orElse(),
-  }) {
-    if (changeMinutes != null) {
-      return changeMinutes(value);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_ChangeHour value) changeHour,
-    required TResult Function(_ChangeMinutes value) changeMinutes,
-    required TResult Function(_Create value) create,
-    required TResult Function(_Reset value) reset,
-  }) {
-    return changeMinutes(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_ChangeHour value)? changeHour,
-    TResult? Function(_ChangeMinutes value)? changeMinutes,
-    TResult? Function(_Create value)? create,
-    TResult? Function(_Reset value)? reset,
-  }) {
-    return changeMinutes?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_ChangeHour value)? changeHour,
-    TResult Function(_ChangeMinutes value)? changeMinutes,
-    TResult Function(_Create value)? create,
-    TResult Function(_Reset value)? reset,
-    required TResult orElse(),
-  }) {
-    if (changeMinutes != null) {
-      return changeMinutes(this);
-    }
-    return orElse();
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeHour&&(identical(other.value, value) || other.value == value));
 }
 
-abstract class _ChangeMinutes implements CreateTimeEvent {
-  const factory _ChangeMinutes({required final String value}) =
-      _$_ChangeMinutes;
 
-  String get value;
-  @JsonKey(ignore: true)
-  _$$_ChangeMinutesCopyWith<_$_ChangeMinutes> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+int get hashCode => Object.hash(runtimeType,value);
+
+@override
+String toString() {
+  return 'CreateTimeEvent.changeHour(value: $value)';
+}
+
+
 }
 
 /// @nodoc
-abstract class _$$_CreateCopyWith<$Res> {
-  factory _$$_CreateCopyWith(_$_Create value, $Res Function(_$_Create) then) =
-      __$$_CreateCopyWithImpl<$Res>;
+abstract mixin class _$ChangeHourCopyWith<$Res> implements $CreateTimeEventCopyWith<$Res> {
+  factory _$ChangeHourCopyWith(_ChangeHour value, $Res Function(_ChangeHour) _then) = __$ChangeHourCopyWithImpl;
+@useResult
+$Res call({
+ String value
+});
+
+
+
+
+}
+/// @nodoc
+class __$ChangeHourCopyWithImpl<$Res>
+    implements _$ChangeHourCopyWith<$Res> {
+  __$ChangeHourCopyWithImpl(this._self, this._then);
+
+  final _ChangeHour _self;
+  final $Res Function(_ChangeHour) _then;
+
+/// Create a copy of CreateTimeEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+  return _then(_ChangeHour(
+value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
 }
 
-/// @nodoc
-class __$$_CreateCopyWithImpl<$Res>
-    extends _$CreateTimeEventCopyWithImpl<$Res, _$_Create>
-    implements _$$_CreateCopyWith<$Res> {
-  __$$_CreateCopyWithImpl(_$_Create _value, $Res Function(_$_Create) _then)
-      : super(_value, _then);
+
 }
 
 /// @nodoc
 
-class _$_Create implements _Create {
-  const _$_Create();
 
-  @override
-  String toString() {
-    return 'CreateTimeEvent.create()';
-  }
+class _ChangeMinutes implements CreateTimeEvent {
+  const _ChangeMinutes({required this.value});
+  
 
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Create);
-  }
+ final  String value;
 
-  @override
-  int get hashCode => runtimeType.hashCode;
+/// Create a copy of CreateTimeEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ChangeMinutesCopyWith<_ChangeMinutes> get copyWith => __$ChangeMinutesCopyWithImpl<_ChangeMinutes>(this, _$identity);
 
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String value) changeHour,
-    required TResult Function(String value) changeMinutes,
-    required TResult Function() create,
-    required TResult Function() reset,
-  }) {
-    return create();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String value)? changeHour,
-    TResult? Function(String value)? changeMinutes,
-    TResult? Function()? create,
-    TResult? Function()? reset,
-  }) {
-    return create?.call();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String value)? changeHour,
-    TResult Function(String value)? changeMinutes,
-    TResult Function()? create,
-    TResult Function()? reset,
-    required TResult orElse(),
-  }) {
-    if (create != null) {
-      return create();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_ChangeHour value) changeHour,
-    required TResult Function(_ChangeMinutes value) changeMinutes,
-    required TResult Function(_Create value) create,
-    required TResult Function(_Reset value) reset,
-  }) {
-    return create(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_ChangeHour value)? changeHour,
-    TResult? Function(_ChangeMinutes value)? changeMinutes,
-    TResult? Function(_Create value)? create,
-    TResult? Function(_Reset value)? reset,
-  }) {
-    return create?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_ChangeHour value)? changeHour,
-    TResult Function(_ChangeMinutes value)? changeMinutes,
-    TResult Function(_Create value)? create,
-    TResult Function(_Reset value)? reset,
-    required TResult orElse(),
-  }) {
-    if (create != null) {
-      return create(this);
-    }
-    return orElse();
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeMinutes&&(identical(other.value, value) || other.value == value));
 }
 
-abstract class _Create implements CreateTimeEvent {
-  const factory _Create() = _$_Create;
+
+@override
+int get hashCode => Object.hash(runtimeType,value);
+
+@override
+String toString() {
+  return 'CreateTimeEvent.changeMinutes(value: $value)';
+}
+
+
 }
 
 /// @nodoc
-abstract class _$$_ResetCopyWith<$Res> {
-  factory _$$_ResetCopyWith(_$_Reset value, $Res Function(_$_Reset) then) =
-      __$$_ResetCopyWithImpl<$Res>;
+abstract mixin class _$ChangeMinutesCopyWith<$Res> implements $CreateTimeEventCopyWith<$Res> {
+  factory _$ChangeMinutesCopyWith(_ChangeMinutes value, $Res Function(_ChangeMinutes) _then) = __$ChangeMinutesCopyWithImpl;
+@useResult
+$Res call({
+ String value
+});
+
+
+
+
+}
+/// @nodoc
+class __$ChangeMinutesCopyWithImpl<$Res>
+    implements _$ChangeMinutesCopyWith<$Res> {
+  __$ChangeMinutesCopyWithImpl(this._self, this._then);
+
+  final _ChangeMinutes _self;
+  final $Res Function(_ChangeMinutes) _then;
+
+/// Create a copy of CreateTimeEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+  return _then(_ChangeMinutes(
+value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
 }
 
-/// @nodoc
-class __$$_ResetCopyWithImpl<$Res>
-    extends _$CreateTimeEventCopyWithImpl<$Res, _$_Reset>
-    implements _$$_ResetCopyWith<$Res> {
-  __$$_ResetCopyWithImpl(_$_Reset _value, $Res Function(_$_Reset) _then)
-      : super(_value, _then);
+
 }
 
 /// @nodoc
 
-class _$_Reset implements _Reset {
-  const _$_Reset();
 
-  @override
-  String toString() {
-    return 'CreateTimeEvent.reset()';
-  }
+class _Create implements CreateTimeEvent {
+  const _Create();
+  
 
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Reset);
-  }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
 
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String value) changeHour,
-    required TResult Function(String value) changeMinutes,
-    required TResult Function() create,
-    required TResult Function() reset,
-  }) {
-    return reset();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String value)? changeHour,
-    TResult? Function(String value)? changeMinutes,
-    TResult? Function()? create,
-    TResult? Function()? reset,
-  }) {
-    return reset?.call();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String value)? changeHour,
-    TResult Function(String value)? changeMinutes,
-    TResult Function()? create,
-    TResult Function()? reset,
-    required TResult orElse(),
-  }) {
-    if (reset != null) {
-      return reset();
-    }
-    return orElse();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_ChangeHour value) changeHour,
-    required TResult Function(_ChangeMinutes value) changeMinutes,
-    required TResult Function(_Create value) create,
-    required TResult Function(_Reset value) reset,
-  }) {
-    return reset(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_ChangeHour value)? changeHour,
-    TResult? Function(_ChangeMinutes value)? changeMinutes,
-    TResult? Function(_Create value)? create,
-    TResult? Function(_Reset value)? reset,
-  }) {
-    return reset?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_ChangeHour value)? changeHour,
-    TResult Function(_ChangeMinutes value)? changeMinutes,
-    TResult Function(_Create value)? create,
-    TResult Function(_Reset value)? reset,
-    required TResult orElse(),
-  }) {
-    if (reset != null) {
-      return reset(this);
-    }
-    return orElse();
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Create);
 }
 
-abstract class _Reset implements CreateTimeEvent {
-  const factory _Reset() = _$_Reset;
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CreateTimeEvent.create()';
 }
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _Reset implements CreateTimeEvent {
+  const _Reset();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Reset);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CreateTimeEvent.reset()';
+}
+
+
+}
+
+
+
 
 /// @nodoc
 mixin _$CreateTimeState {
-  ActionState<ModelTime> get currentState => throw _privateConstructorUsedError;
-  int get hour => throw _privateConstructorUsedError;
-  int get minutes => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
-  $CreateTimeStateCopyWith<CreateTimeState> get copyWith =>
-      throw _privateConstructorUsedError;
+ ActionState<ModelTime> get currentState; int get hour; int get minutes;
+/// Create a copy of CreateTimeState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CreateTimeStateCopyWith<CreateTimeState> get copyWith => _$CreateTimeStateCopyWithImpl<CreateTimeState>(this as CreateTimeState, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateTimeState&&(identical(other.currentState, currentState) || other.currentState == currentState)&&(identical(other.hour, hour) || other.hour == hour)&&(identical(other.minutes, minutes) || other.minutes == minutes));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,currentState,hour,minutes);
+
+@override
+String toString() {
+  return 'CreateTimeState(currentState: $currentState, hour: $hour, minutes: $minutes)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $CreateTimeStateCopyWith<$Res> {
-  factory $CreateTimeStateCopyWith(
-          CreateTimeState value, $Res Function(CreateTimeState) then) =
-      _$CreateTimeStateCopyWithImpl<$Res, CreateTimeState>;
-  @useResult
-  $Res call({ActionState<ModelTime> currentState, int hour, int minutes});
+abstract mixin class $CreateTimeStateCopyWith<$Res>  {
+  factory $CreateTimeStateCopyWith(CreateTimeState value, $Res Function(CreateTimeState) _then) = _$CreateTimeStateCopyWithImpl;
+@useResult
+$Res call({
+ ActionState<ModelTime> currentState, int hour, int minutes
+});
 
-  $ActionStateCopyWith<ModelTime, $Res> get currentState;
+
+$ActionStateCopyWith<ModelTime, $Res> get currentState;
+
 }
-
 /// @nodoc
-class _$CreateTimeStateCopyWithImpl<$Res, $Val extends CreateTimeState>
+class _$CreateTimeStateCopyWithImpl<$Res>
     implements $CreateTimeStateCopyWith<$Res> {
-  _$CreateTimeStateCopyWithImpl(this._value, this._then);
+  _$CreateTimeStateCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final CreateTimeState _self;
+  final $Res Function(CreateTimeState) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? currentState = null,
-    Object? hour = null,
-    Object? minutes = null,
-  }) {
-    return _then(_value.copyWith(
-      currentState: null == currentState
-          ? _value.currentState
-          : currentState // ignore: cast_nullable_to_non_nullable
-              as ActionState<ModelTime>,
-      hour: null == hour
-          ? _value.hour
-          : hour // ignore: cast_nullable_to_non_nullable
-              as int,
-      minutes: null == minutes
-          ? _value.minutes
-          : minutes // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
+/// Create a copy of CreateTimeState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? currentState = null,Object? hour = null,Object? minutes = null,}) {
+  return _then(_self.copyWith(
+currentState: null == currentState ? _self.currentState : currentState // ignore: cast_nullable_to_non_nullable
+as ActionState<ModelTime>,hour: null == hour ? _self.hour : hour // ignore: cast_nullable_to_non_nullable
+as int,minutes: null == minutes ? _self.minutes : minutes // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+/// Create a copy of CreateTimeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ActionStateCopyWith<ModelTime, $Res> get currentState {
+  
+  return $ActionStateCopyWith<ModelTime, $Res>(_self.currentState, (value) {
+    return _then(_self.copyWith(currentState: value));
+  });
+}
+}
 
-  @override
-  @pragma('vm:prefer-inline')
-  $ActionStateCopyWith<ModelTime, $Res> get currentState {
-    return $ActionStateCopyWith<ModelTime, $Res>(_value.currentState, (value) {
-      return _then(_value.copyWith(currentState: value) as $Val);
-    });
-  }
+
+/// Adds pattern-matching-related methods to [CreateTimeState].
+extension CreateTimeStatePatterns on CreateTimeState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CreateTimeState value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _CreateTimeState() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CreateTimeState value)  $default,){
+final _that = this;
+switch (_that) {
+case _CreateTimeState():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CreateTimeState value)?  $default,){
+final _that = this;
+switch (_that) {
+case _CreateTimeState() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ActionState<ModelTime> currentState,  int hour,  int minutes)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _CreateTimeState() when $default != null:
+return $default(_that.currentState,_that.hour,_that.minutes);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ActionState<ModelTime> currentState,  int hour,  int minutes)  $default,) {final _that = this;
+switch (_that) {
+case _CreateTimeState():
+return $default(_that.currentState,_that.hour,_that.minutes);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ActionState<ModelTime> currentState,  int hour,  int minutes)?  $default,) {final _that = this;
+switch (_that) {
+case _CreateTimeState() when $default != null:
+return $default(_that.currentState,_that.hour,_that.minutes);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$_CreateTimeStateCopyWith<$Res>
-    implements $CreateTimeStateCopyWith<$Res> {
-  factory _$$_CreateTimeStateCopyWith(
-          _$_CreateTimeState value, $Res Function(_$_CreateTimeState) then) =
-      __$$_CreateTimeStateCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({ActionState<ModelTime> currentState, int hour, int minutes});
 
-  @override
-  $ActionStateCopyWith<ModelTime, $Res> get currentState;
+
+class _CreateTimeState implements CreateTimeState {
+  const _CreateTimeState({required this.currentState, this.hour = 0, this.minutes = 0});
+  
+
+@override final  ActionState<ModelTime> currentState;
+@override@JsonKey() final  int hour;
+@override@JsonKey() final  int minutes;
+
+/// Create a copy of CreateTimeState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CreateTimeStateCopyWith<_CreateTimeState> get copyWith => __$CreateTimeStateCopyWithImpl<_CreateTimeState>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateTimeState&&(identical(other.currentState, currentState) || other.currentState == currentState)&&(identical(other.hour, hour) || other.hour == hour)&&(identical(other.minutes, minutes) || other.minutes == minutes));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,currentState,hour,minutes);
+
+@override
+String toString() {
+  return 'CreateTimeState(currentState: $currentState, hour: $hour, minutes: $minutes)';
+}
+
+
 }
 
 /// @nodoc
-class __$$_CreateTimeStateCopyWithImpl<$Res>
-    extends _$CreateTimeStateCopyWithImpl<$Res, _$_CreateTimeState>
-    implements _$$_CreateTimeStateCopyWith<$Res> {
-  __$$_CreateTimeStateCopyWithImpl(
-      _$_CreateTimeState _value, $Res Function(_$_CreateTimeState) _then)
-      : super(_value, _then);
+abstract mixin class _$CreateTimeStateCopyWith<$Res> implements $CreateTimeStateCopyWith<$Res> {
+  factory _$CreateTimeStateCopyWith(_CreateTimeState value, $Res Function(_CreateTimeState) _then) = __$CreateTimeStateCopyWithImpl;
+@override @useResult
+$Res call({
+ ActionState<ModelTime> currentState, int hour, int minutes
+});
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? currentState = null,
-    Object? hour = null,
-    Object? minutes = null,
-  }) {
-    return _then(_$_CreateTimeState(
-      currentState: null == currentState
-          ? _value.currentState
-          : currentState // ignore: cast_nullable_to_non_nullable
-              as ActionState<ModelTime>,
-      hour: null == hour
-          ? _value.hour
-          : hour // ignore: cast_nullable_to_non_nullable
-              as int,
-      minutes: null == minutes
-          ? _value.minutes
-          : minutes // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
+
+@override $ActionStateCopyWith<ModelTime, $Res> get currentState;
+
 }
-
 /// @nodoc
+class __$CreateTimeStateCopyWithImpl<$Res>
+    implements _$CreateTimeStateCopyWith<$Res> {
+  __$CreateTimeStateCopyWithImpl(this._self, this._then);
 
-class _$_CreateTimeState implements _CreateTimeState {
-  const _$_CreateTimeState(
-      {required this.currentState, this.hour = 0, this.minutes = 0});
+  final _CreateTimeState _self;
+  final $Res Function(_CreateTimeState) _then;
 
-  @override
-  final ActionState<ModelTime> currentState;
-  @override
-  @JsonKey()
-  final int hour;
-  @override
-  @JsonKey()
-  final int minutes;
-
-  @override
-  String toString() {
-    return 'CreateTimeState(currentState: $currentState, hour: $hour, minutes: $minutes)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_CreateTimeState &&
-            (identical(other.currentState, currentState) ||
-                other.currentState == currentState) &&
-            (identical(other.hour, hour) || other.hour == hour) &&
-            (identical(other.minutes, minutes) || other.minutes == minutes));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, currentState, hour, minutes);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_CreateTimeStateCopyWith<_$_CreateTimeState> get copyWith =>
-      __$$_CreateTimeStateCopyWithImpl<_$_CreateTimeState>(this, _$identity);
+/// Create a copy of CreateTimeState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? currentState = null,Object? hour = null,Object? minutes = null,}) {
+  return _then(_CreateTimeState(
+currentState: null == currentState ? _self.currentState : currentState // ignore: cast_nullable_to_non_nullable
+as ActionState<ModelTime>,hour: null == hour ? _self.hour : hour // ignore: cast_nullable_to_non_nullable
+as int,minutes: null == minutes ? _self.minutes : minutes // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
 }
 
-abstract class _CreateTimeState implements CreateTimeState {
-  const factory _CreateTimeState(
-      {required final ActionState<ModelTime> currentState,
-      final int hour,
-      final int minutes}) = _$_CreateTimeState;
-
-  @override
-  ActionState<ModelTime> get currentState;
-  @override
-  int get hour;
-  @override
-  int get minutes;
-  @override
-  @JsonKey(ignore: true)
-  _$$_CreateTimeStateCopyWith<_$_CreateTimeState> get copyWith =>
-      throw _privateConstructorUsedError;
+/// Create a copy of CreateTimeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ActionStateCopyWith<ModelTime, $Res> get currentState {
+  
+  return $ActionStateCopyWith<ModelTime, $Res>(_self.currentState, (value) {
+    return _then(_self.copyWith(currentState: value));
+  });
 }
+}
+
+// dart format on

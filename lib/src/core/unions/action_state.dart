@@ -4,7 +4,7 @@ import 'package:time_money/src/core/failures/failures.dart';
 part 'action_state.freezed.dart';
 
 @freezed
-class ActionState<T> with _$ActionState<T> {
+abstract class ActionState<T> with _$ActionState<T> {
   const factory ActionState.initial() = _Initial<T>;
   const factory ActionState.loading() = _Loading<T>;
   const factory ActionState.error(GlobalDefaultFailure err) = _Error<T>;

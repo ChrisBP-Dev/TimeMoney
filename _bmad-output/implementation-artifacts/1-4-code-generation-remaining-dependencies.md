@@ -1,6 +1,6 @@
 # Story 1.4: Code Generation & Remaining Dependencies
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -43,41 +43,41 @@ So that the entire dependency tree is current and the codebase is fully moderniz
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Reinstall Freezed 3.x and configure backward-compatible codegen (AC: #1)
-  - [ ] 1.1 Add `freezed: ^3.2.5` to dev_dependencies in pubspec.yaml
-  - [ ] 1.2 Update `freezed_annotation` constraint from `^3.0.0` to `^3.1.0` in dependencies (already compatible, explicit bump)
-  - [ ] 1.3 Run `flutter pub get` — verify dependency resolution succeeds (build_runner will auto-resolve to ~2.13.0 due to freezed 3.x requiring `build >=3.0.0`)
-  - [ ] 1.3b Verify `objectbox_generator` resolves without conflict after transitive build/source_gen upgrade (build 2.x → 4.x, source_gen 2.x → 4.x)
-  - [ ] 1.4 Create `build.yaml` at project root to enable `when`/`map` generation (see Dev Notes for config)
-  - [ ] 1.5 Update all 17 @freezed source files: change `class X with _$X` to `abstract class X with _$X` where needed (15 need change, 2 already abstract — see File Inventory)
-  - [ ] 1.6 Run `dart run build_runner build --delete-conflicting-outputs` — verify all 13 .freezed.dart + 2 .g.dart files regenerate
-  - [ ] 1.7 Run `flutter analyze` — verify zero errors
-  - [ ] 1.8 Verify `.when()` calls in 10 hand-written files still compile (backward compat via build.yaml config)
+- [x] Task 1: Reinstall Freezed 3.x and configure backward-compatible codegen (AC: #1)
+  - [x] 1.1 Add `freezed: ^3.2.5` to dev_dependencies in pubspec.yaml
+  - [x] 1.2 Update `freezed_annotation` constraint from `^3.0.0` to `^3.1.0` in dependencies (already compatible, explicit bump)
+  - [x] 1.3 Run `flutter pub get` — verify dependency resolution succeeds (build_runner will auto-resolve to ~2.13.0 due to freezed 3.x requiring `build >=3.0.0`)
+  - [x] 1.3b Verify `objectbox_generator` resolves without conflict after transitive build/source_gen upgrade (build 2.x → 4.x, source_gen 2.x → 4.x)
+  - [x] 1.4 Create `build.yaml` at project root to enable `when`/`map` generation (see Dev Notes for config)
+  - [x] 1.5 Update all 17 @freezed source files: change `class X with _$X` to `abstract class X with _$X` where needed (15 need change, 2 already abstract — see File Inventory)
+  - [x] 1.6 Run `dart run build_runner build --delete-conflicting-outputs` — verify all 13 .freezed.dart + 2 .g.dart files regenerate
+  - [x] 1.7 Run `flutter analyze` — verify zero errors
+  - [x] 1.8 Verify `.when()` calls in 10 hand-written files still compile (backward compat via build.yaml config)
 
-- [ ] Task 2: Upgrade very_good_analysis 5.x → 10.x (AC: #2)
-  - [ ] 2.1 Update pubspec.yaml: `very_good_analysis: ^10.2.0`
-  - [ ] 2.2 Update `analysis_options.yaml`: change include from `package:very_good_analysis/analysis_options.5.1.0.yaml` to `package:very_good_analysis/analysis_options.yaml`
-  - [ ] 2.3 Run `flutter pub get`
-  - [ ] 2.4 Run `flutter analyze` — capture all new warnings
-  - [ ] 2.5 Fix all new lint violations from 5.x→10.x upgrade (see Dev Notes for expected new rules)
-  - [ ] 2.6 Verify `invalid_annotation_target: ignore` is still needed; keep if @freezed triggers it
-  - [ ] 2.7 Run `flutter analyze` — verify zero warnings on non-generated code
+- [x] Task 2: Upgrade very_good_analysis 5.x → 10.x (AC: #2)
+  - [x] 2.1 Update pubspec.yaml: `very_good_analysis: ^10.2.0`
+  - [x] 2.2 Update `analysis_options.yaml`: change include from `package:very_good_analysis/analysis_options.5.1.0.yaml` to `package:very_good_analysis/analysis_options.yaml`
+  - [x] 2.3 Run `flutter pub get`
+  - [x] 2.4 Run `flutter analyze` — capture all new warnings
+  - [x] 2.5 Fix all new lint violations from 5.x→10.x upgrade (see Dev Notes for expected new rules)
+  - [x] 2.6 Verify `invalid_annotation_target: ignore` is still needed; keep if @freezed triggers it
+  - [x] 2.7 Run `flutter analyze` — verify zero warnings on non-generated code
 
-- [ ] Task 3: Upgrade remaining dependencies (AC: #3)
-  - [ ] 3.1 Run `flutter pub upgrade` to pull latest compatible versions within existing constraints
-  - [ ] 3.2 Verify no dependency placement issues (NFR9): build_runner, json_serializable, objectbox_generator, freezed, mocktail, bloc_test must all be in dev_dependencies
-  - [ ] 3.3 Verify `provider: ^6.0.5` is still needed — grep `lib/` for `import.*provider` to check if any file imports it. If zero imports found, remove from dependencies
-  - [ ] 3.4 Run `flutter analyze` — zero errors
-  - [ ] 3.5 Run `flutter pub get` — clean resolution
+- [x] Task 3: Upgrade remaining dependencies (AC: #3)
+  - [x] 3.1 Run `flutter pub upgrade` to pull latest compatible versions within existing constraints
+  - [x] 3.2 Verify no dependency placement issues (NFR9): build_runner, json_serializable, objectbox_generator, freezed, mocktail, bloc_test must all be in dev_dependencies
+  - [x] 3.3 Verify `provider: ^6.0.5` is still needed — grep `lib/` for `import.*provider` to check if any file imports it. If zero imports found, remove from dependencies
+  - [x] 3.4 Run `flutter analyze` — zero errors
+  - [x] 3.5 Run `flutter pub get` — clean resolution
 
-- [ ] Task 4: Compilation verification (AC: #1, #5)
-  - [ ] 4.1 Run `flutter analyze` — zero errors
-  - [ ] 4.2 Run `flutter build ios --simulator --flavor development` — succeeds
-  - [ ] 4.3 Run `flutter build ios --simulator --flavor staging` — succeeds
-  - [ ] 4.4 Run `flutter build ios --simulator --flavor production` — succeeds
-  - [ ] 4.5 Run `flutter build apk --debug --flavor development` — succeeds
-  - [ ] 4.6 Run `flutter build apk --debug --flavor staging` — succeeds
-  - [ ] 4.7 Run `flutter build apk --debug --flavor production` — succeeds
+- [x] Task 4: Compilation verification (AC: #1, #5)
+  - [x] 4.1 Run `flutter analyze` — zero errors
+  - [x] 4.2 Run `flutter build ios --simulator --flavor development` — succeeds
+  - [x] 4.3 Run `flutter build ios --simulator --flavor staging` — succeeds
+  - [x] 4.4 Run `flutter build ios --simulator --flavor production` — succeeds
+  - [x] 4.5 Run `flutter build apk --debug --flavor development` — succeeds
+  - [x] 4.6 Run `flutter build apk --debug --flavor staging` — succeeds
+  - [x] 4.7 Run `flutter build apk --debug --flavor production` — succeeds
 
 - [ ] Task 5: Runtime verification (AC: #4) — MANUALLY VERIFIED BY DEVELOPER
   - [ ] 5.1 Launch app on iOS simulator — verify no crashes
@@ -378,10 +378,77 @@ Patterns to follow:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- build_runner resolved to 2.11.1 (not 2.13.0 as story predicted) — still compatible, pub upgrade later bumped to 2.13.0
+- json_annotation warning during build_runner: "The version constraint ^4.8.0 on json_annotation allows versions before 4.9.0" — informational only, pub upgrade resolved to 4.11.0
+- Freezed 3.x generates `when`/`map` as extension methods (`ActionStatePatterns<T>`, etc.) instead of mixin methods — required adding explicit imports of `action_state.dart` in 3 widget files that call `.when()` on `ActionState` (external type not in same part-of library)
+- `timebox.dart` had `// ignore_for_file: public_member_api_docs, sort_constructors_first` — removing this surfaced `sort_constructors_first` which was fixed by reordering the constructor before fields
+
 ### Completion Notes List
 
+- **Task 1 (Freezed 3.x):** Added freezed ^3.2.5 to dev_dependencies, bumped freezed_annotation to ^3.1.0, created build.yaml for when/map generation, updated 16 @freezed classes to `abstract class` (2 were already abstract), regenerated all 13 .freezed.dart + 2 .g.dart files, added 3 missing imports for Freezed 3.x extension-based when() method. All 10 .when() call sites compile successfully.
+- **Task 2 (VGA 10.x):** Upgraded very_good_analysis ^5.0.0 → ^10.2.0, updated analysis_options.yaml include path. Fixed 19 new lint violations: removed 5 unnecessary ignore_for_file directives, changed 7 `catch (e)` to `on Object catch (e)` in repositories, wrapped 2 discarded showDialog futures with `unawaited()`, reordered constructor in timebox.dart. Kept `invalid_annotation_target: ignore` for @freezed compatibility.
+- **Task 3 (Remaining deps):** Ran flutter pub upgrade — 7 transitive deps upgraded (build_runner 2.13.0, json_annotation 4.11.0, json_serializable 6.13.0, analyzer 10.0.1, etc). Removed unused `provider: ^6.0.5` (zero imports in lib/). All dev_dependencies correctly placed (NFR9).
+- **Task 4 (Builds):** All 6 builds pass — 3 iOS simulator (dev/stg/prod) + 3 Android APK debug (dev/stg/prod). Zero analyze errors.
+- **Task 5 (Runtime):** Pending manual verification by developer. All builds compile cleanly, no behavioral changes made.
+
+### Change Log
+
+- 2026-03-17: Implemented Story 1.4 — Freezed 2.x→3.x migration, VGA 5.x→10.x upgrade, remaining deps upgrade, provider removed
+
 ### File List
+
+**Modified by developer:**
+- pubspec.yaml — Added freezed ^3.2.5, bumped freezed_annotation ^3.1.0, bumped very_good_analysis ^10.2.0, removed unused provider
+- analysis_options.yaml — Updated include path for VGA 10.x
+- lib/src/features/times/domain/model_time.dart — abstract class
+- lib/src/features/wage_hourly/domain/wage_hourly.dart — abstract class
+- lib/src/core/failures/failures.dart — abstract class (ValueFailure + GlobalFailure)
+- lib/src/core/unions/action_state.dart — abstract class
+- lib/src/presentation/control_hours/times/create_time/bloc/create_time_event.dart — abstract class
+- lib/src/presentation/control_hours/times/delete_time/bloc/delete_time_event.dart — abstract class
+- lib/src/presentation/control_hours/times/list_times/bloc/list_times_state.dart — abstract class
+- lib/src/presentation/control_hours/times/list_times/bloc/list_times_event.dart — abstract class
+- lib/src/presentation/control_hours/times/update_time/bloc/update_time_state.dart — abstract class
+- lib/src/presentation/control_hours/times/update_time/bloc/update_time_event.dart — abstract class
+- lib/src/presentation/control_hours/wage_hourly/fetch_wage/bloc/fetch_wage_hourly_state.dart — abstract class
+- lib/src/presentation/control_hours/wage_hourly/fetch_wage/bloc/fetch_wage_hourly_event.dart — abstract class
+- lib/src/presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_state.dart — abstract class
+- lib/src/presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_event.dart — abstract class
+- lib/src/presentation/control_hours/result_payment/cubit/result_payment_state.dart — abstract class
+- lib/src/presentation/control_hours/times/create_time/widgets/create_time_button.dart — added action_state.dart import
+- lib/src/presentation/control_hours/times/update_time/widgets/update_time_button.dart — added action_state.dart import
+- lib/src/presentation/control_hours/wage_hourly/update_wage/widgets/set_wage_button.dart — added action_state.dart import
+- lib/src/features/times/domain/times_repository.dart — removed unused ignore directive
+- lib/src/features/times/infraestructure/timebox.dart — removed unused ignore directive, reordered constructor
+- lib/src/features/wage_hourly/domain/wage_hourly_repository.dart — removed unused ignore directive
+- lib/src/features/times/infraestructure/i_times_objectbox_repository.dart — catch(e) → on Object catch(e)
+- lib/src/features/wage_hourly/infraestructure/i_wage_hourly_objectbox_repository.dart — catch(e) → on Object catch(e)
+- lib/src/presentation/control_hours/control_hours_page.dart — unawaited(showDialog)
+- lib/src/presentation/control_hours/result_payment/calculate_payment_button.dart — unawaited(showDialog)
+- lib/src/presentation/control_hours/wage_hourly/fetch_wage/bloc/fetch_wage_hourly_bloc.dart — removed unused ignore directive
+- lib/src/presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.dart — removed unused ignore directive
+
+**New files:**
+- build.yaml — Freezed 3.x build configuration (when/map generation enabled)
+
+**Auto-regenerated by build_runner:**
+- lib/src/features/times/domain/model_time.freezed.dart
+- lib/src/features/times/domain/model_time.g.dart
+- lib/src/features/wage_hourly/domain/wage_hourly.freezed.dart
+- lib/src/features/wage_hourly/domain/wage_hourly.g.dart
+- lib/src/core/failures/failures.freezed.dart
+- lib/src/core/unions/action_state.freezed.dart
+- lib/src/presentation/control_hours/times/create_time/bloc/create_time_bloc.freezed.dart
+- lib/src/presentation/control_hours/times/delete_time/bloc/delete_time_bloc.freezed.dart
+- lib/src/presentation/control_hours/times/list_times/bloc/list_times_bloc.freezed.dart
+- lib/src/presentation/control_hours/times/update_time/bloc/update_time_bloc.freezed.dart
+- lib/src/presentation/control_hours/wage_hourly/fetch_wage/bloc/fetch_wage_hourly_bloc.freezed.dart
+- lib/src/presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.freezed.dart
+- lib/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.freezed.dart
+
+**Auto-updated:**
+- pubspec.lock — Updated dependency resolutions

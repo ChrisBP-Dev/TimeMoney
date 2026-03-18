@@ -3,7 +3,7 @@ part 'model_time.freezed.dart';
 part 'model_time.g.dart';
 
 @freezed
-class ModelTime with _$ModelTime {
+abstract class ModelTime with _$ModelTime {
   const factory ModelTime({
     required int hour,
     required int minutes,

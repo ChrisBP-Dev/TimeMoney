@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:time_money/src/core/extensions/screen_size.dart';
 import 'package:time_money/src/presentation/control_hours/result_payment/calculate_payment_button.dart';
@@ -40,10 +42,10 @@ class ControlHoursPage extends StatelessWidget {
                   FloatingActionButton.extended(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     onPressed: () {
-                      showDialog<void>(
+                      unawaited(showDialog<void>(
                         context: context,
                         builder: (context) => const CreateTimeCard(),
-                      );
+                      ));
                     },
                     label: const Text(
                       'Add Time',
