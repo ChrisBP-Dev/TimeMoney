@@ -39,6 +39,7 @@ so that the codebase uses properly organized shared components and the DI tree i
    **And** `InjectionRepositories` class is deleted
    **And** `UseCasesInjection.list()` no longer takes an `InjectionRepositories` parameter
    **And** `context.read<T>()` is used for all dependency resolution
+   **And** `context.watch<T>()` is NEVER used for DI resolution — only `context.read<T>()`
 
 5. **Given** all restructuring is complete
    **When** the full app is compiled and exercised
@@ -58,13 +59,7 @@ so that the codebase uses properly organized shared components and the DI tree i
   - [ ] 1.6 Create `shared/widgets/widgets.dart` barrel — exports all 4 widget files
   - [ ] 1.7 Delete `custom_card.dart` (dead code — verified: zero feature imports)
 
-- [ ] Task 2: Update all cross-codebase imports (AC: #2)
-  - [ ] 2.1 Update `features/times/presentation/widgets/list_times_data_view.dart` — change `presentation/widgets/widgets.dart` → `shared/widgets/widgets.dart`
-  - [ ] 2.2 Update `features/times/presentation/widgets/list_times_other_view.dart` — change `presentation/widgets/widgets.dart` → `shared/widgets/widgets.dart`
-  - [ ] 2.3 Update `features/times/presentation/widgets/error_list_times_view.dart` — change `presentation/widgets/widgets.dart` → `shared/widgets/widgets.dart`
-  - [ ] 2.4 Update `features/wage/presentation/widgets/wage_hourly_data_view.dart` — change `presentation/widgets/widgets.dart` → `shared/widgets/widgets.dart`
-  - [ ] 2.5 Update `features/wage/presentation/widgets/wage_hourly_other_view.dart` — change `presentation/widgets/widgets.dart` → `shared/widgets/widgets.dart`
-  - [ ] 2.6 Update `features/wage/presentation/widgets/error_fetch_wage_hourly_view.dart` — change `presentation/widgets/widgets.dart` → `shared/widgets/widgets.dart`
+- [ ] Task 2: Update all cross-codebase imports (AC: #2) — apply Pattern 1 from "Exhaustive Import Update Checklist" below to all 6 feature files
 
 - [ ] Task 3: Delete old presentation folder (AC: #2, #3)
   - [ ] 3.1 Delete entire `lib/src/presentation/` folder tree (widgets.dart barrel, catch_error_builder.dart, custom_card.dart, info_section.dart, views/error_view.dart)
@@ -313,7 +308,15 @@ class TimesUseCasesInjections {
     RepositoryProvider<ListTimesUseCase>(
       create: (context) => ListTimesUseCase(injection.timesRepository),
     ),
-    // ... same pattern for all 4 use cases
+    RepositoryProvider<CreateTimeUseCase>(
+      create: (context) => CreateTimeUseCase(injection.timesRepository),
+    ),
+    RepositoryProvider<DeleteTimeUseCase>(
+      create: (context) => DeleteTimeUseCase(injection.timesRepository),
+    ),
+    RepositoryProvider<UpdateTimeUseCase>(
+      create: (context) => UpdateTimeUseCase(injection.timesRepository),
+    ),
   ];
 }
 ```
@@ -325,12 +328,52 @@ class TimesUseCasesInjections {
     RepositoryProvider<ListTimesUseCase>(
       create: (context) => ListTimesUseCase(context.read<TimesRepository>()),
     ),
-    // ... same pattern for all 4 use cases
+    RepositoryProvider<CreateTimeUseCase>(
+      create: (context) => CreateTimeUseCase(context.read<TimesRepository>()),
+    ),
+    RepositoryProvider<DeleteTimeUseCase>(
+      create: (context) => DeleteTimeUseCase(context.read<TimesRepository>()),
+    ),
+    RepositoryProvider<UpdateTimeUseCase>(
+      create: (context) => UpdateTimeUseCase(context.read<TimesRepository>()),
+    ),
   ];
 }
 ```
 
-**WageUseCasesInjections — same pattern: `injection.wageHourlyRepository` → `context.read<WageRepository>()`**
+**WageUseCasesInjections — before:**
+```dart
+class WageUseCasesInjections {
+  static List<RepositoryProvider<Object>> list(InjectionRepositories injection) => [
+    RepositoryProvider<FetchWageUseCase>(
+      create: (context) => FetchWageUseCase(injection.wageHourlyRepository),
+    ),
+    RepositoryProvider<SetWageUseCase>(
+      create: (context) => SetWageUseCase(injection.wageHourlyRepository),
+    ),
+    RepositoryProvider<UpdateWageUseCase>(
+      create: (context) => UpdateWageUseCase(injection.wageHourlyRepository),
+    ),
+  ];
+}
+```
+
+**WageUseCasesInjections — after:**
+```dart
+class WageUseCasesInjections {
+  static List<RepositoryProvider<Object>> list() => [
+    RepositoryProvider<FetchWageUseCase>(
+      create: (context) => FetchWageUseCase(context.read<WageRepository>()),
+    ),
+    RepositoryProvider<SetWageUseCase>(
+      create: (context) => SetWageUseCase(context.read<WageRepository>()),
+    ),
+    RepositoryProvider<UpdateWageUseCase>(
+      create: (context) => UpdateWageUseCase(context.read<WageRepository>()),
+    ),
+  ];
+}
+```
 
 **main_development.dart — before:**
 ```dart
@@ -372,7 +415,7 @@ Strings like `'Hubo un error interno...'`, `'Se agotó el tiempo de espera'` are
 Verified: no files under `test/` import from `presentation/widgets/` or `injection_repositories.dart`. The 23 existing tests are in `core/` and don't touch shared widgets or DI.
 
 **W6: `RepositoryProvider.value()` vs `RepositoryProvider(create:)`**
-Use `.value()` for repositories because they are already created externally (in `main_*.dart`). Using `create:` would work too but `.value()` is more explicit and avoids unnecessary lambda wrapping.
+Use `.value()` for repositories because they are already created externally (in `main_*.dart`). Using `create:` would work too but `.value()` is more explicit and avoids unnecessary lambda wrapping. Note: `RepositoryProvider.value()` is provided by the `flutter_bloc` package — already imported in `app_bloc.dart`, no new import needed.
 
 ### Key Differences from Stories 2.2/2.3/2.4
 
@@ -421,22 +464,7 @@ Same rules as all Epic 2 stories:
 
 ### Project Structure Notes
 
-After this story, `lib/src/` has the clean target structure:
-```
-lib/src/
-├── core/          ← cross-cutting concerns (errors, services, constants, extensions, ui)
-├── features/      ← 4 features (times, wage, payment, home)
-└── shared/
-    ├── injections/
-    │   ├── bloc_injections.dart      ← unchanged
-    │   └── use_cases_injection.dart  ← updated (no InjectionRepositories param)
-    └── widgets/
-        ├── widgets.dart              ← NEW barrel
-        ├── catch_error_builder.dart  ← from presentation/widgets/
-        ├── error_view.dart           ← from presentation/widgets/views/
-        ├── icon_text.dart            ← NEW (extracted from info_section.dart)
-        └── info_section.dart         ← from presentation/widgets/ (IconText removed)
-```
+After this story, `lib/src/` has the clean target structure as shown in "Target Shared/Widgets Structure" above, plus `shared/injections/` updated (no `InjectionRepositories` param in `use_cases_injection.dart`, `injection_repositories.dart` deleted).
 
 **Deleted:** `lib/src/presentation/` folder (entire tree), `lib/src/shared/injections/injection_repositories.dart`
 
