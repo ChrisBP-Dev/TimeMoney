@@ -41,35 +41,36 @@ so that all features have a stable foundation of shared utilities, error types, 
   - [ ] 1.2 Move `core/failures/failures.dart` → `core/errors/failures.dart`
   - [ ] 1.3 Move `core/failures/failures.freezed.dart` → `core/errors/failures.freezed.dart`
   - [ ] 1.4 Delete empty `core/failures/` folder
-  - [ ] 1.5 Update `part` directive in failures.dart to point to new path
-  - [ ] 1.6 Update ALL imports referencing `core/failures/failures.dart` → `core/errors/failures.dart`
+  - [ ] 1.5 Verify `part 'failures.freezed.dart'` directive is unchanged (relative path stays valid since both files move together)
+  - [ ] 1.6 Update ALL 14 imports referencing `core/failures/failures.dart` → `core/errors/failures.dart`
 
 - [ ] Task 2: Reorganize core/ui/ (AC: #1)
   - [ ] 2.1 Create `lib/src/core/ui/` folder
   - [ ] 2.2 Move `core/unions/action_state.dart` → `core/ui/action_state.dart`
   - [ ] 2.3 Move `core/unions/action_state.freezed.dart` → `core/ui/action_state.freezed.dart`
   - [ ] 2.4 Delete empty `core/unions/` folder
-  - [ ] 2.5 Update `part` directive in action_state.dart to point to new path
+  - [ ] 2.5 Verify `part 'action_state.freezed.dart'` directive is unchanged (relative path stays valid since both files move together)
   - [ ] 2.6 Update import inside action_state.dart from `core/failures/failures.dart` → `core/errors/failures.dart`
-  - [ ] 2.7 Update ALL imports referencing `core/unions/action_state.dart` → `core/ui/action_state.dart`
+  - [ ] 2.7 Update ALL 6 imports referencing `core/unions/action_state.dart` → `core/ui/action_state.dart`
 
 - [ ] Task 3: Reorganize core/services/ (AC: #1)
   - [ ] 3.1 Rename `core/services/objectbox.dart` → `core/services/objectbox_service.dart`
-  - [ ] 3.2 Update ALL imports referencing `core/services/objectbox.dart` → `core/services/objectbox_service.dart`
+  - [ ] 3.2 Update ALL 5 imports referencing `core/services/objectbox.dart` → `core/services/objectbox_service.dart`
   - [ ] 3.3 Create `core/services/app_database.dart` as drift placeholder
 
 - [ ] Task 4: Create core/constants/ (AC: #1)
   - [ ] 4.1 Create `lib/src/core/constants/` folder
   - [ ] 4.2 Create `core/constants/app_durations.dart` with `abstract final class AppDurations` containing `actionFeedback = Duration(milliseconds: 400)`
   - [ ] 4.3 Move `core/break_points.dart` → `core/constants/break_points.dart`
-  - [ ] 4.4 Update ALL imports referencing `core/break_points.dart` → `core/constants/break_points.dart`
-  - [ ] 4.5 Update ALL references to `Consts.delayed` → `Future.delayed(AppDurations.actionFeedback)` and update imports from `shared/consts/consts.dart` → `core/constants/app_durations.dart`
-  - [ ] 4.6 Delete `shared/consts/consts.dart` after migration (delete `shared/consts/` folder if empty)
+  - [ ] 4.4 Update the 1 import referencing `core/break_points.dart` → `core/constants/break_points.dart` (in screen_size.dart)
+  - [ ] 4.5 Update import inside `break_points.dart` from `core/screen_type.dart` → `core/extensions/screen_type.dart` (cross-dependency with Task 5)
+  - [ ] 4.6 Update ALL 8 references to `Consts.delayed` across BLoC files (4) and widget files (4) — see Consts.delayed Replacement Patterns section below — and update imports from `shared/consts/consts.dart` → `core/constants/app_durations.dart`
+  - [ ] 4.7 Delete `shared/consts/consts.dart` after migration (delete `shared/consts/` folder — it will be empty)
 
 - [ ] Task 5: Reorganize core/extensions/ (AC: #1)
   - [ ] 5.1 Move `core/screen_type.dart` → `core/extensions/screen_type.dart`
-  - [ ] 5.2 Update ALL imports referencing `core/screen_type.dart` → `core/extensions/screen_type.dart`
-  - [ ] 5.3 Update import in `screen_size.dart` to reference new break_points.dart path
+  - [ ] 5.2 Update ALL 2 imports referencing `core/screen_type.dart` → `core/extensions/screen_type.dart` (in screen_size.dart and break_points.dart — note: break_points.dart was already handled in Task 4.5)
+  - [ ] 5.3 Update BOTH imports in `screen_size.dart`: `core/break_points.dart` → `core/constants/break_points.dart` AND `core/screen_type.dart` → `core/extensions/screen_type.dart`
   - [ ] 5.4 Verify `declarative_bool.dart` already in correct location
 
 - [ ] Task 6: Create barrel exports (AC: #2)
@@ -180,15 +181,48 @@ abstract final class AppDurations {
 }
 ```
 
-**IMPORTANT:** The timing changes from 500ms → 400ms per architecture spec. Every file that currently calls `Consts.delayed` (which is a `Future<void>.delayed(Duration(milliseconds: 500))`) must be updated to use `Future.delayed(AppDurations.actionFeedback)` or `Future<void>.delayed(AppDurations.actionFeedback)`.
+**IMPORTANT:** The timing changes from 500ms → 400ms per architecture spec. `Consts.delayed` was a `Future<void>` getter. All 8 consumer files must be updated.
 
-The `Consts.delayed` was a `Future<void>` getter. The replacement pattern is:
+### Consts.delayed Replacement Patterns
+
+There are **3 distinct usage patterns** across 8 files. Search for `Consts.delayed` (without trailing semicolon) to catch all variants:
+
+**Pattern 1 — Bare await (4 BLoC files):**
 ```dart
 // OLD:
 await Consts.delayed;
 // NEW:
 await Future<void>.delayed(AppDurations.actionFeedback);
 ```
+Files: `create_time_bloc.dart`, `update_time_bloc.dart`, `delete_time_bloc.dart`, `update_wage_hourly_bloc.dart`
+
+**Pattern 2 — Chained `.whenComplete()` (2 widget files):**
+```dart
+// OLD:
+await Consts.delayed.whenComplete(
+  () => Navigator.of(context).pop(),
+);
+// NEW:
+await Future<void>.delayed(AppDurations.actionFeedback).whenComplete(
+  () => Navigator.of(context).pop(),
+);
+```
+Files: `create_time_button.dart`, `update_time_button.dart`
+
+**Pattern 3 — Chained `.then()` (2 widget files):**
+```dart
+// OLD:
+await Consts.delayed.then(
+  (value) => Navigator.of(context).pop(),
+);
+// NEW:
+await Future<void>.delayed(AppDurations.actionFeedback).then(
+  (value) => Navigator.of(context).pop(),
+);
+```
+Files: `delete_time_button.dart`, `set_wage_button.dart`
+
+**Verification:** After migration, grep for `Consts` across `lib/` — zero results expected. Also remove `import 'dart:async';` from `consts.dart` consumers only if no other async usage remains in each file.
 
 ### drift Placeholder Implementation
 
@@ -217,18 +251,18 @@ No `library` directive, no logic, no classes. Just re-exports.
 
 ### Import Update Strategy
 
-Search the entire `lib/` tree for these import patterns and update:
+Search the entire `lib/` and `test/` trees for these import patterns and update:
 
-| Search Pattern | Replace With |
-|---|---|
-| `core/failures/failures.dart` | `core/errors/failures.dart` |
-| `core/unions/action_state.dart` | `core/ui/action_state.dart` |
-| `core/services/objectbox.dart` | `core/services/objectbox_service.dart` |
-| `core/break_points.dart` | `core/constants/break_points.dart` |
-| `core/screen_type.dart` | `core/extensions/screen_type.dart` |
-| `shared/consts/consts.dart` | `core/constants/app_durations.dart` |
+| Search Pattern | Replace With | Expected Count |
+|---|---|---|
+| `core/failures/failures.dart` | `core/errors/failures.dart` | 14 files |
+| `core/unions/action_state.dart` | `core/ui/action_state.dart` | 6 files |
+| `core/services/objectbox.dart` | `core/services/objectbox_service.dart` | 5 files |
+| `core/break_points.dart` | `core/constants/break_points.dart` | 1 file |
+| `core/screen_type.dart` | `core/extensions/screen_type.dart` | 2 files |
+| `shared/consts/consts.dart` | `core/constants/app_durations.dart` | 8 files |
 
-Use grep/search across `lib/` and `test/` directories. Every import must use absolute paths: `package:time_money/src/...`
+Every import must use absolute paths: `package:time_money/src/...`. See **Exhaustive Import Update Checklist** below for exact file paths per pattern.
 
 ### ObjectBox Service — Keep Current Functionality
 
@@ -255,34 +289,59 @@ The `ObjectBox` class in `objectbox_service.dart` keeps ALL current methods (cre
 
 VGA 10.x introduced 17 info-level hints across the codebase. If you encounter them in files you're modifying (updating imports), fix them. Do NOT go hunting for hints in files you're not touching.
 
-### Known Files That Import Core Modules
+### Exhaustive Import Update Checklist
 
-Files that will need import updates (non-exhaustive — verify with grep):
+Verified via codebase grep — use these exact counts to confirm completeness. All paths relative to `lib/src/`.
 
-**Importing `core/failures/failures.dart`:**
-- All repository implementations in `features/times/infraestructure/`
-- All repository implementations in `features/wage_hourly/infraestructure/`
-- `core/unions/action_state.dart` (imports failures)
-- `presentation/` error view widgets
-- BLoC state files that reference GlobalFailure
+**`core/failures/failures.dart` → `core/errors/failures.dart` (14 files):**
+1. `core/unions/action_state.dart` (internal — becomes `core/ui/action_state.dart`)
+2. `features/times/domain/times_repository.dart`
+3. `features/times/infraestructure/i_times_objectbox_repository.dart`
+4. `features/wage_hourly/domain/wage_hourly_repository.dart`
+5. `features/wage_hourly/infraestructure/i_wage_hourly_objectbox_repository.dart`
+6. `presentation/control_hours/times/create_time/bloc/create_time_bloc.dart`
+7. `presentation/control_hours/times/delete_time/bloc/delete_time_bloc.dart`
+8. `presentation/control_hours/times/list_times/bloc/list_times_bloc.dart`
+9. `presentation/control_hours/times/list_times/views/error_list_times_view.dart`
+10. `presentation/control_hours/times/update_time/bloc/update_time_bloc.dart`
+11. `presentation/control_hours/wage_hourly/fetch_wage/bloc/fetch_wage_hourly_bloc.dart`
+12. `presentation/control_hours/wage_hourly/fetch_wage/views/error_fetch_wage_hourly_view.dart`
+13. `presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.dart`
+14. `presentation/widgets/views/error_view.dart`
 
-**Importing `core/unions/action_state.dart`:**
-- All BLoC files that use ActionState for CRUD operations
-- Widget files that call `.when()` on ActionState
+**`core/unions/action_state.dart` → `core/ui/action_state.dart` (6 files):**
+1. `presentation/control_hours/times/create_time/bloc/create_time_bloc.dart`
+2. `presentation/control_hours/times/create_time/widgets/create_time_button.dart`
+3. `presentation/control_hours/times/update_time/bloc/update_time_bloc.dart`
+4. `presentation/control_hours/times/update_time/widgets/update_time_button.dart`
+5. `presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.dart`
+6. `presentation/control_hours/wage_hourly/update_wage/widgets/set_wage_button.dart`
 
-**Importing `core/services/objectbox.dart`:**
-- `main_development.dart`, `main_staging.dart`, `main_production.dart`
-- DI/injection files in `shared/injections/`
+**`core/services/objectbox.dart` → `core/services/objectbox_service.dart` (5 files):**
+1. `features/times/infraestructure/i_times_objectbox_repository.dart`
+2. `features/wage_hourly/infraestructure/i_wage_hourly_objectbox_repository.dart`
+3. `../../main_development.dart` (lib/main_development.dart)
+4. `../../main_staging.dart` (lib/main_staging.dart)
+5. `../../main_production.dart` (lib/main_production.dart)
 
-**Importing `shared/consts/consts.dart`:**
-- BLoC files that use `Consts.delayed` for action feedback timing
+**`shared/consts/consts.dart` → `core/constants/app_durations.dart` (8 files):**
+1. `presentation/control_hours/times/create_time/bloc/create_time_bloc.dart`
+2. `presentation/control_hours/times/create_time/widgets/create_time_button.dart`
+3. `presentation/control_hours/times/delete_time/bloc/delete_time_bloc.dart`
+4. `presentation/control_hours/times/delete_time/widgets/delete_time_button.dart`
+5. `presentation/control_hours/times/update_time/bloc/update_time_bloc.dart`
+6. `presentation/control_hours/times/update_time/widgets/update_time_button.dart`
+7. `presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.dart`
+8. `presentation/control_hours/wage_hourly/update_wage/widgets/set_wage_button.dart`
 
-**Importing `core/break_points.dart`:**
-- `core/extensions/screen_size.dart`
+**`core/break_points.dart` → `core/constants/break_points.dart` (1 file):**
+1. `core/extensions/screen_size.dart`
 
-**Importing `core/screen_type.dart`:**
-- `core/extensions/screen_size.dart`
-- `core/break_points.dart`
+**`core/screen_type.dart` → `core/extensions/screen_type.dart` (2 files):**
+1. `core/extensions/screen_size.dart`
+2. `core/break_points.dart` (which itself moves to `core/constants/break_points.dart`)
+
+**Total: 36 file-level import changes across 6 patterns. No test files currently import these modules.**
 
 ### Project Structure Notes
 
