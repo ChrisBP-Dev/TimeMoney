@@ -5,7 +5,9 @@ import 'package:time_money/src/core/services/objectbox_service.dart';
 import 'package:time_money/src/features/times/data/datasources/times_objectbox_datasource.dart';
 import 'package:time_money/src/features/times/data/models/time_box.dart';
 import 'package:time_money/src/features/times/data/repositories/objectbox_times_repository.dart';
-import 'package:time_money/src/features/wage_hourly/infraestructure/i_wage_hourly_objectbox_repository.dart';
+import 'package:time_money/src/features/wage/data/datasources/wage_objectbox_datasource.dart';
+import 'package:time_money/src/features/wage/data/models/wage_hourly_box.dart';
+import 'package:time_money/src/features/wage/data/repositories/objectbox_wage_repository.dart';
 import 'package:time_money/src/shared/injections/injection_repositories.dart';
 
 late final ObjectBox objectbox;
@@ -19,7 +21,9 @@ Future<void> main() async {
         timesRepository: ObjectboxTimesRepository(
           TimesObjectboxDatasource(objectbox.store.box<TimeBox>()),
         ),
-        wageHourlyRepository: IWageHourlyObjectboxRepository(objectbox),
+        wageHourlyRepository: ObjectboxWageRepository(
+          WageObjectboxDatasource(objectbox.store.box<WageHourlyBox>()),
+        ),
       ),
     ),
   );

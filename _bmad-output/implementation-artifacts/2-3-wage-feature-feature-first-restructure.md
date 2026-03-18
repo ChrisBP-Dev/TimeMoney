@@ -1,6 +1,6 @@
 # Story 2.3: Wage Feature — Feature-First Restructure
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -40,55 +40,55 @@ so that all wage management code is organized following the same pattern as the 
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Restructure domain layer (AC: #1, #2, #3)
-  - [ ] 1.1 Create `domain/entities/` — move `wage_hourly.dart` (class `WageHourly` stays — NO entity rename)
-  - [ ] 1.2 Verify `part` directives remain: `wage_hourly.freezed.dart`, `wage_hourly.g.dart`
-  - [ ] 1.3 Create `domain/repositories/` — move+rename `wage_hourly_repository.dart` → `wage_repository.dart`, rename class `WageHourlyRepository` → `WageRepository`
-  - [ ] 1.4 Rename typedefs: `FetchTimesResultStream` → `FetchWageResultStream`, `SetWageHourlyResult` → `SetWageResult`, `UpdateWageHourlyResult` → `UpdateWageResult`
-  - [ ] 1.5 Create `domain/use_cases/` — move+rename all 3 use case files: `FetchWageHourlyUseCase` → `FetchWageUseCase`, `SetWageHourlyUseCase` → `SetWageUseCase`, `UpdateWageHourlyUseCase` → `UpdateWageUseCase`. **PRESERVE:** `SetWageUseCase.call()` takes NO parameters — it internally creates `const defaultWageHourly = WageHourly()` (default $15.00) and passes it to `_repository.setWageHourly(defaultWageHourly)`. This embedded default-creation behavior must be preserved exactly.
-  - [ ] 1.6 Delete `aplication/` folder
+- [x] Task 1: Restructure domain layer (AC: #1, #2, #3)
+  - [x] 1.1 Create `domain/entities/` — move `wage_hourly.dart` (class `WageHourly` stays — NO entity rename)
+  - [x] 1.2 Verify `part` directives remain: `wage_hourly.freezed.dart`, `wage_hourly.g.dart`
+  - [x] 1.3 Create `domain/repositories/` — move+rename `wage_hourly_repository.dart` → `wage_repository.dart`, rename class `WageHourlyRepository` → `WageRepository`
+  - [x] 1.4 Rename typedefs: `FetchTimesResultStream` → `FetchWageResultStream`, `SetWageHourlyResult` → `SetWageResult`, `UpdateWageHourlyResult` → `UpdateWageResult`
+  - [x] 1.5 Create `domain/use_cases/` — move+rename all 3 use case files: `FetchWageHourlyUseCase` → `FetchWageUseCase`, `SetWageHourlyUseCase` → `SetWageUseCase`, `UpdateWageHourlyUseCase` → `UpdateWageUseCase`. **PRESERVE:** `SetWageUseCase.call()` takes NO parameters — it internally creates `const defaultWageHourly = WageHourly()` (default $15.00) and passes it to `_repository.setWageHourly(defaultWageHourly)`. This embedded default-creation behavior must be preserved exactly.
+  - [x] 1.6 Delete `aplication/` folder
 
-- [ ] Task 2: Create data layer (AC: #1, #3)
-  - [ ] 2.1 Create `data/models/` — move `infraestructure/wage_hourly_box.dart`; preserve `@Entity()` annotation, `@Id()` field, and `toString()` override
-  - [ ] 2.2 Rename extension getter `toFreezedWageHourly` → `toWageHourly`
-  - [ ] 2.3 Create `data/datasources/wage_objectbox_datasource.dart` (NEW — see Dev Notes)
-  - [ ] 2.4 Create `data/repositories/` — refactor `i_wage_hourly_objectbox_repository.dart` → `objectbox_wage_repository.dart` (see Dev Notes)
-  - [ ] 2.5 Delete `infraestructure/` folder
+- [x] Task 2: Create data layer (AC: #1, #3)
+  - [x] 2.1 Create `data/models/` — move `infraestructure/wage_hourly_box.dart`; preserve `@Entity()` annotation, `@Id()` field, and `toString()` override
+  - [x] 2.2 Rename extension getter `toFreezedWageHourly` → `toWageHourly`
+  - [x] 2.3 Create `data/datasources/wage_objectbox_datasource.dart` (NEW — see Dev Notes)
+  - [x] 2.4 Create `data/repositories/` — refactor `i_wage_hourly_objectbox_repository.dart` → `objectbox_wage_repository.dart` (see Dev Notes)
+  - [x] 2.5 Delete `infraestructure/` folder
 
-- [ ] Task 3: Move+rename presentation into feature (AC: #1)
-  - [ ] 3.1 Create `presentation/bloc/` — move+rename all 7 BLoC source files (see Rename Table below)
-  - [ ] 3.2 Create `presentation/pages/` — move `fetch_wage_screen.dart` (keep name); move+rename `wage_hourly_view.dart` → `update_wage_page.dart` (class `WageHourlyView` → `UpdateWagePage`)
-  - [ ] 3.3 Create `presentation/widgets/` — flatten ALL widget files from fetch_wage/widgets/ and update_wage/widgets/ PLUS view files from fetch_wage/views/ into single widgets/ folder; delete the 2 old `widgets.dart` barrels and the `views/views.dart` barrel
-  - [ ] 3.4 Delete `presentation/control_hours/wage_hourly/` folder (entire tree)
+- [x] Task 3: Move+rename presentation into feature (AC: #1)
+  - [x] 3.1 Create `presentation/bloc/` — move+rename all 7 BLoC source files (see Rename Table below)
+  - [x] 3.2 Create `presentation/pages/` — move `fetch_wage_screen.dart` (keep name); move+rename `wage_hourly_view.dart` → `update_wage_page.dart` (class `WageHourlyView` → `UpdateWagePage`)
+  - [x] 3.3 Create `presentation/widgets/` — flatten ALL widget files from fetch_wage/widgets/ and update_wage/widgets/ PLUS view files from fetch_wage/views/ into single widgets/ folder; delete the 2 old `widgets.dart` barrels and the `views/views.dart` barrel
+  - [x] 3.4 Delete `presentation/control_hours/wage_hourly/` folder (entire tree)
 
-- [ ] Task 4: Update ObjectBox service (AC: #1)
-  - [ ] 4.1 Remove `getWageHourlyStream()` method from `objectbox_service.dart`
-  - [ ] 4.2 Remove `late final Box<WageHourlyBox> wageHourly;` field and its initialization in constructor
-  - [ ] 4.3 Remove imports for `wage_hourly.dart` and `wage_hourly_box.dart`
+- [x] Task 4: Update ObjectBox service (AC: #1)
+  - [x] 4.1 Remove `getWageHourlyStream()` method from `objectbox_service.dart`
+  - [x] 4.2 Remove `late final Box<WageHourlyBox> wageHourly;` field and its initialization in constructor
+  - [x] 4.3 Remove imports for `wage_hourly.dart` and `wage_hourly_box.dart`
 
-- [ ] Task 5: Update DI/injection and entry point files (AC: #4)
-  - [ ] 5.1 Update ALL 3 entry points (`main_development.dart`, `main_staging.dart`, `main_production.dart`) — replace `IWageHourlyObjectboxRepository(objectbox)` → `ObjectboxWageRepository(WageObjectboxDatasource(objectbox.store.box<WageHourlyBox>()))` and update imports
-  - [ ] 5.2 Update `shared/injections/injection_repositories.dart` — new import path for `WageRepository` (field name stays `wageHourlyRepository`)
-  - [ ] 5.3 Move `wage_hourly_use_cases_injections.dart` → `wage_injection.dart` at feature root, rename class `WageHourlyUseCasesInjections` → `WageUseCasesInjections`
-  - [ ] 5.4 Update `shared/injections/bloc_injections.dart` — new import path, `WageHourlyBlocs.list()` → `WageBlocs.list()`
-  - [ ] 5.5 Update `shared/injections/use_cases_injection.dart` — new import path, `WageHourlyUseCasesInjections.list()` → `WageUseCasesInjections.list()`
+- [x] Task 5: Update DI/injection and entry point files (AC: #4)
+  - [x] 5.1 Update ALL 3 entry points (`main_development.dart`, `main_staging.dart`, `main_production.dart`) — replace `IWageHourlyObjectboxRepository(objectbox)` → `ObjectboxWageRepository(WageObjectboxDatasource(objectbox.store.box<WageHourlyBox>()))` and update imports
+  - [x] 5.2 Update `shared/injections/injection_repositories.dart` — new import path for `WageRepository` (field name stays `wageHourlyRepository`)
+  - [x] 5.3 Move `wage_hourly_use_cases_injections.dart` → `wage_injection.dart` at feature root, rename class `WageHourlyUseCasesInjections` → `WageUseCasesInjections`
+  - [x] 5.4 Update `shared/injections/bloc_injections.dart` — new import path, `WageHourlyBlocs.list()` → `WageBlocs.list()`
+  - [x] 5.5 Update `shared/injections/use_cases_injection.dart` — new import path, `WageHourlyUseCasesInjections.list()` → `WageUseCasesInjections.list()`
 
-- [ ] Task 6: Update ALL cross-codebase imports (AC: #3, #4)
-  - [ ] 6.1 Apply class renames across all files (see Complete Rename Table)
-  - [ ] 6.2 Update `control_hours_page.dart` — import FetchWageScreen from new path
-  - [ ] 6.3 Update internal widget imports to reference new BLoC/page class names
-  - [ ] 6.4 Verify zero references to old paths: `features/wage_hourly/`, `presentation/control_hours/wage_hourly/`
+- [x] Task 6: Update ALL cross-codebase imports (AC: #3, #4)
+  - [x] 6.1 Apply class renames across all files (see Complete Rename Table)
+  - [x] 6.2 Update `control_hours_page.dart` — import FetchWageScreen from new path
+  - [x] 6.3 Update internal widget imports to reference new BLoC/page class names
+  - [x] 6.4 Verify zero references to old paths: `features/wage_hourly/`, `presentation/control_hours/wage_hourly/`
 
-- [ ] Task 7: Create barrel exports (AC: #1)
-  - [ ] 7.1 `domain/entities/entities.dart`, `domain/repositories/repositories.dart`, `domain/use_cases/use_cases.dart`
-  - [ ] 7.2 `data/models/models.dart`, `data/datasources/datasources.dart`, `data/repositories/repositories.dart`
-  - [ ] 7.3 `presentation/bloc/bloc.dart`, `presentation/pages/pages.dart`, `presentation/widgets/widgets.dart`
+- [x] Task 7: Create barrel exports (AC: #1)
+  - [x] 7.1 `domain/entities/entities.dart`, `domain/repositories/repositories.dart`, `domain/use_cases/use_cases.dart`
+  - [x] 7.2 `data/models/models.dart`, `data/datasources/datasources.dart`, `data/repositories/repositories.dart`
+  - [x] 7.3 `presentation/bloc/bloc.dart`, `presentation/pages/pages.dart`, `presentation/widgets/widgets.dart`
 
-- [ ] Task 8: Build & verify (AC: #4)
-  - [ ] 8.1 Run `dart run build_runner build --delete-conflicting-outputs` — regenerate all .freezed.dart, .g.dart, objectbox.g.dart
-  - [ ] 8.2 Run `flutter analyze` — zero issues on ALL project files
-  - [ ] 8.3 Run `flutter test` — all 23 existing tests pass
-  - [ ] 8.4 Run `flutter build apk --debug --flavor development -t lib/main_development.dart` — app compiles
+- [x] Task 8: Build & verify (AC: #4)
+  - [x] 8.1 Run `dart run build_runner build --delete-conflicting-outputs` — regenerate all .freezed.dart, .g.dart, objectbox.g.dart
+  - [x] 8.2 Run `flutter analyze` — zero issues on ALL project files
+  - [x] 8.3 Run `flutter test` — all 23 existing tests pass
+  - [x] 8.4 Run `flutter build apk --debug --flavor development -t lib/main_development.dart` — app compiles
 
 ## Dev Notes
 
@@ -602,12 +602,91 @@ b0301d1 chore: code review passed for story 2.1
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- build_runner: 7 outputs in 9s (3 freezed, 1 json_serializable, 1 combining, 1 objectbox resolver, 1 objectbox generator)
+- flutter analyze: 2 initial issues (directives_ordering) — fixed immediately, re-run: "No issues found!"
+- flutter test: 23/23 tests passed (12 failures_test + 11 action_state_test)
+- flutter build apk: compiled successfully in 6.0s
+
 ### Completion Notes List
+
+- Restructured wage feature from `features/wage_hourly/` (domain/aplication/infraestructure) to `features/wage/` (domain/data/presentation)
+- Created new `WageObjectboxDatasource` — extracted Box operations from ObjectBox service
+- Created new `ObjectboxWageRepository` — receives datasource, owns mapping + empty-to-default fallback logic
+- Renamed all classes per Rename Table: WageRepository, FetchWageUseCase, SetWageUseCase, UpdateWageUseCase, FetchWageBloc, UpdateWageBloc, WageBlocs, WageUseCasesInjections, UpdateWagePage
+- Renamed typedefs: FetchTimesResultStream → FetchWageResultStream (resolves W1 collision), SetWageHourlyResult → SetWageResult, UpdateWageHourlyResult → UpdateWageResult
+- Renamed getter: toFreezedWageHourly → toWageHourly
+- ObjectBox service now a thin Store wrapper — all wage-specific code removed
+- Entry points updated: ObjectboxWageRepository(WageObjectboxDatasource(objectbox.store.box<WageHourlyBox>()))
+- Flattened fetch_wage/widgets/, fetch_wage/views/, update_wage/widgets/ into single presentation/widgets/
+- All barrel exports created for every subfolder
+- Zero flutter analyze warnings
+- All 23 existing tests pass
+- APK compiles successfully
 
 ### Change Log
 
+- 2026-03-18: Story 2.3 complete — wage feature restructured to feature-first clean architecture layout
+
 ### File List
+
+**New files (created):**
+- lib/src/features/wage/domain/entities/wage_hourly.dart
+- lib/src/features/wage/domain/entities/entities.dart
+- lib/src/features/wage/domain/repositories/wage_repository.dart
+- lib/src/features/wage/domain/repositories/repositories.dart
+- lib/src/features/wage/domain/use_cases/fetch_wage_use_case.dart
+- lib/src/features/wage/domain/use_cases/set_wage_use_case.dart
+- lib/src/features/wage/domain/use_cases/update_wage_use_case.dart
+- lib/src/features/wage/domain/use_cases/use_cases.dart
+- lib/src/features/wage/data/models/wage_hourly_box.dart
+- lib/src/features/wage/data/models/models.dart
+- lib/src/features/wage/data/datasources/wage_objectbox_datasource.dart
+- lib/src/features/wage/data/datasources/datasources.dart
+- lib/src/features/wage/data/repositories/objectbox_wage_repository.dart
+- lib/src/features/wage/data/repositories/repositories.dart
+- lib/src/features/wage/presentation/bloc/fetch_wage_bloc.dart
+- lib/src/features/wage/presentation/bloc/fetch_wage_event.dart
+- lib/src/features/wage/presentation/bloc/fetch_wage_state.dart
+- lib/src/features/wage/presentation/bloc/update_wage_bloc.dart
+- lib/src/features/wage/presentation/bloc/update_wage_event.dart
+- lib/src/features/wage/presentation/bloc/update_wage_state.dart
+- lib/src/features/wage/presentation/bloc/wage_blocs.dart
+- lib/src/features/wage/presentation/bloc/bloc.dart
+- lib/src/features/wage/presentation/pages/fetch_wage_screen.dart
+- lib/src/features/wage/presentation/pages/update_wage_page.dart
+- lib/src/features/wage/presentation/pages/pages.dart
+- lib/src/features/wage/presentation/widgets/wage_hourly_card.dart
+- lib/src/features/wage/presentation/widgets/wage_hourly_info.dart
+- lib/src/features/wage/presentation/widgets/update_wage_button.dart
+- lib/src/features/wage/presentation/widgets/wage_hourly_data_view.dart
+- lib/src/features/wage/presentation/widgets/wage_hourly_other_view.dart
+- lib/src/features/wage/presentation/widgets/error_fetch_wage_hourly_view.dart
+- lib/src/features/wage/presentation/widgets/set_wage_button.dart
+- lib/src/features/wage/presentation/widgets/wage_hourly_field.dart
+- lib/src/features/wage/presentation/widgets/widgets.dart
+- lib/src/features/wage/wage_injection.dart
+
+**Modified files:**
+- lib/src/core/services/objectbox_service.dart (removed all wage-specific code)
+- lib/main_development.dart (updated DI wiring)
+- lib/main_staging.dart (updated DI wiring)
+- lib/main_production.dart (updated DI wiring)
+- lib/src/shared/injections/injection_repositories.dart (updated type to WageRepository)
+- lib/src/shared/injections/bloc_injections.dart (updated to WageBlocs)
+- lib/src/shared/injections/use_cases_injection.dart (updated to WageUseCasesInjections)
+- lib/src/presentation/control_hours/control_hours_page.dart (updated import path)
+
+**Generated files (regenerated by build_runner):**
+- lib/src/features/wage/domain/entities/wage_hourly.freezed.dart
+- lib/src/features/wage/domain/entities/wage_hourly.g.dart
+- lib/src/features/wage/presentation/bloc/fetch_wage_bloc.freezed.dart
+- lib/src/features/wage/presentation/bloc/update_wage_bloc.freezed.dart
+- lib/objectbox.g.dart
+
+**Deleted files/folders:**
+- lib/src/features/wage_hourly/ (entire folder tree)
+- lib/src/presentation/control_hours/wage_hourly/ (entire folder tree)

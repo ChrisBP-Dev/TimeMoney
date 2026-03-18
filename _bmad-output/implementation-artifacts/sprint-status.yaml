@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-17
-last_updated: 2026-03-18 # story 2.3 ready-for-dev
+last_updated: 2026-03-18 # story 2.3 review
 project: TimeMoney
 project_key: NOKEY
 tracking_system: file-system
@@ -54,7 +54,7 @@ development_status:
   epic-2: in-progress
   2-1-core-module-cross-cutting-concerns-setup: done
   2-2-times-feature-feature-first-restructure: done
-  2-3-wage-feature-feature-first-restructure: ready-for-dev
+  2-3-wage-feature-feature-first-restructure: review
   2-4-payment-home-features-feature-first-restructure: backlog
   2-5-flutter-hooks-removal-shared-widgets-extraction: backlog
   epic-2-retrospective: optional
