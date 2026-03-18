@@ -1,6 +1,6 @@
 # Story 1.3: State Management & FP Dependencies Migration
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -40,42 +40,42 @@ So that the state management and functional programming foundations are on their
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Update BLoC dependencies in pubspec.yaml (AC: #1)
-  - [ ] 1.1 Change `bloc: ^8.1.1` to `bloc: ^9.2.0`
-  - [ ] 1.2 Change `flutter_bloc: ^8.1.2` to `flutter_bloc: ^9.1.1`
-  - [ ] 1.3 Change `bloc_test: ^9.1.1` to `bloc_test: ^10.0.0`
-  - [ ] 1.4 Run `flutter pub get` — verify it resolves successfully
-  - [ ] 1.5 Run `flutter analyze` — verify zero errors
+- [x] Task 1: Update BLoC dependencies in pubspec.yaml (AC: #1)
+  - [x] 1.1 Change `bloc: ^8.1.1` to `bloc: ^9.2.0`
+  - [x] 1.2 Change `flutter_bloc: ^8.1.2` to `flutter_bloc: ^9.1.1`
+  - [x] 1.3 Change `bloc_test: ^9.1.1` to `bloc_test: ^10.0.0`
+  - [x] 1.4 Run `flutter pub get` — verify it resolves successfully
+  - [x] 1.5 Run `flutter analyze` — verify zero errors
 
-- [ ] Task 2: Verify no deprecated BLoC APIs exist (AC: #2)
-  - [ ] 2.1 Grep for `BlocOverrides` — must find zero matches (already uses `Bloc.observer` static setter in `bootstrap.dart:28`)
-  - [ ] 2.2 Grep for `mapEventToState` — must find zero matches
-  - [ ] 2.3 Grep for `transformEvents` — must find zero matches
-  - [ ] 2.4 Grep for direct `.listen(` on Bloc/Cubit instances — verify none exist (should use `.stream.listen()` if any)
-  - [ ] 2.5 Verify `AppBlocObserver` in `bootstrap.dart` extends `BlocObserver` correctly (unchanged API in 9.x)
+- [x] Task 2: Verify no deprecated BLoC APIs exist (AC: #2)
+  - [x] 2.1 Grep for `BlocOverrides` — must find zero matches (already uses `Bloc.observer` static setter in `bootstrap.dart:28`)
+  - [x] 2.2 Grep for `mapEventToState` — must find zero matches
+  - [x] 2.3 Grep for `transformEvents` — must find zero matches
+  - [x] 2.4 Grep for direct `.listen(` on Bloc/Cubit instances — verify none exist (should use `.stream.listen()` if any)
+  - [x] 2.5 Verify `AppBlocObserver` in `bootstrap.dart` extends `BlocObserver` correctly (unchanged API in 9.x)
 
-- [ ] Task 3: Verify fpdart compatibility (AC: #3)
-  - [ ] 3.1 Confirm fpdart ^1.2.0 is latest stable (verified: 1.2.0 published Oct 2025, no newer stable)
-  - [ ] 3.2 Verify all 4 fpdart import files compile: `times_repository.dart`, `i_times_objectbox_repository.dart`, `wage_hourly_repository.dart`, `i_wage_hourly_objectbox_repository.dart`
-  - [ ] 3.3 Verify `.fold()` usage in BLoC files works with bloc 9.x + fpdart 1.2.0
+- [x] Task 3: Verify fpdart compatibility (AC: #3)
+  - [x] 3.1 Confirm fpdart ^1.2.0 is latest stable (verified: 1.2.0 published Oct 2025, no newer stable)
+  - [x] 3.2 Verify all 4 fpdart import files compile: `times_repository.dart`, `i_times_objectbox_repository.dart`, `wage_hourly_repository.dart`, `i_wage_hourly_objectbox_repository.dart`
+  - [x] 3.3 Verify `.fold()` usage in BLoC files works with bloc 9.x + fpdart 1.2.0
 
-- [ ] Task 4: Compilation verification (AC: #1, #5)
-  - [ ] 4.1 Run `flutter analyze` — zero errors
-  - [ ] 4.2 Run `flutter build ios --simulator --flavor development` — succeeds
-  - [ ] 4.3 Run `flutter build ios --simulator --flavor staging` — succeeds
-  - [ ] 4.4 Run `flutter build ios --simulator --flavor production` — succeeds
-  - [ ] 4.5 Run `flutter build apk --debug --flavor development` — succeeds
-  - [ ] 4.6 Run `flutter build apk --debug --flavor staging` — succeeds
-  - [ ] 4.7 Run `flutter build apk --debug --flavor production` — succeeds
+- [x] Task 4: Compilation verification (AC: #1, #5)
+  - [x] 4.1 Run `flutter analyze` — zero errors
+  - [x] 4.2 Run `flutter build ios --simulator --flavor development` — succeeds
+  - [x] 4.3 Run `flutter build ios --simulator --flavor staging` — succeeds
+  - [x] 4.4 Run `flutter build ios --simulator --flavor production` — succeeds
+  - [x] 4.5 Run `flutter build apk --debug --flavor development` — succeeds
+  - [x] 4.6 Run `flutter build apk --debug --flavor staging` — succeeds
+  - [x] 4.7 Run `flutter build apk --debug --flavor production` — succeeds
 
-- [ ] Task 5: Runtime verification (AC: #4)
-  - [ ] 5.1 Launch app on iOS simulator — verify no crashes
-  - [ ] 5.2 Verify time entry list loads (ListTimesBloc)
-  - [ ] 5.3 Verify wage hourly loads (FetchWageHourlyBloc)
-  - [ ] 5.4 Verify create time entry works (CreateTimeBloc)
-  - [ ] 5.5 Verify update/delete operations work (UpdateTimeBloc, DeleteTimeBloc)
-  - [ ] 5.6 Verify wage update works (UpdateWageHourlyBloc)
-  - [ ] 5.7 Verify payment calculation works (ResultPaymentCubit)
+- [x] Task 5: Runtime verification (AC: #4) — MANUALLY VERIFIED BY DEVELOPER (2026-03-17)
+  - [x] 5.1 Launch app on iOS simulator — verify no crashes
+  - [x] 5.2 Verify time entry list loads (ListTimesBloc)
+  - [x] 5.3 Verify wage hourly loads (FetchWageHourlyBloc)
+  - [x] 5.4 Verify create time entry works (CreateTimeBloc)
+  - [x] 5.5 Verify update/delete operations work (UpdateTimeBloc, DeleteTimeBloc)
+  - [x] 5.6 Verify wage update works (UpdateWageHourlyBloc)
+  - [x] 5.7 Verify payment calculation works (ResultPaymentCubit)
 
 ## Dev Notes
 
@@ -249,10 +249,30 @@ Patterns to follow:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- Tasks 1–4 executed and verified in single session (2026-03-17)
+- All 6 build flavors (3 iOS + 3 Android) compiled successfully
+- Zero deprecated BLoC APIs found in codebase
+- fpdart ^1.2.0 confirmed compatible with bloc 9.x
+- `flutter analyze` reports zero errors (17 pre-existing info-level lint suggestions, unchanged)
+
 ### Completion Notes List
 
+- ✅ Task 1: Updated pubspec.yaml — bloc ^8.1.1→^9.2.0, flutter_bloc ^8.1.2→^9.1.1, bloc_test ^9.1.1→^10.0.0. `flutter pub get` resolved successfully. `flutter analyze` zero errors.
+- ✅ Task 2: Verified zero deprecated BLoC APIs — BlocOverrides (0), mapEventToState (0), transformEvents (0), direct .listen() (0). AppBlocObserver uses 9.x-compatible `Bloc.observer` static setter.
+- ✅ Task 3: fpdart ^1.2.0 confirmed as latest stable. All 4 fpdart import files compile. All `.fold()` usage in BLoC files works with bloc 9.x + fpdart 1.2.0.
+- ✅ Task 4: All 6 builds pass — iOS simulator (dev/stg/prod) and Android APK debug (dev/stg/prod).
+- ✅ Task 5: Runtime verification completed by developer (2026-03-17). All CRUD operations (time entries create/list/update/delete), wage management (fetch/update), and payment calculation verified working. No runtime errors.
+- Note: This was a version-bump-only story — zero source code changes. Only pubspec.yaml modified (3 version bumps). pubspec.lock auto-updated.
+
+### Change Log
+
+- 2026-03-17: Upgraded bloc ^8.1.1→^9.2.0, flutter_bloc ^8.1.2→^9.1.1, bloc_test ^9.1.1→^10.0.0. All 6 builds pass (3 iOS + 3 Android). Runtime CRUD verified by developer. Story complete.
+
 ### File List
+
+- `pubspec.yaml` — Modified: bloc ^8.1.1→^9.2.0, flutter_bloc ^8.1.2→^9.1.1, bloc_test ^9.1.1→^10.0.0
+- `pubspec.lock` — Auto-updated: dependency resolutions for bloc 9.x ecosystem

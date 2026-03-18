@@ -7,10 +7,10 @@ environment:
   sdk: ">=3.11.0 <4.0.0"
 
 dependencies:
-  bloc: ^8.1.1
+  bloc: ^9.2.0
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.2
+  flutter_bloc: ^9.1.1
   flutter_localizations:
     sdk: flutter
   freezed_annotation: ^3.0.0
@@ -26,7 +26,7 @@ dependencies:
   path: ^1.8.2
 
 dev_dependencies:
-  bloc_test: ^9.1.1
+  bloc_test: ^10.0.0
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.0
