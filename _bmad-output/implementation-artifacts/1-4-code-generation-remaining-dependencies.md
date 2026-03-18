@@ -1,6 +1,6 @@
 # Story 1.4: Code Generation & Remaining Dependencies
 
-Status: review
+Status: done
 
 ## Story
 
@@ -12,7 +12,7 @@ So that the entire dependency tree is current and the codebase is fully moderniz
 
 1. **Given** Freezed was removed from dev_dependencies (Story 1.2) and existing .freezed.dart files were generated with Freezed 2.x
    **When** `freezed: ^3.2.5` is added to dev_dependencies and `dart run build_runner build --delete-conflicting-outputs` is executed
-   **Then** all 13 .freezed.dart files and 2 JSON .g.dart files are regenerated successfully with Freezed 3.x
+   **Then** all 11 .freezed.dart files and 2 JSON .g.dart files (13 generated files total) are regenerated successfully with Freezed 3.x
    **And** `flutter pub get` resolves without conflicts
    **And** `flutter analyze` reports zero errors
    **And** the project compiles without errors
@@ -389,7 +389,7 @@ Claude Opus 4.6 (1M context)
 
 ### Completion Notes List
 
-- **Task 1 (Freezed 3.x):** Added freezed ^3.2.5 to dev_dependencies, bumped freezed_annotation to ^3.1.0, created build.yaml for when/map generation, updated 16 @freezed classes to `abstract class` (2 were already abstract), regenerated all 13 .freezed.dart + 2 .g.dart files, added 3 missing imports for Freezed 3.x extension-based when() method. All 10 .when() call sites compile successfully.
+- **Task 1 (Freezed 3.x):** Added freezed ^3.2.5 to dev_dependencies, bumped freezed_annotation to ^3.1.0, created build.yaml for when/map generation, updated 16 @freezed classes to `abstract class` (2 were already abstract), regenerated all 11 .freezed.dart + 2 .g.dart files (13 generated files total), added 3 missing imports for Freezed 3.x extension-based when() method. All 10 .when() call sites compile successfully.
 - **Task 2 (VGA 10.x):** Upgraded very_good_analysis ^5.0.0 → ^10.2.0, updated analysis_options.yaml include path. Fixed 19 new lint violations: removed 5 unnecessary ignore_for_file directives, changed 7 `catch (e)` to `on Object catch (e)` in repositories, wrapped 2 discarded showDialog futures with `unawaited()`, reordered constructor in timebox.dart. Kept `invalid_annotation_target: ignore` for @freezed compatibility.
 - **Task 3 (Remaining deps):** Ran flutter pub upgrade — 7 transitive deps upgraded (build_runner 2.13.0, json_annotation 4.11.0, json_serializable 6.13.0, analyzer 10.0.1, etc). Removed unused `provider: ^6.0.5` (zero imports in lib/). All dev_dependencies correctly placed (NFR9).
 - **Task 4 (Builds):** All 6 builds pass — 3 iOS simulator (dev/stg/prod) + 3 Android APK debug (dev/stg/prod). Zero analyze errors.
@@ -398,6 +398,7 @@ Claude Opus 4.6 (1M context)
 ### Change Log
 
 - 2026-03-17: Implemented Story 1.4 — Freezed 2.x→3.x migration, VGA 5.x→10.x upgrade, remaining deps upgrade, provider removed
+- 2026-03-17: Code review passed — 3-layer adversarial review (Blind Hunter, Edge Case Hunter, Acceptance Auditor). 1 bad_spec finding fixed (AC#1 .freezed.dart count 13→11), 7 findings rejected as noise. Zero code defects found. Story done.
 
 ### File List
 
