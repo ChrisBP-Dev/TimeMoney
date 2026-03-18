@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_money/src/core/failures/failures.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/features/wage_hourly/aplication/fetch_wage_hourly_use_case.dart';
 import 'package:time_money/src/features/wage_hourly/domain/wage_hourly.dart';
 

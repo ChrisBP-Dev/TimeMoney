@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_money/src/core/failures/failures.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 
 part 'action_state.freezed.dart';
 

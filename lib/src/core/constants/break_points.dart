@@ -1,4 +1,4 @@
-import 'package:time_money/src/core/screen_type.dart';
+import 'package:time_money/src/core/extensions/screen_type.dart';
 
 class BreakPoints {
   static const maxMobile = 767.0;

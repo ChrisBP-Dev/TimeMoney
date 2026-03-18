@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/src/core/constants/app_durations.dart';
 import 'package:time_money/src/features/times/domain/model_time.dart';
 import 'package:time_money/src/presentation/control_hours/times/delete_time/bloc/delete_time_bloc.dart';
-import 'package:time_money/src/shared/consts/consts.dart';
 
 class DeleteTimeButton extends StatelessWidget {
   const DeleteTimeButton({
@@ -25,9 +25,9 @@ class DeleteTimeButton extends StatelessWidget {
             context.read<DeleteTimeBloc>().add(
                   DeleteTimeEvent.delete(time: time),
                 );
-            await Consts.delayed.then(
-              (value) => Navigator.of(context).pop(),
-            );
+            await Future<void>.delayed(AppDurations.actionFeedback);
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
           },
           child: state.when(
             initial: () => const Text('Delete'),

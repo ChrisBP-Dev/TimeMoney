@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_money/src/core/failures/failures.dart';
-import 'package:time_money/src/core/unions/action_state.dart';
+import 'package:time_money/src/core/constants/app_durations.dart';
+import 'package:time_money/src/core/errors/failures.dart';
+import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/features/times/aplication/create_time_use_case.dart';
 import 'package:time_money/src/features/times/domain/model_time.dart';
-import 'package:time_money/src/shared/consts/consts.dart';
 
 part 'create_time_event.dart';
 part 'create_time_state.dart';
@@ -33,7 +33,7 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
     on<_Create>((event, emit) async {
       emit(state.copyWith(currentState: const ActionState.loading()));
 
-      await Consts.delayed;
+      await Future<void>.delayed(AppDurations.actionFeedback);
 
       if (state.minutes == 0 && state.hour == 0) return _emitError(emit);
 
@@ -47,7 +47,7 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
         ),
       );
 
-      await Consts.delayed;
+      await Future<void>.delayed(AppDurations.actionFeedback);
 
       emit(CreateTimeState.initial());
     });
@@ -62,7 +62,7 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
       ),
     );
 
-    await Consts.delayed;
+    await Future<void>.delayed(AppDurations.actionFeedback);
 
     emit(
       state.copyWith(

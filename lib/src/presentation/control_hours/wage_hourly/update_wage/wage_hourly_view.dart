@@ -20,9 +20,9 @@ class WageHourlyView extends StatelessWidget {
           ),
         ),
       ),
-      content: Column(
+      content: const Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [WageHourlyField()],
+        children: [WageHourlyField()],
       ),
       actionsAlignment: MainAxisAlignment.center,
       actions: const [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:time_money/src/core/break_points.dart';
-import 'package:time_money/src/core/screen_type.dart';
+import 'package:time_money/src/core/constants/break_points.dart';
+import 'package:time_money/src/core/extensions/screen_type.dart';
 
 extension ScreenSize on BuildContext {
   Size get _size => MediaQuery.of(this).size;

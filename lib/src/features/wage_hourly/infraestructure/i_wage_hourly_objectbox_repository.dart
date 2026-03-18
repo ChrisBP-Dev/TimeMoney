@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:time_money/src/core/failures/failures.dart';
-import 'package:time_money/src/core/services/objectbox.dart';
+import 'package:time_money/src/core/errors/failures.dart';
+import 'package:time_money/src/core/services/objectbox_service.dart';
 import 'package:time_money/src/features/wage_hourly/domain/wage_hourly.dart';
 import 'package:time_money/src/features/wage_hourly/domain/wage_hourly_repository.dart';
 import 'package:time_money/src/features/wage_hourly/infraestructure/wage_hourly_box.dart';

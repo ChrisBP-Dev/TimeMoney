@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_money/src/core/failures/failures.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/features/times/aplication/aplications.dart';
 import 'package:time_money/src/features/times/domain/model_time.dart';
 

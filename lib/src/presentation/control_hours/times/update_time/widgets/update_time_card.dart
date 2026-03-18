@@ -6,13 +6,12 @@ class UpdateTimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      // margin: const EdgeInsets.all(20),
+    return const Card(
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: const [
+          children: [
             Expanded(flex: 3, child: UpdateHourField()),
             Spacer(),
             Expanded(

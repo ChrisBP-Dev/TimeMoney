@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:time_money/src/core/failures/failures.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/presentation/widgets/info_section.dart';
 
 class ErrorView extends StatelessWidget {

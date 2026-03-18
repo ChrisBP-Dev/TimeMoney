@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:time_money/src/core/failures/failures.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/features/wage_hourly/domain/wage_hourly.dart';
 
 abstract class WageHourlyRepository {

@@ -9,7 +9,7 @@ class SetWageHourlyUseCase {
   final WageHourlyRepository _repository;
 
   SetWageHourlyResult call() async {
-    const defaultWageHourly = WageHourly(value: 15);
+    const defaultWageHourly = WageHourly();
     final result = await _repository.setWageHourly(defaultWageHourly);
 
     return result;

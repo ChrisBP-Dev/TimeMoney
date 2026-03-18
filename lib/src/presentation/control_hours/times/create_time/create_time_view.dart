@@ -18,9 +18,9 @@ class CreateTimeView extends StatelessWidget {
           ),
         ),
       ),
-      content: Column(
+      content: const Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
+        children: [
           CreateTimeCard(),
         ],
       ),

@@ -6,25 +6,25 @@ class CreateTimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
+    return const FractionallySizedBox(
       heightFactor: .24,
       child: Card(
-        margin: const EdgeInsets.all(20),
+        margin: EdgeInsets.all(20),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
           child: Column(
             children: [
-              const Text(
+              Text(
                 'Create Time:',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
-                children: const [
+                children: [
                   Expanded(flex: 3, child: CreateHourField()),
                   Spacer(),
                   Expanded(

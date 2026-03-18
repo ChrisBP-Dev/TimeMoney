@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:time_money/src/core/unions/action_state.dart';
+import 'package:time_money/src/core/constants/app_durations.dart';
+import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/presentation/control_hours/times/update_time/bloc/update_time_bloc.dart';
-import 'package:time_money/src/shared/consts/consts.dart';
 
 class UpdateTimeButton extends StatelessWidget {
   const UpdateTimeButton({super.key});
@@ -21,9 +21,9 @@ class UpdateTimeButton extends StatelessWidget {
                   const UpdateTimeEvent.update(),
                 );
 
-            await Consts.delayed.whenComplete(
-              () => Navigator.of(context).pop(),
-            );
+            await Future<void>.delayed(AppDurations.actionFeedback);
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
           },
           child: state.currentState.when(
             initial: () => const Text('Update'),

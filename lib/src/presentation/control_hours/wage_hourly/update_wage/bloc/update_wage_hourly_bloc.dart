@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_money/src/core/failures/failures.dart';
-import 'package:time_money/src/core/unions/action_state.dart';
+import 'package:time_money/src/core/constants/app_durations.dart';
+import 'package:time_money/src/core/errors/failures.dart';
+import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/features/wage_hourly/aplication/update_wage_hourly_use_case.dart';
 import 'package:time_money/src/features/wage_hourly/domain/wage_hourly.dart';
-import 'package:time_money/src/shared/consts/consts.dart';
 
 part 'update_wage_hourly_event.dart';
 part 'update_wage_hourly_state.dart';
@@ -31,14 +31,14 @@ class UpdateWageHourlyBloc
 
       final result = await _updateWageHourlyUseCase.call(state.wageHourly);
 
-      await Consts.delayed;
+      await Future<void>.delayed(AppDurations.actionFeedback);
 
       result.fold(
         (l) => _emitError(emit),
         (wage) => emit(state.copyWith(wageHourly: wage)),
       );
 
-      await Consts.delayed;
+      await Future<void>.delayed(AppDurations.actionFeedback);
 
       emit(UpdateWageHourlyState.initial());
     });
@@ -55,7 +55,7 @@ class UpdateWageHourlyBloc
       ),
     );
 
-    await Consts.delayed;
+    await Future<void>.delayed(AppDurations.actionFeedback);
 
     emit(
       state.copyWith(

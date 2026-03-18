@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:time_money/src/core/failures/failures.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/features/times/domain/model_time.dart';
 
 abstract class TimesRepository {

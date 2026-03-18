@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:time_money/src/core/failures/failures.dart';
-import 'package:time_money/src/core/services/objectbox.dart';
+import 'package:time_money/src/core/errors/failures.dart';
+import 'package:time_money/src/core/services/objectbox_service.dart';
 import 'package:time_money/src/features/times/domain/model_time.dart';
 import 'package:time_money/src/features/times/domain/times_repository.dart';
 import 'package:time_money/src/features/times/infraestructure/timebox.dart';

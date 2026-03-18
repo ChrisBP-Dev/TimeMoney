@@ -1,6 +1,6 @@
 # Story 2.1: Core Module & Cross-Cutting Concerns Setup
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -36,66 +36,66 @@ so that all features have a stable foundation of shared utilities, error types, 
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Reorganize core/errors/ (AC: #1)
-  - [ ] 1.1 Create `lib/src/core/errors/` folder
-  - [ ] 1.2 Move `core/failures/failures.dart` → `core/errors/failures.dart`
-  - [ ] 1.3 Move `core/failures/failures.freezed.dart` → `core/errors/failures.freezed.dart`
-  - [ ] 1.4 Delete empty `core/failures/` folder
-  - [ ] 1.5 Verify `part 'failures.freezed.dart'` directive is unchanged (relative path stays valid since both files move together)
-  - [ ] 1.6 Update ALL 14 imports referencing `core/failures/failures.dart` → `core/errors/failures.dart`
+- [x] Task 1: Reorganize core/errors/ (AC: #1)
+  - [x] 1.1 Create `lib/src/core/errors/` folder
+  - [x] 1.2 Move `core/failures/failures.dart` → `core/errors/failures.dart`
+  - [x] 1.3 Move `core/failures/failures.freezed.dart` → `core/errors/failures.freezed.dart`
+  - [x] 1.4 Delete empty `core/failures/` folder
+  - [x] 1.5 Verify `part 'failures.freezed.dart'` directive is unchanged (relative path stays valid since both files move together)
+  - [x] 1.6 Update ALL 14 imports referencing `core/failures/failures.dart` → `core/errors/failures.dart`
 
-- [ ] Task 2: Reorganize core/ui/ (AC: #1)
-  - [ ] 2.1 Create `lib/src/core/ui/` folder
-  - [ ] 2.2 Move `core/unions/action_state.dart` → `core/ui/action_state.dart`
-  - [ ] 2.3 Move `core/unions/action_state.freezed.dart` → `core/ui/action_state.freezed.dart`
-  - [ ] 2.4 Delete empty `core/unions/` folder
-  - [ ] 2.5 Verify `part 'action_state.freezed.dart'` directive is unchanged (relative path stays valid since both files move together)
-  - [ ] 2.6 Update import inside action_state.dart from `core/failures/failures.dart` → `core/errors/failures.dart`
-  - [ ] 2.7 Update ALL 6 imports referencing `core/unions/action_state.dart` → `core/ui/action_state.dart`
+- [x] Task 2: Reorganize core/ui/ (AC: #1)
+  - [x] 2.1 Create `lib/src/core/ui/` folder
+  - [x] 2.2 Move `core/unions/action_state.dart` → `core/ui/action_state.dart`
+  - [x] 2.3 Move `core/unions/action_state.freezed.dart` → `core/ui/action_state.freezed.dart`
+  - [x] 2.4 Delete empty `core/unions/` folder
+  - [x] 2.5 Verify `part 'action_state.freezed.dart'` directive is unchanged (relative path stays valid since both files move together)
+  - [x] 2.6 Update import inside action_state.dart from `core/failures/failures.dart` → `core/errors/failures.dart`
+  - [x] 2.7 Update ALL 6 imports referencing `core/unions/action_state.dart` → `core/ui/action_state.dart`
 
-- [ ] Task 3: Reorganize core/services/ (AC: #1)
-  - [ ] 3.1 Rename `core/services/objectbox.dart` → `core/services/objectbox_service.dart`
-  - [ ] 3.2 Update ALL 5 imports referencing `core/services/objectbox.dart` → `core/services/objectbox_service.dart`
-  - [ ] 3.3 Create `core/services/app_database.dart` as drift placeholder
+- [x] Task 3: Reorganize core/services/ (AC: #1)
+  - [x] 3.1 Rename `core/services/objectbox.dart` → `core/services/objectbox_service.dart`
+  - [x] 3.2 Update ALL 5 imports referencing `core/services/objectbox.dart` → `core/services/objectbox_service.dart`
+  - [x] 3.3 Create `core/services/app_database.dart` as drift placeholder
 
-- [ ] Task 4: Create core/constants/ (AC: #1)
-  - [ ] 4.1 Create `lib/src/core/constants/` folder
-  - [ ] 4.2 Create `core/constants/app_durations.dart` with `abstract final class AppDurations` containing `actionFeedback = Duration(milliseconds: 400)`
-  - [ ] 4.3 Move `core/break_points.dart` → `core/constants/break_points.dart`
-  - [ ] 4.4 Update the 1 import referencing `core/break_points.dart` → `core/constants/break_points.dart` (in screen_size.dart)
-  - [ ] 4.5 Update import inside `break_points.dart` from `core/screen_type.dart` → `core/extensions/screen_type.dart` (cross-dependency with Task 5)
-  - [ ] 4.6 Update ALL 8 references to `Consts.delayed` across BLoC files (4) and widget files (4) — see Consts.delayed Replacement Patterns section below — and update imports from `shared/consts/consts.dart` → `core/constants/app_durations.dart`
-  - [ ] 4.7 Delete `shared/consts/consts.dart` after migration (delete `shared/consts/` folder — it will be empty)
+- [x] Task 4: Create core/constants/ (AC: #1)
+  - [x] 4.1 Create `lib/src/core/constants/` folder
+  - [x] 4.2 Create `core/constants/app_durations.dart` with `abstract final class AppDurations` containing `actionFeedback = Duration(milliseconds: 400)`
+  - [x] 4.3 Move `core/break_points.dart` → `core/constants/break_points.dart`
+  - [x] 4.4 Update the 1 import referencing `core/break_points.dart` → `core/constants/break_points.dart` (in screen_size.dart)
+  - [x] 4.5 Update import inside `break_points.dart` from `core/screen_type.dart` → `core/extensions/screen_type.dart` (cross-dependency with Task 5)
+  - [x] 4.6 Update ALL 8 references to `Consts.delayed` across BLoC files (4) and widget files (4) — see Consts.delayed Replacement Patterns section below — and update imports from `shared/consts/consts.dart` → `core/constants/app_durations.dart`
+  - [x] 4.7 Delete `shared/consts/consts.dart` after migration (delete `shared/consts/` folder — it will be empty)
 
-- [ ] Task 5: Reorganize core/extensions/ (AC: #1)
-  - [ ] 5.1 Move `core/screen_type.dart` → `core/extensions/screen_type.dart`
-  - [ ] 5.2 Update ALL 2 imports referencing `core/screen_type.dart` → `core/extensions/screen_type.dart` (in screen_size.dart and break_points.dart — note: break_points.dart was already handled in Task 4.5)
-  - [ ] 5.3 Update BOTH imports in `screen_size.dart`: `core/break_points.dart` → `core/constants/break_points.dart` AND `core/screen_type.dart` → `core/extensions/screen_type.dart`
-  - [ ] 5.4 Verify `declarative_bool.dart` already in correct location
+- [x] Task 5: Reorganize core/extensions/ (AC: #1)
+  - [x] 5.1 Move `core/screen_type.dart` → `core/extensions/screen_type.dart`
+  - [x] 5.2 Update ALL 2 imports referencing `core/screen_type.dart` → `core/extensions/screen_type.dart` (in screen_size.dart and break_points.dart — note: break_points.dart was already handled in Task 4.5)
+  - [x] 5.3 Update BOTH imports in `screen_size.dart`: `core/break_points.dart` → `core/constants/break_points.dart` AND `core/screen_type.dart` → `core/extensions/screen_type.dart`
+  - [x] 5.4 Verify `declarative_bool.dart` already in correct location
 
-- [ ] Task 6: Create barrel exports (AC: #2)
-  - [ ] 6.1 Create `core/errors/errors.dart` — re-exports failures.dart
-  - [ ] 6.2 Create `core/services/services.dart` — re-exports objectbox_service.dart, app_database.dart
-  - [ ] 6.3 Create `core/ui/ui.dart` — re-exports action_state.dart
-  - [ ] 6.4 Create `core/constants/constants.dart` — re-exports app_durations.dart, break_points.dart
-  - [ ] 6.5 Create `core/extensions/extensions.dart` — re-exports screen_size.dart, screen_type.dart, declarative_bool.dart
+- [x] Task 6: Create barrel exports (AC: #2)
+  - [x] 6.1 Create `core/errors/errors.dart` — re-exports failures.dart
+  - [x] 6.2 Create `core/services/services.dart` — re-exports objectbox_service.dart, app_database.dart
+  - [x] 6.3 Create `core/ui/ui.dart` — re-exports action_state.dart
+  - [x] 6.4 Create `core/constants/constants.dart` — re-exports app_durations.dart, break_points.dart
+  - [x] 6.5 Create `core/extensions/extensions.dart` — re-exports screen_size.dart, screen_type.dart, declarative_bool.dart
 
-- [ ] Task 7: Run `build_runner` to regenerate (AC: #3)
-  - [ ] 7.1 Run `dart run build_runner build --delete-conflicting-outputs`
-  - [ ] 7.2 Verify generated files appear in new locations (core/errors/, core/ui/)
+- [x] Task 7: Run `build_runner` to regenerate (AC: #3)
+  - [x] 7.1 Run `dart run build_runner build --delete-conflicting-outputs`
+  - [x] 7.2 Verify generated files appear in new locations (core/errors/, core/ui/)
 
-- [ ] Task 8: Verify zero warnings (AC: #3)
-  - [ ] 8.1 Run `flutter analyze` — must produce zero warnings
-  - [ ] 8.2 Fix any remaining import issues across the entire codebase
+- [x] Task 8: Verify zero warnings (AC: #3)
+  - [x] 8.1 Run `flutter analyze` — must produce zero warnings
+  - [x] 8.2 Fix any remaining import issues across the entire codebase
 
-- [ ] Task 9: Write core module tests (AC: #4)
-  - [ ] 9.1 Create `test/src/core/errors/failures_test.dart`
-  - [ ] 9.2 Create `test/src/core/ui/action_state_test.dart`
-  - [ ] 9.3 Run `flutter test` — all tests pass
+- [x] Task 9: Write core module tests (AC: #4)
+  - [x] 9.1 Create `test/src/core/errors/failures_test.dart`
+  - [x] 9.2 Create `test/src/core/ui/action_state_test.dart`
+  - [x] 9.3 Run `flutter test` — all tests pass
 
-- [ ] Task 10: Build verification (AC: #1, #3)
-  - [ ] 10.1 Run `flutter build apk --debug --flavor development -t lib/main_development.dart`
-  - [ ] 10.2 Verify the app compiles without errors
+- [x] Task 10: Build verification (AC: #1, #3)
+  - [x] 10.1 Run `flutter build apk --debug --flavor development -t lib/main_development.dart`
+  - [x] 10.2 Verify the app compiles without errors
 
 ## Dev Notes
 
@@ -406,8 +406,95 @@ f2299be docs: create story 1.4
 
 ### Agent Model Used
 
+Claude Opus 4.6 (1M context)
+
 ### Debug Log References
+
+- build_runner: 18 outputs written in 17s, .freezed.dart regenerated in core/errors/ and core/ui/
+- flutter analyze: 26 → 0 issues (fixed all 26 info hints across modified + pre-existing files)
+- flutter test: 23/23 passed, zero regressions
+- flutter build apk: development debug APK built successfully
 
 ### Completion Notes List
 
+- Task 1: Moved failures.dart + .freezed.dart from core/failures/ → core/errors/, deleted empty folder, updated 14 imports
+- Task 2: Moved action_state.dart + .freezed.dart from core/unions/ → core/ui/, deleted empty folder, updated internal import + 6 consumer imports
+- Task 3: Renamed objectbox.dart → objectbox_service.dart, updated 5 imports, created app_database.dart drift placeholder
+- Task 4: Created core/constants/ with AppDurations (abstract final class, 400ms), moved break_points.dart, migrated all 8 Consts.delayed references to Future<void>.delayed(AppDurations.actionFeedback), deleted shared/consts/
+- Task 5: Moved screen_type.dart → core/extensions/, updated cross-dependency imports in break_points.dart and screen_size.dart, verified declarative_bool.dart in place
+- Task 6: Created 5 barrel export files (errors.dart, services.dart, ui.dart, constants.dart, extensions.dart) — re-exports only, no .freezed.dart exports
+- Task 7: build_runner regenerated all .freezed.dart files in new locations
+- Task 8: Fixed all 26 info-level hints across the codebase to achieve true zero-issue state:
+  - 7 directives_ordering (import reordering in modified files)
+  - 4 use_build_context_synchronously (replaced .whenComplete/.then with context.mounted guard)
+  - 1 lines_longer_than_80_chars (update_time_button.dart)
+  - 6 prefer_const_constructors (promoted widget subtrees to const in create_time_card, create_time_view, update_time_card, update_view, wage_hourly_view)
+  - 1 prefer_const_literals_to_create_immutables (create_time_card.dart children list)
+  - 1 avoid_redundant_argument_values (set_wage_hourly_use_case.dart — removed redundant default value: 15)
+  - Tests refactored to eliminate cascade_invocations, unnecessary_underscores, omit_local_variable_types
+- Task 9: Created failures_test.dart (12 tests) and action_state_test.dart (11 tests) — 23 total, all passing
+- Task 10: Debug APK compiled successfully
+
+### Change Log
+
+- 2026-03-18: Story 2.1 implementation complete — core module reorganized with barrel exports, AppDurations, drift placeholder, 23 unit tests, and 36 import updates across codebase
+- 2026-03-18: Fixed all remaining 13 pre-existing info-level hints + 7 test code hints — flutter analyze now reports "No issues found!" (0 total)
+
 ### File List
+
+**New files:**
+- lib/src/core/constants/app_durations.dart
+- lib/src/core/services/app_database.dart
+- lib/src/core/errors/errors.dart (barrel)
+- lib/src/core/services/services.dart (barrel)
+- lib/src/core/ui/ui.dart (barrel)
+- lib/src/core/constants/constants.dart (barrel)
+- lib/src/core/extensions/extensions.dart (barrel)
+- test/src/core/errors/failures_test.dart
+- test/src/core/ui/action_state_test.dart
+
+**Moved/renamed files:**
+- lib/src/core/failures/failures.dart → lib/src/core/errors/failures.dart
+- lib/src/core/failures/failures.freezed.dart → lib/src/core/errors/failures.freezed.dart
+- lib/src/core/unions/action_state.dart → lib/src/core/ui/action_state.dart
+- lib/src/core/unions/action_state.freezed.dart → lib/src/core/ui/action_state.freezed.dart
+- lib/src/core/services/objectbox.dart → lib/src/core/services/objectbox_service.dart
+- lib/src/core/break_points.dart → lib/src/core/constants/break_points.dart
+- lib/src/core/screen_type.dart → lib/src/core/extensions/screen_type.dart
+
+**Deleted files:**
+- lib/src/shared/consts/consts.dart
+- lib/src/core/failures/ (empty folder)
+- lib/src/core/unions/ (empty folder)
+- lib/src/shared/consts/ (empty folder)
+
+**Modified files (import updates + hint fixes):**
+- lib/src/core/ui/action_state.dart
+- lib/src/core/constants/break_points.dart
+- lib/src/core/extensions/screen_size.dart
+- lib/src/features/times/domain/times_repository.dart
+- lib/src/features/times/infraestructure/i_times_objectbox_repository.dart
+- lib/src/features/wage_hourly/domain/wage_hourly_repository.dart
+- lib/src/features/wage_hourly/infraestructure/i_wage_hourly_objectbox_repository.dart
+- lib/src/presentation/control_hours/times/create_time/bloc/create_time_bloc.dart
+- lib/src/presentation/control_hours/times/create_time/widgets/create_time_button.dart
+- lib/src/presentation/control_hours/times/delete_time/bloc/delete_time_bloc.dart
+- lib/src/presentation/control_hours/times/delete_time/widgets/delete_time_button.dart
+- lib/src/presentation/control_hours/times/list_times/bloc/list_times_bloc.dart
+- lib/src/presentation/control_hours/times/list_times/views/error_list_times_view.dart
+- lib/src/presentation/control_hours/times/update_time/bloc/update_time_bloc.dart
+- lib/src/presentation/control_hours/times/update_time/widgets/update_time_button.dart
+- lib/src/presentation/control_hours/wage_hourly/fetch_wage/bloc/fetch_wage_hourly_bloc.dart
+- lib/src/presentation/control_hours/wage_hourly/fetch_wage/views/error_fetch_wage_hourly_view.dart
+- lib/src/presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.dart
+- lib/src/presentation/control_hours/wage_hourly/update_wage/widgets/set_wage_button.dart
+- lib/src/presentation/widgets/views/error_view.dart
+- lib/src/features/wage_hourly/aplication/set_wage_hourly_use_case.dart
+- lib/src/presentation/control_hours/times/create_time/create_time_view.dart
+- lib/src/presentation/control_hours/times/create_time/widgets/create_time_card.dart
+- lib/src/presentation/control_hours/times/update_time/update_view.dart
+- lib/src/presentation/control_hours/times/update_time/widgets/update_time_card.dart
+- lib/src/presentation/control_hours/wage_hourly/update_wage/wage_hourly_view.dart
+- lib/main_development.dart
+- lib/main_staging.dart
+- lib/main_production.dart

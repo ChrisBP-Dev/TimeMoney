@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:time_money/src/core/unions/action_state.dart';
+import 'package:time_money/src/core/constants/app_durations.dart';
+import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/presentation/control_hours/times/create_time/bloc/create_time_bloc.dart';
-import 'package:time_money/src/shared/consts/consts.dart';
 
 class CreateTimeButton extends StatelessWidget {
   const CreateTimeButton({super.key});
@@ -17,10 +17,9 @@ class CreateTimeButton extends StatelessWidget {
                 const CreateTimeEvent.create(),
               );
 
-          await Consts.delayed.whenComplete(
-            () => Navigator.of(context).pop(),
-          );
-          // FocusManager.instance.primaryFocus?.unfocus();
+          await Future<void>.delayed(AppDurations.actionFeedback);
+          if (!context.mounted) return;
+          Navigator.of(context).pop();
         },
         child: state.currentState.when(
           initial: () => const Text('Create'),

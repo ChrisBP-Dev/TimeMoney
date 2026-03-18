@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:time_money/src/core/unions/action_state.dart';
+import 'package:time_money/src/core/constants/app_durations.dart';
+import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/presentation/control_hours/wage_hourly/update_wage/bloc/update_wage_hourly_bloc.dart';
-import 'package:time_money/src/shared/consts/consts.dart';
 
 class SetWageButton extends StatelessWidget {
   const SetWageButton({super.key});
@@ -21,9 +21,9 @@ class SetWageButton extends StatelessWidget {
                   const UpdateWageHourlyEvent.update(),
                 );
 
-            await Consts.delayed.then(
-              (value) => Navigator.of(context).pop(),
-            );
+            await Future<void>.delayed(AppDurations.actionFeedback);
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
           },
           child: state.currentState.when(
             initial: () => const Text('Update'),

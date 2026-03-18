@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_money/src/core/failures/failures.dart';
-import 'package:time_money/src/core/unions/action_state.dart';
+import 'package:time_money/src/core/constants/app_durations.dart';
+import 'package:time_money/src/core/errors/failures.dart';
+import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/features/times/aplication/aplications.dart';
 import 'package:time_money/src/features/times/domain/model_time.dart';
-import 'package:time_money/src/shared/consts/consts.dart';
 
 part 'update_time_event.dart';
 part 'update_time_state.dart';
@@ -30,7 +30,7 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
     on<_Update>((event, emit) async {
       emit(state.copyWith(currentState: const ActionState.loading()));
 
-      await Consts.delayed;
+      await Future<void>.delayed(AppDurations.actionFeedback);
 
       if (state.time == null) return _emitError(emit);
 
@@ -42,7 +42,7 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
         ),
       );
 
-      await Consts.delayed;
+      await Future<void>.delayed(AppDurations.actionFeedback);
 
       emit(state.copyWith(currentState: const ActionState.initial()));
     });
@@ -59,7 +59,7 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
       ),
     );
 
-    await Consts.delayed;
+    await Future<void>.delayed(AppDurations.actionFeedback);
 
     emit(
       state.copyWith(
