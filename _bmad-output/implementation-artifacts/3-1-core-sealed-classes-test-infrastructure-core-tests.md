@@ -35,8 +35,8 @@ So that all union types use native sealed classes consistently and the testing f
    - `flutter test` runs successfully with helpers available
 
 5. **Core unit tests rewritten for sealed classes**
-   - `test/src/core/ui/action_state_test.dart` — rewrite 11 tests to use `switch`/type checks instead of `.when()`
-   - `test/src/core/errors/failures_test.dart` — rewrite 12 tests to use `switch`/type checks instead of `.when()`
+   - `test/src/core/ui/action_state_test.dart` — rewrite 12 tests to use `switch`/type checks instead of `.when()`
+   - `test/src/core/errors/failures_test.dart` — rewrite 11 tests to use `switch`/type checks instead of `.when()` (remove `GlobalDefaultFailure` typedef test — typedef no longer exists)
    - All core tests pass via `flutter test`
 
 6. **Zero lint compliance**
@@ -67,8 +67,9 @@ So that all union types use native sealed classes consistently and the testing f
   - [ ] 3.4 Group E: Update all files using `GlobalDefaultFailure` typedef → `GlobalFailure` (BLoC states, error view widgets)
   - [ ] 3.5 Group F: Update repository files — remove generic from `GlobalFailure<dynamic>` → `GlobalFailure`
   - [ ] 3.6 Group G: Delete `action_state.freezed.dart` and `failures.freezed.dart` (core only)
-  - [ ] 3.7 Run `flutter analyze` — zero warnings
-  - [ ] 3.8 Run `flutter test` (tests will fail until Task 5 rewrites them)
+  - [ ] 3.7 Regenerate BLoC Freezed files: `dart run build_runner build --delete-conflicting-outputs` — required because BLoC state source files (Groups D/E) now reference `ActionInitial`, `GlobalFailure` (no generic), etc., so their `.freezed.dart` outputs are stale. Affected generated files: `create_time_bloc.freezed.dart`, `update_time_bloc.freezed.dart`, `update_wage_bloc.freezed.dart`, `list_times_bloc.freezed.dart`, `delete_time_bloc.freezed.dart`, `fetch_wage_bloc.freezed.dart`
+  - [ ] 3.8 Run `flutter analyze` — zero warnings
+  - [ ] 3.9 Run `flutter test` (tests will fail until Task 5 rewrites them)
 
 - [ ] Task 4: Create test infrastructure (AC: #4)
   - [ ] 4.1 Create `test/helpers/mocks.dart` with shared mocktail mocks:
@@ -81,13 +82,13 @@ So that all union types use native sealed classes consistently and the testing f
     - `class MockFetchWageUseCase extends Mock implements FetchWageUseCase {}`
     - `class MockSetWageUseCase extends Mock implements SetWageUseCase {}`
     - `class MockUpdateWageUseCase extends Mock implements UpdateWageUseCase {}`
-    - `class MockCalculatePaymentUseCase extends Mock implements CalculatePaymentUseCase {}`
+    - `class MockCalculatePaymentUseCase extends Mock implements CalculatePaymentUseCase {}` — **import path:** `package:time_money/src/features/payment/aplication/calculate_payment_use_case.dart` (note: `aplication` is a pre-existing typo in the folder name — use as-is)
   - [ ] 4.2 Update `test/helpers/helpers.dart` barrel to export both `pump_app.dart` and `mocks.dart`
   - [ ] 4.3 Verify `pump_app.dart` is adequate (already has localization + MaterialApp)
 
 - [ ] Task 5: Rewrite core unit tests (AC: #5)
-  - [ ] 5.1 Rewrite `test/src/core/ui/action_state_test.dart` — use type checks (`is ActionInitial`) and `switch` expressions instead of `.when()`
-  - [ ] 5.2 Rewrite `test/src/core/errors/failures_test.dart` — use type checks and `switch` expressions instead of `.when()`
+  - [ ] 5.1 Rewrite `test/src/core/ui/action_state_test.dart` (12 tests) — use type checks (`is ActionInitial`) and `switch` expressions instead of `.when()`
+  - [ ] 5.2 Rewrite `test/src/core/errors/failures_test.dart` (11 tests) — use type checks and `switch` expressions instead of `.when()`. Remove `GlobalDefaultFailure` typedef test group (typedef no longer exists) — replace with test verifying `GlobalFailure` works without generics
   - [ ] 5.3 All 23 tests pass via `flutter test`
 
 - [ ] Task 6: Final verification (AC: #6)
@@ -230,6 +231,26 @@ final class InvalidFormat<T> extends ValueFailure<T> {
 **Group B — Files using `.when()` on GlobalFailure (must change to `switch`):**
 - `lib/src/shared/widgets/error_view.dart` — `failure.when(...)` → `switch (failure) { ... }`, also `GlobalDefaultFailure` → `GlobalFailure` parameter type
 
+  **Parameter name mapping (Freezed positional callbacks → sealed class destructuring):**
+  ```dart
+  // BEFORE — Freezed .when() with positional callback params
+  failure.when(
+    internalError: (failedValue, exception) => ShowInfoSection(infoMessage: '$failedValue'),
+    timeOutExceeded: () => ShowInfoSection(...),
+    serverError: (failure) => ShowInfoSection(...),
+    notConnection: () => ShowInfoSection(...),
+  )
+
+  // AFTER — switch expression with named field destructuring
+  switch (failure) {
+    InternalError(:final error, :final stackTrace) => ShowInfoSection(infoMessage: '$error'),
+    TimeOutExceeded() => ShowInfoSection(...),
+    ServerError(:final failure) => ShowInfoSection(...),
+    NotConnection() => ShowInfoSection(...),
+  }
+  ```
+  Note: `failedValue` → `error`, `exception` → `stackTrace` — field names changed in sealed class definition.
+
 **Group C — Files using `.when()` on ActionState (must change to `switch`):**
 - `lib/src/features/times/presentation/widgets/create_time_button.dart` — `state.currentState.when(` → `switch (state.currentState) {`
 - `lib/src/features/times/presentation/widgets/update_time_button.dart` — `state.currentState.when(` → `switch (state.currentState) {`
@@ -237,9 +258,9 @@ final class InvalidFormat<T> extends ValueFailure<T> {
 
 **Group D — Files using `ActionState` constructors (must change to variant classes):**
 - `lib/src/features/times/presentation/bloc/create_time_bloc.dart` — `ActionState.initial()` → `ActionInitial()`, `ActionState.loading()` → `ActionLoading()`, `ActionState.error(f)` → `ActionError(f)`, `ActionState.success(v)` → `ActionSuccess(v)`. **Tear-off warning:** `result.fold(ActionState.error, ActionState.success)` → `result.fold(ActionError.new, ActionSuccess.new)`
-- `lib/src/features/times/presentation/bloc/create_time_state.dart` — `ActionState<TimeEntry>` field type stays, `ActionState<TimeEntry>.initial()` → `ActionInitial<TimeEntry>()`
+- `lib/src/features/times/presentation/bloc/create_time_state.dart` — `ActionState<TimeEntry>` field type stays, `ActionState<TimeEntry>.initial()` → `ActionInitial<TimeEntry>()`. **Const propagation:** `@Default` and factory constructors require `const` — `const ActionInitial<TimeEntry>()` satisfies this since `ActionInitial` has a `const` constructor
 - `lib/src/features/times/presentation/bloc/update_time_bloc.dart` — same constructor changes as create_time_bloc. **Tear-off warning:** same `result.fold()` pattern
-- `lib/src/features/times/presentation/bloc/update_time_state.dart` — constructor calls change
+- `lib/src/features/times/presentation/bloc/update_time_state.dart` — `@Default(ActionState<TimeEntry>.initial())` → `@Default(ActionInitial<TimeEntry>())` — `const` propagation valid
 - `lib/src/features/times/presentation/bloc/delete_time_state.dart` — constructor calls change
 - `lib/src/features/wage/presentation/bloc/update_wage_state.dart` — constructor calls change
 - `lib/src/features/wage/presentation/bloc/update_wage_bloc.dart` — constructor calls change
@@ -263,7 +284,7 @@ final class InvalidFormat<T> extends ValueFailure<T> {
 - `lib/src/core/ui/action_state.freezed.dart` — DELETE
 - `lib/src/core/errors/failures.freezed.dart` — DELETE
 
-**DO NOT touch `.freezed.dart` files in BLoC folders** — those belong to BLoC events/states and will be migrated in Stories 3.2-3.5.
+**DO NOT manually edit `.freezed.dart` files in BLoC folders** — those belong to BLoC events/states and will be migrated in Stories 3.2-3.5. However, they MUST be **regenerated** via `dart run build_runner build --delete-conflicting-outputs` after updating their source files (Groups D/E), because the generated code references `GlobalDefaultFailure`, `GlobalFailure<dynamic>`, and `ActionState` constructor patterns that change in this story.
 
 ### Approach Order
 
@@ -272,10 +293,11 @@ final class InvalidFormat<T> extends ValueFailure<T> {
 2. Migrate `action_state.dart` second — depends on GlobalFailure
 3. Update consumer files batch by batch (repositories → BLoC states → BLoC blocs → widgets)
 4. Delete `.freezed.dart` files for core only
-5. Run `flutter analyze` + `flutter test` (tests will fail until step 6)
-6. Create test infrastructure (mocks.dart)
-7. Rewrite core tests
-8. Final verification
+5. Run `dart run build_runner build --delete-conflicting-outputs` to regenerate BLoC Freezed files (they reference changed types)
+6. Run `flutter analyze` + `flutter test` (tests will fail until step 8)
+7. Create test infrastructure (mocks.dart)
+8. Rewrite core tests
+9. Final verification
 
 ### Technical Debt Awareness (from Epic 2 Retrospective)
 
@@ -316,6 +338,53 @@ These are documented pre-existing issues. **DO NOT fix them in this story** — 
 - **Coverage target:** 100% on use cases, BLoCs, repositories; 85%+ overall
 - **Test command:** `flutter test --coverage --test-randomize-ordering-seed random`
 - **Every test uses `pumpApp()` for widget tests** — wraps with localization + MaterialApp
+
+**Test rewrite pattern — FROM `.when()` TO type checks:**
+```dart
+// BEFORE — Freezed .when() dispatch
+test('initial creates Initial state', () {
+  const ActionState<int>.initial().when(
+    initial: () => expect(true, isTrue),
+    loading: () => fail('wrong variant'),
+    error: (_) => fail('wrong variant'),
+    success: (_) => fail('wrong variant'),
+  );
+});
+
+// AFTER — sealed class type checks
+test('ActionInitial is correct type', () {
+  const state = ActionInitial<int>();
+  expect(state, isA<ActionInitial<int>>());
+  expect(state, isA<ActionState<int>>());
+  expect(state.isInitial, isTrue);
+  expect(state.isLoading, isFalse);
+});
+
+// BEFORE — Freezed constructor with generic
+test('notConnection is constructable', () {
+  const GlobalFailure<dynamic>.notConnection().when(
+    serverError: (_) => fail('wrong'),
+    notConnection: () => expect(true, isTrue),
+    timeOutExceeded: () => fail('wrong'),
+    internalError: (_, _) => fail('wrong'),
+  );
+});
+
+// AFTER — sealed class direct constructor, no generic
+test('NotConnection is correct type', () {
+  const failure = NotConnection();
+  expect(failure, isA<NotConnection>());
+  expect(failure, isA<GlobalFailure>());
+});
+```
+
+**GlobalDefaultFailure typedef test removal:** The existing test group "GlobalDefaultFailure typedef" (verifies `isA<GlobalDefaultFailure>()` and `isA<GlobalFailure<dynamic>>()`) must be removed since the typedef no longer exists. Replace with a test verifying `GlobalFailure` is non-generic:
+```dart
+test('GlobalFailure is non-generic sealed class', () {
+  const failure = NotConnection();
+  expect(failure, isA<GlobalFailure>());
+});
+```
 
 ### Dependencies — Verify Before Starting
 
