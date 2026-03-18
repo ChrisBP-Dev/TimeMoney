@@ -95,6 +95,9 @@ This story is NOT about:
 - Architecture restructuring or folder renaming (Epic 2)
 - Freezed 2.x → 3.x codegen migration (Story 1.4)
 - Any source code changes to BLoC files (the 8.x → 9.x upgrade requires NO code changes for this codebase)
+- Fixing pre-existing bugs (see D-4 below) — do NOT fix any existing logic issues
+
+**Why version-bump-only:** Story 1.1 already migrated dartz → fpdart. BLoC 8.x already required `on<Event>` (deprecated `mapEventToState` was removed in 8.0.0). The codebase uses zero deprecated APIs. Sealed class migration and `emit.forEach` adoption are Epic 3. The epics file AC#2 mentions "dartz → fpdart" but that work is complete — this story only verifies fpdart compatibility with bloc 9.x.
 
 ### BLoC 9.x Migration Details (Research Complete — 2026-03-17)
 
@@ -118,16 +121,6 @@ This story is NOT about:
 | `TransitionFunction` typedef | NOT USED |
 | Direct `.listen()` on Bloc/Cubit | NOT USED |
 
-**New features in BLoC 9.x (informational — no action needed):**
-
-| Feature | Version | Description |
-|---------|---------|-------------|
-| `onDone` callback | 9.1.0 | Optional `BlocObserver` override for lifecycle tracking |
-| `MultiBlocObserver` | 9.2.0 | Attach multiple observer instances simultaneously |
-| Mounted check in listeners | flutter_bloc 9.0.0 | `BlocListener`/`BlocConsumer` auto-verify `context.mounted` |
-| `dispose` callback on `RepositoryProvider` | flutter_bloc 9.1.0 | Cleanup callback |
-| `BlocSelector` rebuild fix | flutter_bloc 9.1.1 | Properly rebuilds when selector changes |
-
 **Unchanged APIs (no code modifications needed):**
 - `on<Event>` handler pattern — identical
 - `emit`, `emit.forEach`, `emit.onEach` — identical
@@ -150,7 +143,9 @@ The dartz → fpdart migration was completed in Story 1.1. All 4 files already i
 
 **Current mismatch:** pubspec.yaml pins `bloc_test: ^9.1.1` which was designed for `bloc 8.x`. When upgrading to `bloc ^9.2.0`, the corresponding `bloc_test` version is `^10.0.0`. The `blocTest` function API is unchanged — the 10.0.0 major version is due to an internal refactor (`EmittableStateStreamableSource` interface decoupling).
 
-### Existing BLoC Inventory (7 classes — zero changes needed)
+**Zero test files exist:** The codebase contains no `*_test.dart` files and no imports of `package:bloc_test`. The bloc_test upgrade is purely to keep dependency alignment — there are no existing tests to break or verify. Test infrastructure is created in Epic 3.
+
+### Existing BLoC Inventory (8 classes — zero changes needed)
 
 | BLoC/Cubit | File | Event Pattern | State Pattern |
 |------------|------|---------------|---------------|
@@ -161,6 +156,7 @@ The dartz → fpdart migration was completed in Story 1.1. All 4 files already i
 | FetchWageHourlyBloc | `lib/src/presentation/.../fetch_wage/bloc/fetch_wage_hourly_bloc.dart` | `on<_GetWage>` | Union: initial/loading/empty/error/hasDataStream |
 | UpdateWageHourlyBloc | `lib/src/presentation/.../update_wage/bloc/update_wage_hourly_bloc.dart` | `on<_ChangeHourly>`, `on<_Update>` | Single factory with ActionState |
 | ResultPaymentCubit | `lib/src/presentation/.../result_payment/cubit/result_payment_cubit.dart` | N/A (Cubit — methods only) | Single factory with list + wage |
+| AppBloc | `lib/app/view/app_bloc.dart` | N/A (Widget wrapper) | N/A — BLoC provider composition only |
 
 All use `on<Event>` handlers (BLoC) or direct methods (Cubit). No deprecated patterns found.
 
@@ -187,17 +183,6 @@ BLoC DI uses `BlocProvider` from flutter_bloc. The registration pattern in `time
 - All repository files — fpdart is already latest
 - `bootstrap.dart` — `Bloc.observer` already uses 9.x-compatible API
 - All DI files — `BlocProvider` API is unchanged
-
-### Why This Is a Version-Bump-Only Story
-
-This story is intentionally minimal because:
-1. **Story 1.1 already migrated dartz → fpdart** — the FP dependency work is done
-2. **BLoC 8.x already required `on<Event>`** — the deprecated `mapEventToState` was removed in bloc 8.0.0
-3. **The codebase uses zero deprecated APIs** — grep verification confirms no `BlocOverrides`, `mapEventToState`, `transformEvents`, or direct `.listen()`
-4. **Sealed class migration is Epic 3** — this story explicitly does NOT convert Freezed events/states to sealed classes
-5. **Stream consumption migration is Epic 3** — `emit.forEach` pattern adoption happens in Stories 3.2-3.5
-
-The architecture document confirms: "Sealed classes (3) and BLoC 9.x (4) can be done together — they're interrelated" but the epics decompose them separately — version bump first (Story 1.3), API modernization later (Epic 3).
 
 ### Commit Convention
 
@@ -227,6 +212,8 @@ Key learnings from Story 1.2 that apply to this story:
 5. **Manual CRUD verification pattern** — Tasks 4/5 in Story 1.2 required manual UI verification. Same approach applies here for runtime verification.
 
 6. **Code review deferred findings D-1, D-2, D-3** are pre-existing issues unrelated to this story — do not attempt to fix them.
+
+7. **D-4 (NEW): DeleteTimeBloc `.fold()` result not emitted** — In `delete_time_bloc.dart:23`, the line `result.fold(DeleteTimeState.error, (r) => const _Success())` discards the fold result instead of emitting it. The success/error state is never emitted; state jumps directly to `initial()`. This is a pre-existing logic bug unrelated to Story 1.3 — do NOT fix it in this story. It will be addressed in Epic 3 when BLoC files are modernized.
 
 ### Git Intelligence (Recent Commits)
 
