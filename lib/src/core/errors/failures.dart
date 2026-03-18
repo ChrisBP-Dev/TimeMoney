@@ -3,39 +3,54 @@ import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'failures.freezed.dart';
-
-@freezed
-abstract class ValueFailure<T> with _$ValueFailure<T> {
-  const factory ValueFailure.characterLimitExceeded({required T failedValue}) =
-      CharacterLimitExceeded<T>;
-  const factory ValueFailure.shortOrNullCharacters({required T failedValue}) =
-      ShortOrNullCharacters<T>;
-  const factory ValueFailure.invalidFormat({required T failedValue}) =
-      InvalidFormat<T>;
+sealed class ValueFailure<T> {
+  const ValueFailure();
 }
 
-@freezed
-abstract class GlobalFailure<F> with _$GlobalFailure<F> {
-  const factory GlobalFailure.serverError(F failure) = ServerError<F>;
-  const factory GlobalFailure.notConnection() = NotConnection<F>;
-  const factory GlobalFailure.timeOutExceeded() = TimeOutExceeded<F>;
-  const factory GlobalFailure.internalError(dynamic err, [StackTrace? st]) =
-      LocalError<F>;
+final class CharacterLimitExceeded<T> extends ValueFailure<T> {
+  const CharacterLimitExceeded({required this.failedValue});
+  final T failedValue;
+}
+
+final class ShortOrNullCharacters<T> extends ValueFailure<T> {
+  const ShortOrNullCharacters({required this.failedValue});
+  final T failedValue;
+}
+
+final class InvalidFormat<T> extends ValueFailure<T> {
+  const InvalidFormat({required this.failedValue});
+  final T failedValue;
+}
+
+sealed class GlobalFailure {
+  const GlobalFailure();
 
   factory GlobalFailure.fromException(Object err, [StackTrace? st]) {
-    if (err is SocketException) return const GlobalFailure.notConnection();
-
-    if (err is TimeoutException) return const GlobalFailure.timeOutExceeded();
-
+    if (err is SocketException) return const NotConnection();
+    if (err is TimeoutException) return const TimeOutExceeded();
     if (kDebugMode) {
       developer.log('Exception Failure', error: err, stackTrace: st);
     }
-
-    return GlobalFailure.internalError(err, st);
+    return InternalError(err, st);
   }
 }
 
-typedef GlobalDefaultFailure = GlobalFailure<dynamic>;
+final class ServerError extends GlobalFailure {
+  const ServerError(this.failure);
+  final Object failure;
+}
+
+final class NotConnection extends GlobalFailure {
+  const NotConnection();
+}
+
+final class TimeOutExceeded extends GlobalFailure {
+  const TimeOutExceeded();
+}
+
+final class InternalError extends GlobalFailure {
+  const InternalError(this.error, [this.stackTrace]);
+  final dynamic error;
+  final StackTrace? stackTrace;
+}

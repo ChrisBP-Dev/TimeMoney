@@ -28,7 +28,7 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
       emit(state.copyWith(time: state.time?.copyWith(minutes: minutes)));
     });
     on<_Update>((event, emit) async {
-      emit(state.copyWith(currentState: const ActionState.loading()));
+      emit(state.copyWith(currentState: const ActionLoading()));
 
       await Future<void>.delayed(AppDurations.actionFeedback);
 
@@ -38,13 +38,13 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
 
       emit(
         state.copyWith(
-          currentState: result.fold(ActionState.error, ActionState.success),
+          currentState: result.fold(ActionError.new, ActionSuccess.new),
         ),
       );
 
       await Future<void>.delayed(AppDurations.actionFeedback);
 
-      emit(state.copyWith(currentState: const ActionState.initial()));
+      emit(state.copyWith(currentState: const ActionInitial()));
     });
   }
 
@@ -53,8 +53,8 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
   FutureOr<void> _emitError(Emitter<UpdateTimeState> emit) async {
     emit(
       state.copyWith(
-        currentState: const ActionState.error(
-          GlobalFailure.internalError('invalid number'),
+        currentState: const ActionError(
+          InternalError('invalid number'),
         ),
       ),
     );
@@ -63,7 +63,7 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
 
     emit(
       state.copyWith(
-        currentState: const ActionState.initial(),
+        currentState: const ActionInitial(),
       ),
     );
   }

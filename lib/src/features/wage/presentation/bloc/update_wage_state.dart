@@ -6,7 +6,7 @@ abstract class UpdateWageState with _$UpdateWageState {
     @Default(WageHourly())
         WageHourly wageHourly,
     @Default(
-      ActionState<WageHourly>.initial(),
+      ActionInitial<WageHourly>(),
     )
         ActionState<WageHourly> currentState,
   }) = _UpdateWageState;

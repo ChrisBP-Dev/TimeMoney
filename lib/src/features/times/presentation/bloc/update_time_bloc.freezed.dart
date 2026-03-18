@@ -466,7 +466,7 @@ $Res call({
 });
 
 
-$ActionStateCopyWith<TimeEntry, $Res> get currentState;$TimeEntryCopyWith<$Res>? get time;
+$TimeEntryCopyWith<$Res>? get time;
 
 }
 /// @nodoc
@@ -487,15 +487,6 @@ as TimeEntry?,
   ));
 }
 /// Create a copy of UpdateTimeState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ActionStateCopyWith<TimeEntry, $Res> get currentState {
-  
-  return $ActionStateCopyWith<TimeEntry, $Res>(_self.currentState, (value) {
-    return _then(_self.copyWith(currentState: value));
-  });
-}/// Create a copy of UpdateTimeState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -645,7 +636,7 @@ return $default(_that.currentState,_that.time);case _:
 
 
 class _UpdateTimeState implements UpdateTimeState {
-  const _UpdateTimeState({this.currentState = const ActionState<TimeEntry>.initial(), this.time = null});
+  const _UpdateTimeState({this.currentState = const ActionInitial<TimeEntry>(), this.time = null});
   
 
 @override@JsonKey() final  ActionState<TimeEntry> currentState;
@@ -685,7 +676,7 @@ $Res call({
 });
 
 
-@override $ActionStateCopyWith<TimeEntry, $Res> get currentState;@override $TimeEntryCopyWith<$Res>? get time;
+@override $TimeEntryCopyWith<$Res>? get time;
 
 }
 /// @nodoc
@@ -707,15 +698,6 @@ as TimeEntry?,
 }
 
 /// Create a copy of UpdateTimeState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ActionStateCopyWith<TimeEntry, $Res> get currentState {
-  
-  return $ActionStateCopyWith<TimeEntry, $Res>(_self.currentState, (value) {
-    return _then(_self.copyWith(currentState: value));
-  });
-}/// Create a copy of UpdateTimeState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')

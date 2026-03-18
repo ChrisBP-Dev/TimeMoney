@@ -6,120 +6,95 @@ import 'package:time_money/src/core/errors/failures.dart';
 
 void main() {
   group('ValueFailure', () {
-    test('characterLimitExceeded holds failedValue', () {
-      const ValueFailure<String>.characterLimitExceeded(
-        failedValue: 'too long',
-      ).when(
-        characterLimitExceeded: (value) => expect(value, 'too long'),
-        shortOrNullCharacters: (_) => fail('wrong variant'),
-        invalidFormat: (_) => fail('wrong variant'),
-      );
+    test('CharacterLimitExceeded holds failedValue', () {
+      const failure = CharacterLimitExceeded<String>(failedValue: 'too long');
+      expect(failure, isA<CharacterLimitExceeded<String>>());
+      expect(failure, isA<ValueFailure<String>>());
+      expect(failure.failedValue, 'too long');
     });
 
-    test('shortOrNullCharacters holds failedValue', () {
-      const ValueFailure<String>.shortOrNullCharacters(
-        failedValue: '',
-      ).when(
-        characterLimitExceeded: (_) => fail('wrong variant'),
-        shortOrNullCharacters: (value) => expect(value, ''),
-        invalidFormat: (_) => fail('wrong variant'),
-      );
+    test('ShortOrNullCharacters holds failedValue', () {
+      const failure = ShortOrNullCharacters<String>(failedValue: '');
+      expect(failure, isA<ShortOrNullCharacters<String>>());
+      expect(failure, isA<ValueFailure<String>>());
+      expect(failure.failedValue, '');
     });
 
-    test('invalidFormat holds failedValue', () {
-      const ValueFailure<String>.invalidFormat(
-        failedValue: 'abc',
-      ).when(
-        characterLimitExceeded: (_) => fail('wrong variant'),
-        shortOrNullCharacters: (_) => fail('wrong variant'),
-        invalidFormat: (value) => expect(value, 'abc'),
-      );
+    test('InvalidFormat holds failedValue', () {
+      const failure = InvalidFormat<String>(failedValue: 'abc');
+      expect(failure, isA<InvalidFormat<String>>());
+      expect(failure, isA<ValueFailure<String>>());
+      expect(failure.failedValue, 'abc');
     });
   });
 
   group('GlobalFailure', () {
-    test('serverError holds failure value', () {
-      const GlobalFailure<String>.serverError('500').when(
-        serverError: (value) => expect(value, '500'),
-        notConnection: () => fail('wrong variant'),
-        timeOutExceeded: () => fail('wrong variant'),
-        internalError: (_, _) => fail('wrong variant'),
-      );
+    test('GlobalFailure is non-generic sealed class', () {
+      const failure = NotConnection();
+      expect(failure, isA<GlobalFailure>());
     });
 
-    test('notConnection is constructable', () {
-      const GlobalFailure<dynamic>.notConnection().when(
-        serverError: (_) => fail('wrong variant'),
-        notConnection: () => expect(true, isTrue),
-        timeOutExceeded: () => fail('wrong variant'),
-        internalError: (_, _) => fail('wrong variant'),
-      );
+    test('ServerError holds failure value', () {
+      const failure = ServerError('500');
+      expect(failure, isA<ServerError>());
+      expect(failure, isA<GlobalFailure>());
+      expect(failure.failure, '500');
     });
 
-    test('timeOutExceeded is constructable', () {
-      const GlobalFailure<dynamic>.timeOutExceeded().when(
-        serverError: (_) => fail('wrong variant'),
-        notConnection: () => fail('wrong variant'),
-        timeOutExceeded: () => expect(true, isTrue),
-        internalError: (_, _) => fail('wrong variant'),
-      );
+    test('NotConnection is correct type', () {
+      const failure = NotConnection();
+      expect(failure, isA<NotConnection>());
+      expect(failure, isA<GlobalFailure>());
     });
 
-    test('internalError holds error and optional stackTrace', () {
+    test('TimeOutExceeded is correct type', () {
+      const failure = TimeOutExceeded();
+      expect(failure, isA<TimeOutExceeded>());
+      expect(failure, isA<GlobalFailure>());
+    });
+
+    test('InternalError holds error and optional stackTrace', () {
       final st = StackTrace.current;
-      GlobalFailure<dynamic>.internalError('err', st).when(
-        serverError: (_) => fail('wrong variant'),
-        notConnection: () => fail('wrong variant'),
-        timeOutExceeded: () => fail('wrong variant'),
-        internalError: (err, stackTrace) {
-          expect(err, 'err');
-          expect(stackTrace, st);
-        },
-      );
+      final failure = InternalError('err', st);
+      expect(failure, isA<InternalError>());
+      expect(failure, isA<GlobalFailure>());
+      expect(failure.error, 'err');
+      expect(failure.stackTrace, st);
+    });
+
+    test('exhaustive switch covers all variants', () {
+      const GlobalFailure failure = NotConnection();
+      final result = switch (failure) {
+        ServerError() => 'server',
+        NotConnection() => 'noConnection',
+        TimeOutExceeded() => 'timeout',
+        InternalError() => 'internal',
+      };
+      expect(result, 'noConnection');
     });
 
     group('fromException', () {
-      test('SocketException maps to notConnection', () {
-        GlobalFailure<dynamic>.fromException(
+      test('SocketException maps to NotConnection', () {
+        final failure = GlobalFailure.fromException(
           const SocketException('no network'),
-        ).when(
-          serverError: (_) => fail('wrong variant'),
-          notConnection: () => expect(true, isTrue),
-          timeOutExceeded: () => fail('wrong variant'),
-          internalError: (_, _) => fail('wrong variant'),
         );
+        expect(failure, isA<NotConnection>());
       });
 
-      test('TimeoutException maps to timeOutExceeded', () {
-        GlobalFailure<dynamic>.fromException(
+      test('TimeoutException maps to TimeOutExceeded', () {
+        final failure = GlobalFailure.fromException(
           TimeoutException('timed out'),
-        ).when(
-          serverError: (_) => fail('wrong variant'),
-          notConnection: () => fail('wrong variant'),
-          timeOutExceeded: () => expect(true, isTrue),
-          internalError: (_, _) => fail('wrong variant'),
         );
+        expect(failure, isA<TimeOutExceeded>());
       });
 
-      test('generic Exception maps to internalError', () {
-        GlobalFailure<dynamic>.fromException(
+      test('generic Exception maps to InternalError', () {
+        final failure = GlobalFailure.fromException(
           Exception('generic'),
-        ).when(
-          serverError: (_) => fail('wrong variant'),
-          notConnection: () => fail('wrong variant'),
-          timeOutExceeded: () => fail('wrong variant'),
-          internalError: (err, _) => expect(err, isA<Exception>()),
         );
+        expect(failure, isA<InternalError>());
+        expect((failure as InternalError).error, isA<Exception>());
       });
-    });
-  });
-
-  group('GlobalDefaultFailure typedef', () {
-    test('resolves to GlobalFailure<dynamic>', () {
-      const failure = GlobalDefaultFailure.notConnection();
-
-      expect(failure, isA<GlobalDefaultFailure>());
-      expect(failure, isA<GlobalFailure<dynamic>>());
     });
   });
 }

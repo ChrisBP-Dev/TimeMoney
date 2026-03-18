@@ -8,7 +8,7 @@ class ErrorFetchWageHourlyView extends StatelessWidget {
     required this.actionWidget,
     super.key,
   });
-  final GlobalDefaultFailure failure;
+  final GlobalFailure failure;
   final Widget? actionWidget;
 
   @override

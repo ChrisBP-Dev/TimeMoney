@@ -1,6 +1,6 @@
 # Story 3.1: Core Sealed Classes, Test Infrastructure & Core Tests
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -44,35 +44,35 @@ So that all union types use native sealed classes consistently and the testing f
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Migrate GlobalFailure & ValueFailure to sealed classes (AC: #2)
-  - [ ] 1.1 Replace Freezed `GlobalFailure<F>` with `sealed class GlobalFailure` (no generic) in `lib/src/core/errors/failures.dart`
-  - [ ] 1.2 Define `final class` variants: `ServerError`, `NotConnection`, `TimeOutExceeded`, `InternalError` — all with `const` constructors
-  - [ ] 1.3 Preserve `GlobalFailure.fromException()` as static factory method (same logic: SocketException → NotConnection, TimeoutException → TimeOutExceeded, else → InternalError)
-  - [ ] 1.4 Replace Freezed `ValueFailure<T>` with `sealed class ValueFailure<T>` and `final class` variants
-  - [ ] 1.5 Remove `GlobalDefaultFailure` typedef — update all references to use `GlobalFailure` directly
-  - [ ] 1.6 Delete `lib/src/core/errors/failures.freezed.dart`
-  - [ ] 1.7 Remove `freezed_annotation` import and `part` directive from `failures.dart`
+- [x] Task 1: Migrate GlobalFailure & ValueFailure to sealed classes (AC: #2)
+  - [x] 1.1 Replace Freezed `GlobalFailure<F>` with `sealed class GlobalFailure` (no generic) in `lib/src/core/errors/failures.dart`
+  - [x] 1.2 Define `final class` variants: `ServerError`, `NotConnection`, `TimeOutExceeded`, `InternalError` — all with `const` constructors
+  - [x] 1.3 Preserve `GlobalFailure.fromException()` as static factory method (same logic: SocketException → NotConnection, TimeoutException → TimeOutExceeded, else → InternalError)
+  - [x] 1.4 Replace Freezed `ValueFailure<T>` with `sealed class ValueFailure<T>` and `final class` variants
+  - [x] 1.5 Remove `GlobalDefaultFailure` typedef — update all references to use `GlobalFailure` directly
+  - [x] 1.6 Delete `lib/src/core/errors/failures.freezed.dart`
+  - [x] 1.7 Remove `freezed_annotation` import and `part` directive from `failures.dart`
 
-- [ ] Task 2: Migrate ActionState to sealed class (AC: #1)
-  - [ ] 2.1 Replace Freezed `ActionState<T>` with `sealed class ActionState<T>` in `lib/src/core/ui/action_state.dart`
-  - [ ] 2.2 Define `final class` variants: `ActionInitial<T>`, `ActionLoading<T>`, `ActionSuccess<T>`, `ActionError<T>` — all with `const` constructors
-  - [ ] 2.3 Remove `ActionInfo` extension — replace with type-check getters directly on sealed class (e.g., `bool get isInitial => this is ActionInitial<T>;`)
-  - [ ] 2.4 Delete `lib/src/core/ui/action_state.freezed.dart`
-  - [ ] 2.5 Remove `freezed_annotation` import and `part` directive
+- [x] Task 2: Migrate ActionState to sealed class (AC: #1)
+  - [x] 2.1 Replace Freezed `ActionState<T>` with `sealed class ActionState<T>` in `lib/src/core/ui/action_state.dart`
+  - [x] 2.2 Define `final class` variants: `ActionInitial<T>`, `ActionLoading<T>`, `ActionSuccess<T>`, `ActionError<T>` — all with `const` constructors
+  - [x] 2.3 Remove `ActionInfo` extension — replace with type-check getters directly on sealed class (e.g., `bool get isInitial => this is ActionInitial<T>;`)
+  - [x] 2.4 Delete `lib/src/core/ui/action_state.freezed.dart`
+  - [x] 2.5 Remove `freezed_annotation` import and `part` directive
 
-- [ ] Task 3: Update all consumer files (AC: #1, #2) — see Consumer Update Reference groups B-F
-  - [ ] 3.1 Group B: Update `error_view.dart` — `GlobalDefaultFailure` → `GlobalFailure`, `.when()` → `switch` expression
-  - [ ] 3.2 Group C: Update widget files that call `.when()` on ActionState — `create_time_button.dart`, `update_time_button.dart`, `set_wage_button.dart` — change `state.currentState.when(` → `switch (state.currentState) {`
-  - [ ] 3.3 Group D: Update BLoC files with ActionState constructors — change `ActionState.initial()` → `ActionInitial()`, etc. **Watch for tear-offs:** `result.fold(ActionState.error, ActionState.success)` → `result.fold(ActionError.new, ActionSuccess.new)`
-  - [ ] 3.4 Group E: Update all files using `GlobalDefaultFailure` typedef → `GlobalFailure` (BLoC states, error view widgets)
-  - [ ] 3.5 Group F: Update repository files — remove generic from `GlobalFailure<dynamic>` → `GlobalFailure`
-  - [ ] 3.6 Group G: Delete `action_state.freezed.dart` and `failures.freezed.dart` (core only)
-  - [ ] 3.7 Regenerate BLoC Freezed files: `dart run build_runner build --delete-conflicting-outputs` — required because BLoC state source files (Groups D/E) now reference `ActionInitial`, `GlobalFailure` (no generic), etc., so their `.freezed.dart` outputs are stale. Affected generated files: `create_time_bloc.freezed.dart`, `update_time_bloc.freezed.dart`, `update_wage_bloc.freezed.dart`, `list_times_bloc.freezed.dart`, `delete_time_bloc.freezed.dart`, `fetch_wage_bloc.freezed.dart`
-  - [ ] 3.8 Run `flutter analyze` — zero warnings
-  - [ ] 3.9 Run `flutter test` (tests will fail until Task 5 rewrites them)
+- [x] Task 3: Update all consumer files (AC: #1, #2) — see Consumer Update Reference groups B-F
+  - [x] 3.1 Group B: Update `error_view.dart` — `GlobalDefaultFailure` → `GlobalFailure`, `.when()` → `switch` expression
+  - [x] 3.2 Group C: Update widget files that call `.when()` on ActionState — `create_time_button.dart`, `update_time_button.dart`, `set_wage_button.dart` — change `state.currentState.when(` → `switch (state.currentState) {`
+  - [x] 3.3 Group D: Update BLoC files with ActionState constructors — change `ActionState.initial()` → `ActionInitial()`, etc. **Watch for tear-offs:** `result.fold(ActionState.error, ActionState.success)` → `result.fold(ActionError.new, ActionSuccess.new)`
+  - [x] 3.4 Group E: Update all files using `GlobalDefaultFailure` typedef → `GlobalFailure` (BLoC states, error view widgets)
+  - [x] 3.5 Group F: Update repository files — remove generic from `GlobalFailure<dynamic>` → `GlobalFailure`
+  - [x] 3.6 Group G: Delete `action_state.freezed.dart` and `failures.freezed.dart` (core only)
+  - [x] 3.7 Regenerate BLoC Freezed files: `dart run build_runner build --delete-conflicting-outputs` — required because BLoC state source files (Groups D/E) now reference `ActionInitial`, `GlobalFailure` (no generic), etc., so their `.freezed.dart` outputs are stale. Affected generated files: `create_time_bloc.freezed.dart`, `update_time_bloc.freezed.dart`, `update_wage_bloc.freezed.dart`, `list_times_bloc.freezed.dart`, `delete_time_bloc.freezed.dart`, `fetch_wage_bloc.freezed.dart`
+  - [x] 3.8 Run `flutter analyze` — zero warnings
+  - [x] 3.9 Run `flutter test` (tests will fail until Task 5 rewrites them)
 
-- [ ] Task 4: Create test infrastructure (AC: #4)
-  - [ ] 4.1 Create `test/helpers/mocks.dart` with shared mocktail mocks:
+- [x] Task 4: Create test infrastructure (AC: #4)
+  - [x] 4.1 Create `test/helpers/mocks.dart` with shared mocktail mocks:
     - `class MockTimesRepository extends Mock implements TimesRepository {}`
     - `class MockWageRepository extends Mock implements WageRepository {}`
     - `class MockCreateTimeUseCase extends Mock implements CreateTimeUseCase {}`
@@ -83,18 +83,18 @@ So that all union types use native sealed classes consistently and the testing f
     - `class MockSetWageUseCase extends Mock implements SetWageUseCase {}`
     - `class MockUpdateWageUseCase extends Mock implements UpdateWageUseCase {}`
     - `class MockCalculatePaymentUseCase extends Mock implements CalculatePaymentUseCase {}` — **import path:** `package:time_money/src/features/payment/aplication/calculate_payment_use_case.dart` (note: `aplication` is a pre-existing typo in the folder name — use as-is)
-  - [ ] 4.2 Update `test/helpers/helpers.dart` barrel to export both `pump_app.dart` and `mocks.dart`
-  - [ ] 4.3 Verify `pump_app.dart` is adequate (already has localization + MaterialApp)
+  - [x] 4.2 Update `test/helpers/helpers.dart` barrel to export both `pump_app.dart` and `mocks.dart`
+  - [x] 4.3 Verify `pump_app.dart` is adequate (already has localization + MaterialApp)
 
-- [ ] Task 5: Rewrite core unit tests (AC: #5)
-  - [ ] 5.1 Rewrite `test/src/core/ui/action_state_test.dart` (12 tests) — use type checks (`is ActionInitial`) and `switch` expressions instead of `.when()`
-  - [ ] 5.2 Rewrite `test/src/core/errors/failures_test.dart` (11 tests) — use type checks and `switch` expressions instead of `.when()`. Remove `GlobalDefaultFailure` typedef test group (typedef no longer exists) — replace with test verifying `GlobalFailure` works without generics
-  - [ ] 5.3 All 23 tests pass via `flutter test`
+- [x] Task 5: Rewrite core unit tests (AC: #5)
+  - [x] 5.1 Rewrite `test/src/core/ui/action_state_test.dart` (12 tests) — use type checks (`is ActionInitial`) and `switch` expressions instead of `.when()`
+  - [x] 5.2 Rewrite `test/src/core/errors/failures_test.dart` (11 tests) — use type checks and `switch` expressions instead of `.when()`. Remove `GlobalDefaultFailure` typedef test group (typedef no longer exists) — replace with test verifying `GlobalFailure` works without generics
+  - [x] 5.3 All 23 tests pass via `flutter test`
 
-- [ ] Task 6: Final verification (AC: #6)
-  - [ ] 6.1 `flutter analyze` — zero warnings
-  - [ ] 6.2 `flutter test` — all tests pass
-  - [ ] 6.3 App compiles and runs correctly
+- [x] Task 6: Final verification (AC: #6)
+  - [x] 6.1 `flutter analyze` — zero warnings
+  - [x] 6.2 `flutter test` — all tests pass
+  - [x] 6.3 App compiles and runs correctly
 
 ## Dev Notes
 
@@ -406,10 +406,68 @@ Confirm these are in `pubspec.yaml` dev_dependencies (they should already be):
 
 ### Agent Model Used
 
+Claude Opus 4.6 (1M context)
+
 ### Debug Log References
+
+- `flutter analyze` — 0 issues on full project
+- `flutter test --test-randomize-ordering-seed random` — 24 tests passed (12 action_state + 12 failures)
+- `dart run build_runner build --delete-conflicting-outputs` — 6 outputs regenerated successfully
 
 ### Completion Notes List
 
+- Migrated `GlobalFailure` from Freezed generic class to non-generic sealed class. `LocalError` renamed to `InternalError`. `ServerError.failure` field type changed from generic `F` to `Object`. `GlobalDefaultFailure` typedef removed.
+- Migrated `ValueFailure` from Freezed to sealed class with `final class` variants preserving generic `<T>`.
+- Migrated `ActionState` from Freezed to sealed class. Removed `ActionInfo` extension, replaced with type-check getters on base class. Removed `freezed_annotation` import and `part` directive.
+- Updated 19 consumer files across Groups B-F: `.when()` → `switch` expressions on ActionState/GlobalFailure, `GlobalDefaultFailure` → `GlobalFailure`, `GlobalFailure<dynamic>` → `GlobalFailure`, tear-off constructors updated.
+- Deleted `failures.freezed.dart` and `action_state.freezed.dart` (core only).
+- Regenerated 6 BLoC `.freezed.dart` files via build_runner.
+- Created `test/helpers/mocks.dart` with 10 shared mocktail mocks (2 repositories + 8 use cases).
+- Updated `test/helpers/helpers.dart` barrel to export mocks.
+- Rewrote `action_state_test.dart` (12 tests) and `failures_test.dart` (12 tests) using type checks and `switch` expressions. Replaced `GlobalDefaultFailure` typedef test with non-generic verification test.
+- All 24 tests pass. Zero lint warnings.
+
 ### Change Log
 
+- 2026-03-18: Story 3.1 implementation complete — sealed class migration for ActionState, GlobalFailure, ValueFailure; test infrastructure created; core tests rewritten
+
 ### File List
+
+**Modified:**
+- `lib/src/core/errors/failures.dart` — Freezed → sealed class (GlobalFailure + ValueFailure)
+- `lib/src/core/ui/action_state.dart` — Freezed → sealed class (ActionState)
+- `lib/src/shared/widgets/error_view.dart` — GlobalDefaultFailure → GlobalFailure, .when() → switch
+- `lib/src/features/times/presentation/widgets/create_time_button.dart` — .when() → switch
+- `lib/src/features/times/presentation/widgets/update_time_button.dart` — .when() → switch
+- `lib/src/features/wage/presentation/widgets/set_wage_button.dart` — .when() → switch
+- `lib/src/features/times/presentation/bloc/create_time_bloc.dart` — ActionState constructors → variant classes
+- `lib/src/features/times/presentation/bloc/create_time_state.dart` — ActionState.initial() → ActionInitial()
+- `lib/src/features/times/presentation/bloc/update_time_bloc.dart` — ActionState constructors → variant classes
+- `lib/src/features/times/presentation/bloc/update_time_state.dart` — ActionState.initial() → ActionInitial()
+- `lib/src/features/wage/presentation/bloc/update_wage_bloc.dart` — ActionState constructors → variant classes
+- `lib/src/features/wage/presentation/bloc/update_wage_state.dart` — ActionState.initial() → ActionInitial()
+- `lib/src/features/times/presentation/bloc/delete_time_state.dart` — GlobalFailure<dynamic> → GlobalFailure
+- `lib/src/features/times/presentation/bloc/list_times_state.dart` — GlobalDefaultFailure → GlobalFailure
+- `lib/src/features/wage/presentation/bloc/fetch_wage_state.dart` — GlobalDefaultFailure → GlobalFailure
+- `lib/src/features/times/presentation/widgets/error_list_times_view.dart` — GlobalDefaultFailure → GlobalFailure
+- `lib/src/features/wage/presentation/widgets/error_fetch_wage_hourly_view.dart` — GlobalDefaultFailure → GlobalFailure
+- `lib/src/features/times/domain/repositories/times_repository.dart` — GlobalFailure<dynamic> → GlobalFailure
+- `lib/src/features/wage/domain/repositories/wage_repository.dart` — GlobalDefaultFailure → GlobalFailure
+- `test/helpers/helpers.dart` — added mocks.dart export
+- `test/src/core/ui/action_state_test.dart` — rewritten for sealed classes
+- `test/src/core/errors/failures_test.dart` — rewritten for sealed classes
+
+**Created:**
+- `test/helpers/mocks.dart` — shared mocktail mocks for repositories and use cases
+
+**Deleted:**
+- `lib/src/core/errors/failures.freezed.dart`
+- `lib/src/core/ui/action_state.freezed.dart`
+
+**Regenerated (via build_runner):**
+- `lib/src/features/times/presentation/bloc/create_time_bloc.freezed.dart`
+- `lib/src/features/times/presentation/bloc/update_time_bloc.freezed.dart`
+- `lib/src/features/times/presentation/bloc/delete_time_bloc.freezed.dart`
+- `lib/src/features/times/presentation/bloc/list_times_bloc.freezed.dart`
+- `lib/src/features/wage/presentation/bloc/update_wage_bloc.freezed.dart`
+- `lib/src/features/wage/presentation/bloc/fetch_wage_bloc.freezed.dart`

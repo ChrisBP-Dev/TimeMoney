@@ -323,7 +323,7 @@ return hasDataStream(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  empty,TResult Function( GlobalDefaultFailure err)?  error,TResult Function( Stream<WageHourly> data)?  hasDataStream,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  empty,TResult Function( GlobalFailure err)?  error,TResult Function( Stream<WageHourly> data)?  hasDataStream,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
@@ -348,7 +348,7 @@ return hasDataStream(_that.data);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  empty,required TResult Function( GlobalDefaultFailure err)  error,required TResult Function( Stream<WageHourly> data)  hasDataStream,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  empty,required TResult Function( GlobalFailure err)  error,required TResult Function( Stream<WageHourly> data)  hasDataStream,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
@@ -372,7 +372,7 @@ return hasDataStream(_that.data);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  empty,TResult? Function( GlobalDefaultFailure err)?  error,TResult? Function( Stream<WageHourly> data)?  hasDataStream,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  empty,TResult? Function( GlobalFailure err)?  error,TResult? Function( Stream<WageHourly> data)?  hasDataStream,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
@@ -490,7 +490,7 @@ class _Error implements FetchWageState {
   const _Error(this.err);
   
 
- final  GlobalDefaultFailure err;
+ final  GlobalFailure err;
 
 /// Create a copy of FetchWageState
 /// with the given fields replaced by the non-null parameter values.
@@ -522,11 +522,11 @@ abstract mixin class _$ErrorCopyWith<$Res> implements $FetchWageStateCopyWith<$R
   factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
 @useResult
 $Res call({
- GlobalDefaultFailure err
+ GlobalFailure err
 });
 
 
-$GlobalFailureCopyWith<dynamic, $Res> get err;
+
 
 }
 /// @nodoc
@@ -542,20 +542,11 @@ class __$ErrorCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? err = null,}) {
   return _then(_Error(
 null == err ? _self.err : err // ignore: cast_nullable_to_non_nullable
-as GlobalDefaultFailure,
+as GlobalFailure,
   ));
 }
 
-/// Create a copy of FetchWageState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$GlobalFailureCopyWith<dynamic, $Res> get err {
-  
-  return $GlobalFailureCopyWith<dynamic, $Res>(_self.err, (value) {
-    return _then(_self.copyWith(err: value));
-  });
-}
+
 }
 
 /// @nodoc

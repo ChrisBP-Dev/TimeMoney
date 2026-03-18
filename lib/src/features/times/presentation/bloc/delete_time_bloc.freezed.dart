@@ -403,7 +403,7 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  success,TResult Function( GlobalFailure<dynamic> err)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function()?  success,TResult Function( GlobalFailure err)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
@@ -427,7 +427,7 @@ return error(_that.err);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  success,required TResult Function( GlobalFailure<dynamic> err)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function()  success,required TResult Function( GlobalFailure err)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
@@ -450,7 +450,7 @@ return error(_that.err);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  success,TResult? Function( GlobalFailure<dynamic> err)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function()?  success,TResult? Function( GlobalFailure err)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
@@ -567,7 +567,7 @@ class _Error implements DeleteTimeState {
   const _Error(this.err);
   
 
- final  GlobalFailure<dynamic> err;
+ final  GlobalFailure err;
 
 /// Create a copy of DeleteTimeState
 /// with the given fields replaced by the non-null parameter values.
@@ -599,11 +599,11 @@ abstract mixin class _$ErrorCopyWith<$Res> implements $DeleteTimeStateCopyWith<$
   factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
 @useResult
 $Res call({
- GlobalFailure<dynamic> err
+ GlobalFailure err
 });
 
 
-$GlobalFailureCopyWith<dynamic, $Res> get err;
+
 
 }
 /// @nodoc
@@ -619,20 +619,11 @@ class __$ErrorCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? err = null,}) {
   return _then(_Error(
 null == err ? _self.err : err // ignore: cast_nullable_to_non_nullable
-as GlobalFailure<dynamic>,
+as GlobalFailure,
   ));
 }
 
-/// Create a copy of DeleteTimeState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$GlobalFailureCopyWith<dynamic, $Res> get err {
-  
-  return $GlobalFailureCopyWith<dynamic, $Res>(_self.err, (value) {
-    return _then(_self.copyWith(err: value));
-  });
-}
+
 }
 
 // dart format on

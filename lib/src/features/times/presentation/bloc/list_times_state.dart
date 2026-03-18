@@ -5,7 +5,7 @@ abstract class ListTimesState with _$ListTimesState {
   const factory ListTimesState.initial() = _Initial;
   const factory ListTimesState.loading() = _Loading;
   const factory ListTimesState.empty() = _Empty;
-  const factory ListTimesState.error(GlobalDefaultFailure err) = _Error;
+  const factory ListTimesState.error(GlobalFailure err) = _Error;
   const factory ListTimesState.hasDataStream(
     Stream<List<TimeEntry>> data,
   ) = _HasDataStream;

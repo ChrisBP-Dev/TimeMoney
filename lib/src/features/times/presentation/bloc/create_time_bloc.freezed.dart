@@ -423,7 +423,7 @@ $Res call({
 });
 
 
-$ActionStateCopyWith<TimeEntry, $Res> get currentState;
+
 
 }
 /// @nodoc
@@ -444,16 +444,7 @@ as int,minutes: null == minutes ? _self.minutes : minutes // ignore: cast_nullab
 as int,
   ));
 }
-/// Create a copy of CreateTimeState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ActionStateCopyWith<TimeEntry, $Res> get currentState {
-  
-  return $ActionStateCopyWith<TimeEntry, $Res>(_self.currentState, (value) {
-    return _then(_self.copyWith(currentState: value));
-  });
-}
+
 }
 
 
@@ -632,7 +623,7 @@ $Res call({
 });
 
 
-@override $ActionStateCopyWith<TimeEntry, $Res> get currentState;
+
 
 }
 /// @nodoc
@@ -654,16 +645,7 @@ as int,
   ));
 }
 
-/// Create a copy of CreateTimeState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ActionStateCopyWith<TimeEntry, $Res> get currentState {
-  
-  return $ActionStateCopyWith<TimeEntry, $Res>(_self.currentState, (value) {
-    return _then(_self.copyWith(currentState: value));
-  });
-}
+
 }
 
 // dart format on

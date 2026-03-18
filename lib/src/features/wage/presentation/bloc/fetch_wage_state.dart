@@ -5,7 +5,7 @@ abstract class FetchWageState with _$FetchWageState {
   const factory FetchWageState.initial() = _Initial;
   const factory FetchWageState.loading() = _Loading;
   const factory FetchWageState.empty() = _Empty;
-  const factory FetchWageState.error(GlobalDefaultFailure err) = _Error;
+  const factory FetchWageState.error(GlobalFailure err) = _Error;
   const factory FetchWageState.hasDataStream(
     Stream<WageHourly> data,
   ) = _HasDataStream;

@@ -10,7 +10,7 @@ abstract class TimesRepository {
 }
 
 typedef FetchTimesResultStream
-    = Either<GlobalFailure<dynamic>, Stream<List<TimeEntry>>>;
-typedef CreateTimeResult = Future<Either<GlobalFailure<dynamic>, TimeEntry>>;
-typedef DeleteTimeResult = Future<Either<GlobalFailure<dynamic>, Unit>>;
-typedef UpdateTimeResult = Future<Either<GlobalFailure<dynamic>, TimeEntry>>;
+    = Either<GlobalFailure, Stream<List<TimeEntry>>>;
+typedef CreateTimeResult = Future<Either<GlobalFailure, TimeEntry>>;
+typedef DeleteTimeResult = Future<Either<GlobalFailure, Unit>>;
+typedef UpdateTimeResult = Future<Either<GlobalFailure, TimeEntry>>;

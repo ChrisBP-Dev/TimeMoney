@@ -26,7 +26,7 @@ class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
       );
     });
     on<_Update>((event, emit) async {
-      emit(state.copyWith(currentState: const ActionState.loading()));
+      emit(state.copyWith(currentState: const ActionLoading()));
 
       final result = await _updateWageUseCase.call(state.wageHourly);
 
@@ -48,8 +48,8 @@ class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
   FutureOr<void> _emitError(Emitter<UpdateWageState> emit) async {
     emit(
       state.copyWith(
-        currentState: const ActionState.error(
-          GlobalFailure.internalError('invalid number'),
+        currentState: const ActionError(
+          InternalError('invalid number'),
         ),
       ),
     );
@@ -58,7 +58,7 @@ class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
 
     emit(
       state.copyWith(
-        currentState: const ActionState.initial(),
+        currentState: const ActionInitial(),
       ),
     );
   }

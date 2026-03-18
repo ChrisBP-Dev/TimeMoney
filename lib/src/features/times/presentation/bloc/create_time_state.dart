@@ -9,6 +9,6 @@ abstract class CreateTimeState with _$CreateTimeState {
   }) = _CreateTimeState;
 
   factory CreateTimeState.initial() => const CreateTimeState(
-        currentState: ActionState<TimeEntry>.initial(),
+        currentState: ActionInitial<TimeEntry>(),
       );
 }

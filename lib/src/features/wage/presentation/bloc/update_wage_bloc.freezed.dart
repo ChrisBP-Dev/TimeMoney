@@ -313,7 +313,7 @@ $Res call({
 });
 
 
-$WageHourlyCopyWith<$Res> get wageHourly;$ActionStateCopyWith<WageHourly, $Res> get currentState;
+$WageHourlyCopyWith<$Res> get wageHourly;
 
 }
 /// @nodoc
@@ -341,15 +341,6 @@ $WageHourlyCopyWith<$Res> get wageHourly {
   
   return $WageHourlyCopyWith<$Res>(_self.wageHourly, (value) {
     return _then(_self.copyWith(wageHourly: value));
-  });
-}/// Create a copy of UpdateWageState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ActionStateCopyWith<WageHourly, $Res> get currentState {
-  
-  return $ActionStateCopyWith<WageHourly, $Res>(_self.currentState, (value) {
-    return _then(_self.copyWith(currentState: value));
   });
 }
 }
@@ -489,7 +480,7 @@ return $default(_that.wageHourly,_that.currentState);case _:
 
 
 class _UpdateWageState implements UpdateWageState {
-  const _UpdateWageState({this.wageHourly = const WageHourly(), this.currentState = const ActionState<WageHourly>.initial()});
+  const _UpdateWageState({this.wageHourly = const WageHourly(), this.currentState = const ActionInitial<WageHourly>()});
   
 
 @override@JsonKey() final  WageHourly wageHourly;
@@ -529,7 +520,7 @@ $Res call({
 });
 
 
-@override $WageHourlyCopyWith<$Res> get wageHourly;@override $ActionStateCopyWith<WageHourly, $Res> get currentState;
+@override $WageHourlyCopyWith<$Res> get wageHourly;
 
 }
 /// @nodoc
@@ -558,15 +549,6 @@ $WageHourlyCopyWith<$Res> get wageHourly {
   
   return $WageHourlyCopyWith<$Res>(_self.wageHourly, (value) {
     return _then(_self.copyWith(wageHourly: value));
-  });
-}/// Create a copy of UpdateWageState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ActionStateCopyWith<WageHourly, $Res> get currentState {
-  
-  return $ActionStateCopyWith<WageHourly, $Res>(_self.currentState, (value) {
-    return _then(_self.copyWith(currentState: value));
   });
 }
 }

@@ -4,7 +4,7 @@ part of 'update_time_bloc.dart';
 abstract class UpdateTimeState with _$UpdateTimeState {
   const factory UpdateTimeState({
     @Default(
-      ActionState<TimeEntry>.initial(),
+      ActionInitial<TimeEntry>(),
     )
         ActionState<TimeEntry> currentState,
     @Default(null)

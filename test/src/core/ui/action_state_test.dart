@@ -3,134 +3,119 @@ import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/core/ui/action_state.dart';
 
 void main() {
-  group('ActionState factory constructors', () {
-    test('initial creates Initial state', () {
-      const ActionState<int>.initial().when(
-        initial: () => expect(true, isTrue),
-        loading: () => fail('wrong variant'),
-        error: (_) => fail('wrong variant'),
-        success: (_) => fail('wrong variant'),
-      );
+  group('ActionState sealed class variants', () {
+    test('ActionInitial is correct type', () {
+      const state = ActionInitial<int>();
+      expect(state, isA<ActionInitial<int>>());
+      expect(state, isA<ActionState<int>>());
     });
 
-    test('loading creates Loading state', () {
-      const ActionState<int>.loading().when(
-        initial: () => fail('wrong variant'),
-        loading: () => expect(true, isTrue),
-        error: (_) => fail('wrong variant'),
-        success: (_) => fail('wrong variant'),
-      );
+    test('ActionLoading is correct type', () {
+      const state = ActionLoading<int>();
+      expect(state, isA<ActionLoading<int>>());
+      expect(state, isA<ActionState<int>>());
     });
 
-    test('error creates Error state with failure', () {
-      const failure = GlobalFailure<dynamic>.notConnection();
-      const ActionState<int>.error(failure).when(
-        initial: () => fail('wrong variant'),
-        loading: () => fail('wrong variant'),
-        error: (err) => expect(err, failure),
-        success: (_) => fail('wrong variant'),
-      );
+    test('ActionError holds failure', () {
+      const failure = NotConnection();
+      const state = ActionError<int>(failure);
+      expect(state, isA<ActionError<int>>());
+      expect(state, isA<ActionState<int>>());
+      expect(state.failure, failure);
     });
 
-    test('success creates Success state with value', () {
-      const ActionState<int>.success(42).when(
-        initial: () => fail('wrong variant'),
-        loading: () => fail('wrong variant'),
-        error: (_) => fail('wrong variant'),
-        success: (value) => expect(value, 42),
-      );
+    test('ActionSuccess holds data', () {
+      const state = ActionSuccess<int>(42);
+      expect(state, isA<ActionSuccess<int>>());
+      expect(state, isA<ActionState<int>>());
+      expect(state.data, 42);
     });
   });
 
-  group('ActionInfo extension', () {
-    test('isInitial returns true only for initial', () {
-      expect(const ActionState<int>.initial().isInitial, isTrue);
-      expect(const ActionState<int>.loading().isInitial, isFalse);
-      expect(const ActionState<int>.success(1).isInitial, isFalse);
+  group('ActionState convenience getters', () {
+    test('isInitial returns true only for ActionInitial', () {
+      expect(const ActionInitial<int>().isInitial, isTrue);
+      expect(const ActionLoading<int>().isInitial, isFalse);
+      expect(const ActionSuccess<int>(1).isInitial, isFalse);
       expect(
-        const ActionState<int>.error(
-          GlobalFailure<dynamic>.notConnection(),
-        ).isInitial,
+        const ActionError<int>(NotConnection()).isInitial,
         isFalse,
       );
     });
 
-    test('isLoading returns true only for loading', () {
-      expect(const ActionState<int>.initial().isLoading, isFalse);
-      expect(const ActionState<int>.loading().isLoading, isTrue);
-      expect(const ActionState<int>.success(1).isLoading, isFalse);
+    test('isLoading returns true only for ActionLoading', () {
+      expect(const ActionInitial<int>().isLoading, isFalse);
+      expect(const ActionLoading<int>().isLoading, isTrue);
+      expect(const ActionSuccess<int>(1).isLoading, isFalse);
       expect(
-        const ActionState<int>.error(
-          GlobalFailure<dynamic>.notConnection(),
-        ).isLoading,
+        const ActionError<int>(NotConnection()).isLoading,
         isFalse,
       );
     });
 
-    test('isSuccess returns true only for success', () {
-      expect(const ActionState<int>.initial().isSuccess, isFalse);
-      expect(const ActionState<int>.loading().isSuccess, isFalse);
-      expect(const ActionState<int>.success(1).isSuccess, isTrue);
+    test('isSuccess returns true only for ActionSuccess', () {
+      expect(const ActionInitial<int>().isSuccess, isFalse);
+      expect(const ActionLoading<int>().isSuccess, isFalse);
+      expect(const ActionSuccess<int>(1).isSuccess, isTrue);
       expect(
-        const ActionState<int>.error(
-          GlobalFailure<dynamic>.notConnection(),
-        ).isSuccess,
+        const ActionError<int>(NotConnection()).isSuccess,
         isFalse,
       );
     });
 
-    test('isError returns true only for error', () {
-      expect(const ActionState<int>.initial().isError, isFalse);
-      expect(const ActionState<int>.loading().isError, isFalse);
-      expect(const ActionState<int>.success(1).isError, isFalse);
+    test('isError returns true only for ActionError', () {
+      expect(const ActionInitial<int>().isError, isFalse);
+      expect(const ActionLoading<int>().isError, isFalse);
+      expect(const ActionSuccess<int>(1).isError, isFalse);
       expect(
-        const ActionState<int>.error(
-          GlobalFailure<dynamic>.notConnection(),
-        ).isError,
+        const ActionError<int>(NotConnection()).isError,
         isTrue,
       );
     });
   });
 
-  group('when dispatches correctly', () {
-    test('dispatches initial', () {
-      final result = const ActionState<int>.initial().when(
-        initial: () => 'initial',
-        loading: () => 'loading',
-        error: (_) => 'error',
-        success: (_) => 'success',
-      );
+  group('ActionState exhaustive switch', () {
+    test('switch dispatches ActionInitial', () {
+      const ActionState<int> state = ActionInitial<int>();
+      final result = switch (state) {
+        ActionInitial() => 'initial',
+        ActionLoading() => 'loading',
+        ActionError() => 'error',
+        ActionSuccess() => 'success',
+      };
       expect(result, 'initial');
     });
 
-    test('dispatches loading', () {
-      final result = const ActionState<int>.loading().when(
-        initial: () => 'initial',
-        loading: () => 'loading',
-        error: (_) => 'error',
-        success: (_) => 'success',
-      );
+    test('switch dispatches ActionLoading', () {
+      const ActionState<int> state = ActionLoading<int>();
+      final result = switch (state) {
+        ActionInitial() => 'initial',
+        ActionLoading() => 'loading',
+        ActionError() => 'error',
+        ActionSuccess() => 'success',
+      };
       expect(result, 'loading');
     });
 
-    test('dispatches error', () {
-      const failure = GlobalFailure<dynamic>.notConnection();
-      final result = const ActionState<int>.error(failure).when(
-        initial: () => 'initial',
-        loading: () => 'loading',
-        error: (_) => 'error',
-        success: (_) => 'success',
-      );
+    test('switch dispatches ActionError', () {
+      const ActionState<int> state = ActionError<int>(NotConnection());
+      final result = switch (state) {
+        ActionInitial() => 'initial',
+        ActionLoading() => 'loading',
+        ActionError() => 'error',
+        ActionSuccess() => 'success',
+      };
       expect(result, 'error');
     });
 
-    test('dispatches success', () {
-      final result = const ActionState<int>.success(42).when(
-        initial: () => 'initial',
-        loading: () => 'loading',
-        error: (_) => 'error',
-        success: (v) => 'success:$v',
-      );
+    test('switch dispatches ActionSuccess with data', () {
+      const ActionState<int> state = ActionSuccess<int>(42);
+      final result = switch (state) {
+        ActionInitial() => 'initial',
+        ActionLoading() => 'loading',
+        ActionError() => 'error',
+        ActionSuccess(:final data) => 'success:$data',
+      };
       expect(result, 'success:42');
     });
   });

@@ -28,7 +28,7 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
     });
 
     on<_Create>((event, emit) async {
-      emit(state.copyWith(currentState: const ActionState.loading()));
+      emit(state.copyWith(currentState: const ActionLoading()));
 
       await Future<void>.delayed(AppDurations.actionFeedback);
 
@@ -40,7 +40,7 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
 
       emit(
         state.copyWith(
-          currentState: result.fold(ActionState.error, ActionState.success),
+          currentState: result.fold(ActionError.new, ActionSuccess.new),
         ),
       );
 
@@ -53,8 +53,8 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
   FutureOr<void> _emitError(Emitter<CreateTimeState> emit) async {
     emit(
       state.copyWith(
-        currentState: const ActionState.error(
-          GlobalFailure.internalError('invalid number'),
+        currentState: const ActionError(
+          InternalError('invalid number'),
         ),
       ),
     );
@@ -63,7 +63,7 @@ class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
 
     emit(
       state.copyWith(
-        currentState: const ActionState.initial(),
+        currentState: const ActionInitial(),
       ),
     );
   }

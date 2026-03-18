@@ -25,16 +25,16 @@ class SetWageButton extends StatelessWidget {
             if (!context.mounted) return;
             Navigator.of(context).pop();
           },
-          child: state.currentState.when(
-            initial: () => const Text('Update'),
-            loading: () => const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
-            success: (_) => const Text('Success'),
-            error: (_) => const Text('Error'),
-          ),
+          child: switch (state.currentState) {
+            ActionInitial() => const Text('Update'),
+            ActionLoading() => const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            ActionSuccess() => const Text('Success'),
+            ActionError() => const Text('Error'),
+          },
         );
       },
     );
