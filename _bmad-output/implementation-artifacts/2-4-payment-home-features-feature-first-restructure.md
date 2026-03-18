@@ -1,6 +1,6 @@
 # Story 2.4: Payment & Home Features — Feature-First Restructure
 
-Status: review
+Status: done
 
 ## Story
 
@@ -123,13 +123,12 @@ so that cross-feature composition follows Clean Architecture with proper boundar
 
 ```
 lib/src/features/payment/
-├── domain/
-│   └── use_cases/
-│       ├── use_cases.dart                          ← barrel
-│       └── calculate_payment_use_case.dart         ← NEW
+├── aplication/                                     ← corrected by code review (was domain/use_cases/)
+│   ├── use_cases.dart                              ← barrel
+│   └── calculate_payment_use_case.dart             ← NEW
 └── presentation/
     ├── cubit/
-    │   ├── cubit.dart                              ← barrel
+    │   ├── cubit.dart                              ← barrel (exports payment_cubit.dart only)
     │   ├── payment_cubit.dart                      ← was result_payment/cubit/result_payment_cubit.dart
     │   ├── payment_state.dart                      ← was result_payment/cubit/result_payment_state.dart
     │   ├── payment_cubit.freezed.dart              ← regenerated
@@ -554,19 +553,19 @@ Verified: no files under `test/` import `result_payment`, `control_hours`, `Resu
 
 ### Key Differences from Stories 2.2/2.3
 
-Simpler than previous stories: ~12 new files (vs ~35), no datasources/repositories/entity renames, no ObjectBox service or entry point changes. Payment has only 2 layers (domain+presentation), home has only 1 layer (presentation).
+Simpler than previous stories: ~12 new files (vs ~35), no datasources/repositories/entity renames, no ObjectBox service or entry point changes. Payment has 2 layers (aplication+presentation), home has only 1 layer (presentation). Note: no `domain/` or `infraestructure/` layers for payment — intentional, no entities or repository interfaces needed for a pure derived-calculation feature.
 
 ### Barrel Export Contents
 
 **Payment feature barrels:**
 ```dart
-// features/payment/domain/use_cases/use_cases.dart
+// features/payment/aplication/use_cases.dart  ← corrected by code review (was domain/use_cases/)
 export 'calculate_payment_use_case.dart';
 ```
 ```dart
 // features/payment/presentation/cubit/cubit.dart
 export 'payment_cubit.dart';
-export 'payment_cubits.dart';
+// NOTE: Do NOT export payment_cubits.dart (DI utility — accessed directly by shared/injections/)
 // NOTE: Do NOT export payment_state.dart (part file) or payment_cubit.freezed.dart (generated)
 ```
 ```dart
@@ -690,12 +689,13 @@ Claude Opus 4.6 (1M context)
 ### Change Log
 
 - 2026-03-18: Story 2.4 implemented — created payment feature (domain + presentation), home feature (presentation shell), renamed all ResultPayment* → Payment*, ControlHoursPage → HomePage, updated all cross-codebase imports, deleted old presentation/control_hours/ folder.
+- 2026-03-18: Code review corrections — moved CalculatePaymentUseCase from domain/use_cases/ to aplication/ (project layer convention); fixed CalculatePaymentButton to use barrel imports (cubit.dart, pages.dart); removed PaymentCubits from cubit.dart barrel (DI utility, not public API); added TODO comment on no-op BlocConsumer listener.
 
 ### File List
 
 **New files (12):**
-- `lib/src/features/payment/domain/use_cases/calculate_payment_use_case.dart`
-- `lib/src/features/payment/domain/use_cases/use_cases.dart`
+- `lib/src/features/payment/aplication/calculate_payment_use_case.dart` ← corrected from domain/use_cases/
+- `lib/src/features/payment/aplication/use_cases.dart` ← corrected from domain/use_cases/
 - `lib/src/features/payment/presentation/cubit/payment_cubit.dart`
 - `lib/src/features/payment/presentation/cubit/payment_state.dart`
 - `lib/src/features/payment/presentation/cubit/payment_cubit.freezed.dart` (generated)
@@ -722,3 +722,56 @@ Claude Opus 4.6 (1M context)
 - `lib/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.dart`
 - `lib/src/presentation/control_hours/result_payment/cubit/result_payment_state.dart`
 - `lib/src/presentation/control_hours/result_payment/cubit/result_payment_cubit.freezed.dart`
+
+**Deleted by code review (2):**
+- `lib/src/features/payment/domain/use_cases/calculate_payment_use_case.dart` (moved to aplication/)
+- `lib/src/features/payment/domain/use_cases/use_cases.dart` (moved to aplication/)
+
+## Code Review Record
+
+### Review Date
+
+2026-03-18
+
+### Reviewer Model
+
+Claude Sonnet 4.6
+
+### Layers Executed
+
+Blind Hunter ✅ | Edge Case Hunter ✅ | Acceptance Auditor ✅
+
+### Findings Summary
+
+| # | Category | Finding |
+|---|----------|---------|
+| B1 | bad_spec | `CalculatePaymentButton` imported `payment_cubit.dart` and `payment_result_page.dart` directly — spec specified direct paths bypassing barrels |
+| B2 | bad_spec | `CalculatePaymentUseCase` placed in `payment/domain/use_cases/` — violates project convention (`aplication/` for use cases) |
+| B3 | bad_spec | `cubit.dart` barrel exported `PaymentCubits` (DI utility) alongside `PaymentCubit` — mixes abstraction layers |
+| P1 | patch | No-op `BlocConsumer` listener carried into canonical files without inline deferred comment |
+| D1 | defer | `CalculatePaymentUseCase` dead code — not wired/called (W6 → Epic 3) |
+| D2 | defer | `CalculatePaymentUseCase` wraps single extension call — no interface/testability (Epic 3) |
+| D3 | defer | `CalculatePaymentButton` no guard for `wageHourly == 0.0` (pre-existing) |
+| D4 | defer | Negative `wageHourly` not validated (pre-existing) |
+| D5 | defer | `context.read<PaymentCubit>()` crash if not in widget tree (pre-existing) |
+| D6 | defer | Hardcoded user-facing strings violate localization rule (pre-existing → Epic 4) |
+| D7 | defer | Cross-feature `times/wage → payment` import violation (W1 → Epic 3) |
+| D8 | defer | `'Dolars'` typo (W5 → pre-existing) |
+| D9 | defer | Zero tests for new/renamed classes (W7 → Epic 3/5) |
+| D10 | defer | `lib/src/presentation/widgets/` still used — partial migration (→ Story 2.5) |
+| D11 | defer | `Save` button label misleading — only dismisses dialog (pre-existing) |
+| D12 | defer | `PaymentResultPage` takes constructor args instead of reading cubit (pre-existing → Epic 3) |
+
+**Rejected (3):** `times` list empty path (button guards it), null to `setList` (Dart null safety), `payment_state.dart` not in barrel (by design — part file).
+
+### Fixes Applied
+
+- **B1:** `calculate_payment_button.dart` — imports updated to use barrels `cubit/cubit.dart` and `pages/pages.dart`
+- **B2:** `CalculatePaymentUseCase` moved from `payment/domain/use_cases/` to `payment/aplication/`; `payment/domain/` directory removed
+- **B3:** `cubit/cubit.dart` barrel — removed `payment_cubits.dart` export; `PaymentCubits` accessed directly from `shared/injections/bloc_injections.dart`
+- **P1:** `calculate_payment_button.dart:14` — added `// TODO(epic3): replace with BlocBuilder (listener is no-op)`
+
+### Post-Fix Verification
+
+- `flutter analyze` — No issues found ✅
+- `flutter test` — 23/23 passed ✅
