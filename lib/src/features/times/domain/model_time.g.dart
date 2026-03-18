@@ -7,10 +7,10 @@ part of 'model_time.dart';
 // **************************************************************************
 
 _$_ModelTime _$$_ModelTimeFromJson(Map<String, dynamic> json) => _$_ModelTime(
-      hour: json['hour'] as int,
-      minutes: json['minutes'] as int,
-      id: json['id'] as int? ?? 0,
-    );
+  hour: (json['hour'] as num).toInt(),
+  minutes: (json['minutes'] as num).toInt(),
+  id: (json['id'] as num?)?.toInt() ?? 0,
+);
 
 Map<String, dynamic> _$$_ModelTimeToJson(_$_ModelTime instance) =>
     <String, dynamic>{
