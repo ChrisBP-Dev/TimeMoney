@@ -1,6 +1,6 @@
 # Story 1.2: ObjectBox Migration & Data Verification
 
-Status: review
+Status: done
 
 ## Story
 
@@ -316,18 +316,49 @@ Claude Opus 4.6 (1M context)
 ### Change Log
 
 - 2026-03-17: Story 1.2 implementation — ObjectBox 4.x → 5.x migration with build verification
+- 2026-03-17: Code review fixes — revert xcscheme tooling artifacts, document json_serializable regeneration, fix sprint-status timestamp
+
+### Code Review Record
+
+**Review date:** 2026-03-17
+**Reviewer model:** Claude Opus 4.6 (1M context) — 3-layer adversarial review (Blind Hunter + Edge Case Hunter + Acceptance Auditor)
+**Diff reviewed:** `5e54904..5c81ead` (12 files, 594+/217-)
+
+**Findings summary:** 37 raw → 18 deduplicated → 7 actionable (1 intent_gap, 1 bad_spec, 2 patch, 3 defer) + 11 rejected as noise.
+
+**IG-1 — Data migration not runtime-verified against 4.x database (ACCEPTED):** Fresh simulator had no pre-existing 4.x data; Tasks 4.2/4.3 marked N/A. Structural evidence is strong (objectbox-model.json byte-identical, all entity/property UIDs preserved, vTable offsets unchanged, FlatBuffers backward-compatible by design). AC#2 verified structurally, not via runtime migration path. Acceptable for a portfolio project with trivial 2-entity schema and no production users.
+
+**BS-1 — json_serializable .g.dart regeneration not anticipated (FIXED):** `build_runner build` regenerates all active generators, not only ObjectBox. `model_time.g.dart` and `wage_hourly.g.dart` were regenerated with updated json_serializable casting pattern (`as num).toInt()` instead of `as int`). File List updated below to document these files.
+
+**P-1 — Xcode xcscheme tooling artifacts (FIXED):** Reverted `customLLDBInitFile` additions from Runner.xcscheme, production.xcscheme, and staging.xcscheme. These were Flutter 3.41+ tooling side-effects from `flutter build ios --simulator`, not part of the ObjectBox migration.
+
+**P-2 — Sprint status timestamp inconsistency (FIXED):** Normalized `last_updated` from `2026-03-17T12:00:00` to `2026-03-17` to match `generated` field format.
+
+**D-1 — Build transitive deps restructuring (DEFERRED):** `build` 3.x→4.x, `source_gen` 3.x→4.x, `build_resolvers`/`build_runner_core` removed (internalized in `build_runner` 2.11.1). Natural consequence of upgrade. Monitor for conflicts when adding `freezed` in Story 1.4.
+
+**D-2 — No error handling in ObjectBox.create() (DEFERRED):** `openStore()` called without try-catch in `objectbox.dart:50`. Pre-existing since project inception. Address in Epic 2/3 architecture work.
+
+**D-3 — Web platform crash risk (DEFERRED):** Project includes `flutter_web_plugins` and `web/` directory but ObjectBox has no web support. Pre-existing. PRD confirms no web distribution planned.
 
 ### File List
 
 **Modified:**
 - `pubspec.yaml` — ObjectBox version bumps (^4.0.0 → ^5.2.0), removed build_runner BROKEN comment
-- `pubspec.lock` — Updated dependency resolutions
+- `pubspec.lock` — Updated dependency resolutions (objectbox 5.2.0, source_gen 4.2.1, build 4.0.4, build_runner 2.11.1, flat_buffers 25.9.23)
+
+**Modified (iOS platform):**
 - `ios/Podfile` — iOS deployment target 13.0 → 15.0
 - `ios/Runner.xcodeproj/project.pbxproj` — IPHONEOS_DEPLOYMENT_TARGET 13.0 → 15.0 (9 instances)
-- `ios/Podfile.lock` — ObjectBox pod 4.4.1 → 5.2.0
 
-**Regenerated (by build_runner):**
+**Regenerated (by build_runner — ObjectBox):**
 - `lib/objectbox.g.dart` — Updated generator version and import style (functionally equivalent)
+
+**Regenerated (by build_runner — json_serializable, out of original scope):**
+- `lib/src/features/times/domain/model_time.g.dart` — Casting pattern updated: `as int` → `(as num).toInt()` (more robust for JS interop)
+- `lib/src/features/wage_hourly/domain/wage_hourly.g.dart` — Same casting pattern update + formatting normalization
 
 **Unchanged (verified):**
 - `lib/objectbox-model.json` — Schema identical, all UIDs preserved
+
+**Not version-controlled (expected):**
+- `ios/Podfile.lock` — ObjectBox pod 4.4.1 → 5.2.0 (gitignored by `*.lock` rule in .gitignore; `!pubspec.lock` exception does not apply)
