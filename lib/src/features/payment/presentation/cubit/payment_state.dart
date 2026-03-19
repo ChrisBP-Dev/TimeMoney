@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
@@ -6,6 +7,7 @@ sealed class PaymentState {
   const PaymentState();
 }
 
+@immutable
 final class PaymentInitial extends PaymentState {
   const PaymentInitial();
 
@@ -16,6 +18,7 @@ final class PaymentInitial extends PaymentState {
   int get hashCode => runtimeType.hashCode;
 }
 
+@immutable
 final class PaymentReady extends PaymentState {
   const PaymentReady({required this.times, required this.wageHourly});
 
@@ -26,10 +29,10 @@ final class PaymentReady extends PaymentState {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PaymentReady &&
-          listEquals(times, other.times) &&
+          const ListEquality<TimeEntry>().equals(times, other.times) &&
           wageHourly == other.wageHourly;
 
   @override
   int get hashCode =>
-      Object.hash(Object.hashAll(times), wageHourly);
+      Object.hash(const ListEquality<TimeEntry>().hash(times), wageHourly);
 }

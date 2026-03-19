@@ -100,7 +100,25 @@ void main() {
       ],
     );
 
-    test('calculate() when PaymentReady returns Right', () async {
+    blocTest<PaymentCubit, PaymentState>(
+      'setWage zero resets from PaymentReady to PaymentInitial',
+      build: () => PaymentCubit(useCase),
+      act: (c) {
+        c
+          ..setWage(15)
+          ..setTimes([testEntry])
+          ..setWage(0);
+      },
+      expect: () => [
+        const PaymentInitial(),
+        const PaymentReady(times: [testEntry], wageHourly: 15),
+        const PaymentInitial(),
+      ],
+    );
+
+    test(
+      'calculate() when PaymentReady returns Right with all fields',
+      () async {
       final cubit = PaymentCubit(useCase)
         ..setTimes([testEntry])
         ..setWage(20);
@@ -113,7 +131,9 @@ void main() {
         (paymentResult) {
           expect(paymentResult.totalHours, 2);
           expect(paymentResult.totalMinutes, 30);
-          expect(paymentResult.totalPayment, 50);
+          expect(paymentResult.totalPayment, 50.0);
+          expect(paymentResult.wageHourly, 20.0);
+          expect(paymentResult.workedDays, 1);
         },
       );
       await cubit.close();

@@ -1,6 +1,6 @@
 # Story 3.5: Payment Feature — Cubit Modernization & Cross-Feature Composition
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -59,6 +59,14 @@ so that I can see an accurate payment summary with total hours, minutes, rate, a
   - [x] 8.1 Run `flutter analyze` — zero warnings
   - [x] 8.2 Run `flutter test` — all 105 tests pass (15 new payment tests + 90 existing)
   - [ ] 8.3 Verify app end-to-end: times → wage → button enables → tap → dialog shows correct result
+- [x] Task 9: Code Review patches (CR-3.5)
+  - [x] 9.1 Add `collection: ^1.18.0` and `meta: ^1.15.0` as direct dependencies in `pubspec.yaml` (fix `depend_on_referenced_packages` linter warnings)
+  - [x] 9.2 `payment_state.dart` — replace `listEquals` with `const ListEquality<TimeEntry>()` from `package:collection`; add `@immutable` per variant; remove `flutter/foundation` import for list comparison
+  - [x] 9.3 `payment_result.dart` — replace `flutter/foundation` import with `package:meta/meta.dart` to remove Flutter dep from domain layer; restore `@immutable`
+  - [x] 9.4 `list_times_screen.dart` — extend BlocConsumer listener to call `setTimes(const [])` on `ListTimesEmpty` and `ListTimesError` states (prevents stale PaymentReady when all times are deleted or an error occurs)
+  - [x] 9.5 `payment_cubit_test.dart` — add `setWage(0)` reset test; add `wageHourly` and `workedDays` assertions to `calculate()` Right test; fix `50` → `50.0` double literal
+  - [x] 9.6 `calculate_payment_use_case_test.dart` — fix `105` → `105.0` and `30` → `30.0` double literals
+  - [x] 9.7 Run `flutter analyze` — zero issues; `flutter test` — all 106 tests pass
 
 ## Dev Notes
 
@@ -651,20 +659,22 @@ N/A
 
 ### Completion Notes List
 
-- PaymentResult value object created with `@immutable`, const constructor, manual `==`/`hashCode` via `Object.hash`
+- PaymentResult value object created with `@immutable` (via `package:meta`), const constructor, manual `==`/`hashCode` via `Object.hash`; no Flutter dependency in domain layer
 - CalculatePaymentUseCase moved from `aplication/` to `domain/use_cases/`, return type changed from `double` to `Either<GlobalFailure, PaymentResult>`, uses `on Object catch` for linter compliance
-- PaymentState rewritten as `@immutable sealed class` with `PaymentInitial` and `PaymentReady` variants; uses `listEquals` from `package:flutter/foundation.dart` (project pattern) instead of `ListEquality` from `package:collection` (avoids `depend_on_referenced_packages` linter warning)
+- PaymentState rewritten as sealed class with `PaymentInitial` and `PaymentReady` variants; uses `const ListEquality<TimeEntry>()` from `package:collection` (AC1 spec); `collection` added as direct dependency in `pubspec.yaml`
 - PaymentCubit modernized: Freezed removed, `CalculatePaymentUseCase` injected via constructor, `setTimes`/`setWage`/`_tryEmitReady`/`calculate()` implemented with exhaustive switch
 - PaymentResultPage receives `PaymentResult result` instead of raw times/wage — visual output identical
 - CalculatePaymentButton: `BlocConsumer` → `BlocBuilder` (BS-1), sealed state check `state is! PaymentReady`, inlined `calculate().fold(...)` to fix `cascade_invocations` warning
-- Cross-feature: `setList` → `setTimes` in `list_times_screen.dart`, import path updated in `mocks.dart`, `use_cases_injection.dart` had no payment reference
+- Cross-feature: `setList` → `setTimes` in `list_times_screen.dart`; listener extended to reset `PaymentCubit` on `ListTimesEmpty`/`ListTimesError` (prevents stale payment state); import path updated in `mocks.dart`
 - Test adaptation: bloc 8.x does NOT deduplicate states — test expectations updated to include all emissions (story spec assumed bloc 9.x deduplication behavior)
-- 5 use case tests + 10 cubit tests = 15 new tests, all passing; 105 total tests pass with zero regressions
+- CR patches applied: `setWage(0)` reset test added; `wageHourly`/`workedDays` assertions added to calculate() test; double literals fixed in both test files
+- 5 use case tests + 11 cubit tests = 16 new tests, all passing; 106 total tests pass with zero regressions
 - `flutter analyze`: zero issues
 
 ### Change Log
 
 - 2026-03-18: Story 3.5 implementation complete — Payment feature cubit modernization and cross-feature composition
+- 2026-03-19: CR patches applied — `ListEquality` from `package:collection` (AC1 fix), `package:meta` for domain `@immutable`, `list_times_screen.dart` listener extended for empty/error reset, test coverage gaps filled (setWage(0) reset + wageHourly/workedDays assertions + double literals), `collection` and `meta` added as direct dependencies
 
 ### File List
 

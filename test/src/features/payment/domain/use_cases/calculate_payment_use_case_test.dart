@@ -22,7 +22,7 @@ void main() {
           expect(paymentResult.totalHours, 5);
           expect(paymentResult.totalMinutes, 15);
           expect(paymentResult.wageHourly, 20);
-          expect(paymentResult.totalPayment, 105);
+          expect(paymentResult.totalPayment, 105.0);
           expect(paymentResult.workedDays, 2);
         },
       );
@@ -81,7 +81,7 @@ void main() {
       result.fold(
         (_) => fail('Expected Right'),
         (paymentResult) {
-          expect(paymentResult.totalPayment, 30);
+          expect(paymentResult.totalPayment, 30.0);
         },
       );
     });
