@@ -256,6 +256,7 @@ Future<void> _onHourlyChanged(
 ```
 - Note: `WageHourly.copyWith()` is fine — it's a Freezed domain entity, not a BLoC state
 - Capture `state.wageHourly` into local before using (race condition prevention)
+- Note: Handler uses `Future<void> async` (not `FutureOr<void>` non-async like CreateTimeBloc from 3.2). This follows the post-P-1 pattern applied to UpdateTimeBloc in Story 3.3 — all handlers use `Future<void>` for consistency. The `async` keyword ensures `return _emitError(emit)` is properly awaited before the handler completes.
 
 **Handler `_onSubmitted`:**
 ```dart
@@ -306,7 +307,15 @@ Future<void> _emitError(Emitter<UpdateWageState> emit) async {
 
 **`fetch_wage_screen.dart` — MAJOR REWRITE:**
 - Currently: `BlocConsumer` with no-op listener, `..add(const FetchWageEvent.getWage())`, renders via `.when()` with 5 branches including `hasDataStream` → `WageHourlyDataView(StreamBuilder)`
-- Target: `BlocConsumer` with `listenWhen: (prev, curr) => curr is FetchWageLoaded`, listener calls `context.read<PaymentCubit>().setWage(state.wage.value)` to sync payment calculations. Builder uses `switch` expression on 4 sealed states:
+- Target: `BlocConsumer` with `listenWhen: (prev, curr) => curr is FetchWageLoaded`, listener calls `context.read<PaymentCubit>().setWage(state.wage.value)` to sync payment calculations. Builder uses `switch` expression on 4 sealed states.
+- **Import migration:** PaymentCubit import moves here from deleted `WageHourlyDataView`. `CatchErrorBuilder` and `shared/widgets` imports are NO longer needed — stream error handling is now covered by `emit.forEach`'s `onError` callback in FetchWageBloc.
+- **Required imports for rewritten file:**
+  - `package:flutter/material.dart`
+  - `package:flutter_bloc/flutter_bloc.dart`
+  - `package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart` (moved from deleted WageHourlyDataView)
+  - `package:time_money/src/features/wage/presentation/bloc/fetch_wage_bloc.dart`
+  - `package:time_money/src/features/wage/presentation/widgets/widgets.dart` (provides `ShimmerWageHourlyView`, `WageHourlyCard`, `ErrorFetchWageHourlyView`)
+- Code:
   ```dart
   BlocConsumer<FetchWageBloc, FetchWageState>(
     listenWhen: (prev, curr) => curr is FetchWageLoaded,
@@ -331,12 +340,13 @@ Future<void> _emitError(Emitter<UpdateWageState> emit) async {
 - Remove `WageHourlyDataView` usage — render `WageHourlyCard` directly
 - Remove `empty` branch — no `FetchWageEmpty` state variant
 - Keep `_ActionWidget` as-is (pre-existing stub, not in scope)
-- Keep `PaymentCubit` import for listener sync
+- `ShimmerWageHourlyView` comes from `widgets.dart` barrel (via `wage_hourly_other_view.dart` export) — remains available after removing `wage_hourly_data_view.dart` export
 
 **`wage_hourly_data_view.dart` — DELETE:**
 - StreamBuilder is eliminated. FetchWageBloc now handles stream internally via `emit.forEach`
 - PaymentCubit sync moved to FetchWageScreen listener
 - WageHourlyCard rendering moved to FetchWageScreen builder
+- `CatchErrorBuilder` stream error handling replaced by `emit.forEach`'s `onError` callback in FetchWageBloc — no widget-level error catching needed
 
 **`widgets.dart` barrel — UPDATE:**
 - Remove `export 'wage_hourly_data_view.dart';` line
