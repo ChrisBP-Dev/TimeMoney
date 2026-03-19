@@ -32,7 +32,7 @@ so that the web platform has a fully functional local data layer using SQLite vi
   - [ ] 1.1 Add `drift: ^2.32.0` to dependencies section
   - [ ] 1.2 Add `drift_flutter: ^0.3.0` to dependencies section
   - [ ] 1.3 Add `drift_dev: ^2.32.0` to dev_dependencies section
-  - [ ] 1.4 Run `flutter pub get` — verify zero conflicts with existing objectbox/freezed/bloc dependencies
+  - [ ] 1.4 Run `flutter pub get` — verify zero conflicts; check `pubspec.lock` to confirm objectbox 5.2.0, freezed 3.2.5, bloc 9.2.0 versions remain unchanged
   - [ ] 1.5 Do NOT add `sqlite3_flutter_libs` — drift 2.32+ uses Dart build hooks to bundle SQLite automatically
 
 - [ ] Task 2: Create TimesTable drift definition (AC: #3)
@@ -62,27 +62,30 @@ so that the web platform has a fully functional local data layer using SQLite vi
   - [ ] 4.12 Update `services.dart` barrel if needed (already exports `app_database.dart`)
 
 - [ ] Task 5: Run code generation (AC: #2)
-  - [ ] 5.1 Run `dart run build_runner build --delete-conflicting-outputs`
+  - [ ] 5.1 Run `dart run build_runner build --delete-conflicting-outputs` — the flag avoids conflicts with existing ObjectBox/Freezed generated files
   - [ ] 5.2 Verify `app_database.g.dart` is generated in `lib/src/core/services/`
   - [ ] 5.3 Verify existing ObjectBox and Freezed generated files are NOT corrupted by the run
 
 - [ ] Task 6: Download and place web assets (AC: #5)
-  - [ ] 6.1 Download `sqlite3.wasm` from sqlite3 3.x GitHub release matching `pubspec.lock` version
-  - [ ] 6.2 Download `drift_worker.dart.js` from drift 2.32 GitHub release
-  - [ ] 6.3 Place both files in `web/` directory
-  - [ ] 6.4 Verify files are accessible (not gitignored, correct permissions)
+  - [ ] 6.1 Check `pubspec.lock` for resolved `sqlite3` transitive dependency version (e.g., `3.1.5`)
+  - [ ] 6.2 Download `sqlite3.wasm` from `https://github.com/simolus3/sqlite3.dart/releases` — find the tag matching the resolved version, download the `sqlite3.wasm` asset
+  - [ ] 6.3 Download `drift_worker.dart.js` from `https://github.com/simolus3/drift/releases` — find the tag matching drift 2.32.x, download the `drift_worker.dart.js` asset
+  - [ ] 6.4 Place both files in `web/` directory (alongside existing `index.html`, `favicon.png`, `manifest.json`)
+  - [ ] 6.5 Verify files are accessible (not gitignored, correct permissions)
+  - [ ] 6.6 Alternative: if `drift_dev` provides a CLI command (e.g., `dart run drift_dev make-web`), use it to auto-download both assets
 
 - [ ] Task 7: Write tests (AC: #7)
   - [ ] 7.1 Create `test/src/core/services/app_database_test.dart`
   - [ ] 7.2 Test AppDatabase opens successfully with in-memory executor
   - [ ] 7.3 Test schemaVersion equals 1
-  - [ ] 7.4 Test TimesTable insert + select roundtrip (verify column types work)
-  - [ ] 7.5 Test WageHourlyTable insert + select roundtrip
+  - [ ] 7.4 Test TimesTable insert + select roundtrip (verify column types work); verify autoIncrement produces sequential IDs across multiple inserts
+  - [ ] 7.5 Test WageHourlyTable insert + select roundtrip; verify autoIncrement produces sequential IDs across multiple inserts
   - [ ] 7.6 Test TimesTable watch() emits updated list after insert
   - [ ] 7.7 Test WageHourlyTable watch() emits updated record after insert
   - [ ] 7.8 Test AppDatabase.close() completes without error (inherited from GeneratedDatabase)
   - [ ] 7.9 Test update operations on both tables (modify existing row, verify change persisted)
   - [ ] 7.10 Test delete operations on both tables (remove row, verify empty result)
+  - [ ] 7.11 Test select on empty table returns empty list for both TimesTable and WageHourlyTable (edge case)
 
 - [ ] Task 8: Verification (AC: #7)
   - [ ] 8.1 Run `flutter analyze` — zero issues
@@ -115,15 +118,17 @@ so that the web platform has a fully functional local data layer using SQLite vi
 
 **CRITICAL: `sqlite3_flutter_libs` is OBSOLETE** — drift 2.32 depends on `sqlite3: ^3.1.5` which uses Dart build hooks to automatically bundle SQLite with the app. Do NOT add `sqlite3_flutter_libs` or `sqlcipher_flutter_libs`.
 
+**VERSION NOTE:** The architecture planning document shows `drift_flutter: ^2.0.0` in a code sample — that value is outdated. The correct verified version is `drift_flutter: ^0.3.0` as specified in this story. Always use the versions in the table above, not the architecture doc.
+
 **Code generation:** Drift generates `*.g.dart` files (same as Freezed/ObjectBox). The existing `analysis_options.yaml` exclusion `"**/**.g.dart"` already covers drift output. No changes needed.
 
 **Web persistence — WASM + OPFS:**
 - drift uses SQLite compiled to WebAssembly for web
 - OPFS (Origin Private File System) provides file-system-like persistence in browsers
 - Required browser versions: Chrome 86+, Firefox 111+, Safari 15.2+ (NFR14)
-- Two web assets must be placed in `web/`:
-  - `sqlite3.wasm` — from sqlite3 3.x GitHub release
-  - `drift_worker.dart.js` — from drift 2.32 GitHub release
+- Two web assets must be placed in `web/` (alongside existing `index.html`, `favicon.png`, `manifest.json`):
+  - `sqlite3.wasm` — from `https://github.com/simolus3/sqlite3.dart/releases` (tag matching resolved sqlite3 version in `pubspec.lock`)
+  - `drift_worker.dart.js` — from `https://github.com/simolus3/drift/releases` (tag matching drift 2.32.x)
 - For OPFS performance, web server needs COOP/COEP headers:
   - `Cross-Origin-Opener-Policy: same-origin`
   - `Cross-Origin-Embedder-Policy: require-corp`
@@ -308,62 +313,45 @@ void main() {
 
 ---
 
-### Previous Story Intelligence (Story 3.6)
+### Previous Story Intelligence (Epic 3 Summary)
 
-**Learnings from the final Epic 3 story:**
+**Epic 3 quantitative results:** 6/6 stories completed, tests grew 23 → 116 (+93), 18 CR patches across all stories, 15 pre-existing bugs fixed, zero-lint on all 6 stories, zero hard blockers.
+
+**Learnings directly relevant to this story:**
 - **Dartdoc is mandatory** — `public_member_api_docs` enabled; every public class/method/field needs `///` comments
 - **Zero lint tolerance** — `flutter analyze` must be clean before completion
 - **Barrel exports** — update them when adding files to folders with existing barrels
 - **Tests alongside implementation** — BMad aligned; never defer
-- **`==`/`hashCode` on data-carrying types** — if you create any data class (like a drift companion wrapper), add equality; though drift's generated data classes already have equality
+- **`==`/`hashCode` on data-carrying types** — drift's generated data classes already have equality, so no extra work needed here
+- **Edge case test coverage** — don't just test happy path; test empty tables, multiple inserts, updates to non-existent rows (flagged in 4/6 stories)
+- **Verify build_runner doesn't corrupt other generated files** — ObjectBox and Freezed files must remain intact (check after every generation)
 
-**Git patterns from recent work:**
+**Git patterns:**
 - Commit format: `feat: description (story X.Y)` for implementation, `docs:` for documentation
 - `flutter analyze` + `flutter test` must pass before marking complete
 - Generated files are committed (Freezed, ObjectBox) — drift generated files should also be committed
 
 ---
 
-### Recurring Patterns to Follow (from Epic 3 Retrospective)
+### Developer Rules
 
-1. **Capture state fields into locals before `await`** — mandatory pattern
-2. **Edge case test coverage** — don't just test happy path; test empty tables, multiple inserts, updates to non-existent rows
-3. **`const` constructors wherever possible**
-4. **`final class` if creating any sealed class variants** (not directly applicable here but keep habit)
-5. **Verify build_runner doesn't corrupt other generated files** — ObjectBox and Freezed files must remain intact
+**Mandatory patterns:**
+- `const` constructors wherever possible
+- Capture state fields into locals before `await`
+- Absolute imports only — `package:time_money/...`
+- Dartdoc `///` on every public class, method, and field
+- Zero linter warnings — non-negotiable
 
----
-
-### Anti-Patterns — NEVER Do
-
-- Do NOT add `sqlite3_flutter_libs` — it is obsolete with drift 2.32+ (Dart build hooks bundle SQLite)
-- Do NOT define tables inside `app_database.dart` — separate files per architecture: `times_table.dart` and `wage_hourly_table.dart` in their feature's `data/models/` directory
-- Do NOT use `import 'package:drift/native.dart'` in production code — only in tests; production uses `drift_flutter`'s `driftDatabase()` which is cross-platform
-- Do NOT change the ObjectBox service or any existing ObjectBox code — this story only adds drift alongside ObjectBox
-- Do NOT create drift datasources or repositories — those are Story 4.2 and 4.3 scope
-- Do NOT modify bootstrap.dart or main_*.dart files — platform-aware DI wiring is Story 4.4 scope
+**NEVER do (anti-patterns):**
+- Do NOT add `sqlite3_flutter_libs` — obsolete with drift 2.32+ (Dart build hooks bundle SQLite)
+- Do NOT define tables inside `app_database.dart` — separate files in feature's `data/models/`
+- Do NOT use `import 'package:drift/native.dart'` in production code — only in tests
+- Do NOT change ObjectBox service or any existing ObjectBox code
+- Do NOT create drift datasources or repositories — Story 4.2/4.3 scope
+- Do NOT modify bootstrap.dart or main_*.dart — Story 4.4 scope
 - Do NOT edit generated files (`*.g.dart`)
-- Do NOT use relative imports — always `package:time_money/...`
-- Do NOT skip dartdoc comments on public members
-- Do NOT leave any linter warnings
 
-### Scope Boundaries
-
-**IN SCOPE (this story):**
-- Add drift/drift_flutter/drift_dev dependencies
-- Create TimesTable and WageHourlyTable definitions
-- Implement AppDatabase with drift codegen
-- Download web assets (sqlite3.wasm, drift_worker.dart.js)
-- Write database-level tests
-- Zero lint verification
-
-**OUT OF SCOPE (later stories):**
-- drift datasources (Story 4.2, 4.3)
-- drift repositories (Story 4.2, 4.3)
-- Platform-aware DI with kIsWeb (Story 4.4)
-- Modifying main_*.dart or bootstrap.dart (Story 4.4)
-- Multi-platform verification (Story 4.5)
-- Localization validation (Story 4.5)
+**Out of scope:** drift datasources/repositories (4.2/4.3), platform-aware DI with kIsWeb (4.4), modifying main_*.dart/bootstrap.dart (4.4), multi-platform verification/localization (4.5)
 
 ---
 
