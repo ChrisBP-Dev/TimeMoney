@@ -203,6 +203,9 @@ void main() {
         ),
         const UpdateTimeInitial(),
       ],
+      verify: (_) {
+        verifyNever(() => mockUseCase.call(any<TimeEntry>()));
+      },
     );
   });
 }

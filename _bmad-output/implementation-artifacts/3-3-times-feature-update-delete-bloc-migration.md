@@ -1,6 +1,6 @@
 # Story 3.3: Times Feature — Update & Delete BLoC Migration
 
-Status: review
+Status: done
 
 ## Story
 
@@ -397,6 +397,7 @@ Claude Opus 4.6 (1M context)
 ### Change Log
 
 - 2026-03-18: Story 3.3 implementation complete — UpdateTimeBloc and DeleteTimeBloc migrated to sealed classes, 5 widgets updated, 26 new tests, 3 bugs fixed
+- 2026-03-18: Code review passed — 3-layer adversarial review (Blind Hunter, Edge Case Hunter, Acceptance Auditor). 12 findings raised, 2 patches applied (P-1: FutureOr→Future type fix in UpdateTimeBloc handlers; P-2: verifyNever guard on null-time submit test), 3 deferred as pre-existing (emit-after-close, double-tap concurrency, GlobalFailure equality), 7 rejected as noise. 68/68 tests passing, 0 warnings. Story done.
 
 ### File List
 

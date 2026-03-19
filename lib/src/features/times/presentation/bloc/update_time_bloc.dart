@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:time_money/src/core/constants/app_durations.dart';
 import 'package:time_money/src/core/errors/failures.dart';
@@ -32,10 +30,10 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
     );
   }
 
-  FutureOr<void> _onHourChanged(
+  Future<void> _onHourChanged(
     UpdateTimeHourChanged event,
     Emitter<UpdateTimeState> emit,
-  ) {
+  ) async {
     final hour = int.tryParse(event.value);
     if (hour == null) return _emitError(emit);
     emit(
@@ -47,10 +45,10 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
     );
   }
 
-  FutureOr<void> _onMinutesChanged(
+  Future<void> _onMinutesChanged(
     UpdateTimeMinutesChanged event,
     Emitter<UpdateTimeState> emit,
-  ) {
+  ) async {
     final minutes = int.tryParse(event.value);
     if (minutes == null) return _emitError(emit);
     emit(
@@ -89,7 +87,7 @@ class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
     emit(UpdateTimeInitial(hour: hour, minutes: minutes, time: time));
   }
 
-  FutureOr<void> _emitError(Emitter<UpdateTimeState> emit) async {
+  Future<void> _emitError(Emitter<UpdateTimeState> emit) async {
     final hour = state.hour;
     final minutes = state.minutes;
     final time = state.time;
