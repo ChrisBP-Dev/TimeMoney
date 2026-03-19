@@ -15,19 +15,21 @@ class DeleteTimeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<DeleteTimeBloc, DeleteTimeState>(
       listenWhen: (prev, curr) => curr is DeleteTimeSuccess,
-      listener: (context, state) => Navigator.of(context).pop(),
+      listener: (context, state) {
+        if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+      },
       builder: (_, state) {
         return FilledButton(
           style: FilledButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 163, 70, 64),
           ),
-          onPressed: state is DeleteTimeLoading
-              ? null
-              : () {
+          onPressed: state is DeleteTimeInitial
+              ? () {
                   context.read<DeleteTimeBloc>().add(
                         DeleteTimeRequested(time: time),
                       );
-                },
+                }
+              : null,
           child: switch (state) {
             DeleteTimeInitial() => const Text('Delete'),
             DeleteTimeLoading() => const SizedBox(

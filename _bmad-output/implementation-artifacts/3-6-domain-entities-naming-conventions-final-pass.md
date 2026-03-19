@@ -1,6 +1,6 @@
 # Story 3.6: Domain Entities & Naming Conventions Final Pass
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -20,7 +20,7 @@ so that domain data classes support copyWith/equality/JSON, all code follows con
 
 4. **StackTrace in error_view.dart resolved** — `GlobalFailure.fromException` already logs via `developer.log` in debug mode; no additional action required in `error_view.dart`; this deferred item is explicitly closed as "resolved by existing implementation"
 
-5. **Loading guard on action buttons** — `UpdateTimeButton` and `DeleteTimeButton` disable `onPressed` when state is `UpdateTimeLoading` / `DeleteTimeLoading` (same P-1 pattern as `SetWageButton` from story 3.4); verify `UpdateWageButton` also has or receives the same guard
+5. **Loading guard on action buttons** — `UpdateTimeButton` and `DeleteTimeButton` disable `onPressed` when state is NOT `Initial` (covers `Loading`, `Success`, and `Error` states to prevent double-tap during the `AppDurations.actionFeedback` delay window); `UpdateWageButton` does NOT receive a loading guard — it is a dialog launcher (`showDialog` → `UpdateWagePage`); the guard lives in `SetWageButton` inside that dialog (same P-1 pattern as story 3.4); `Navigator.pop()` calls are guarded with `canPop()` to prevent FlutterError when no popable route exists
 
 6. **Naming conventions final pass — screen → page rename** — `list_times_screen.dart` → `list_times_page.dart` (class `ListTimesScreen` → `ListTimesPage`); `fetch_wage_screen.dart` → `fetch_wage_page.dart` (class `FetchWageScreen` → `FetchWagePage`); all references updated (barrel exports, `home_page.dart` imports and widget usage); NFR8 satisfied
 
@@ -533,9 +533,25 @@ N/A
 - ✅ Task 6: Renamed `list_times_screen.dart` → `list_times_page.dart` (class `ListTimesPage`); renamed `fetch_wage_screen.dart` → `fetch_wage_page.dart` (class `FetchWagePage`). Updated both barrel files and `home_page.dart`. BlocConsumer listener that calls `context.read<PaymentCubit>().setTimes(const [])` preserved verbatim. Updated `docs/component-inventory.md` and `docs/source-tree-analysis.md`. Codebase-wide grep confirmed zero remaining references to old names in `lib/` and `test/`.
 - ✅ Task 7: `flutter analyze` — zero issues. `flutter test` — 116 tests passed (106 existing + 10 new equality tests). Zero regressions.
 
+### Code Review Record
+
+**Reviewer model:** claude-sonnet-4-6
+**Review date:** 2026-03-19
+**Review layers:** Blind Hunter (adversarial) + Edge Case Hunter (boundary) + Acceptance Auditor (AC compliance)
+**Raw findings:** 15 | **Rejected (noise/false positives):** 11 | **Bad spec (amended):** 1 | **Patched:** 2 | **Deferred:** 1
+
+**CR patches applied:**
+- ✅ CR-1 (D-1): `DeleteTimeButton` and `UpdateTimeButton` — expanded guard from `state is *Loading ? null :` to `state is *Initial ? action : null`; prevents double-tap during `AppDurations.actionFeedback` window in `Success` and `Error` states
+- ✅ CR-2 (D-2): `DeleteTimeButton` and `UpdateTimeButton` listeners — wrapped `Navigator.of(context).pop()` with `if (Navigator.of(context).canPop())` guard; prevents `FlutterError` if widget ever renders outside a popable route
+- ✅ BS-1: AC5 text amended — clarified that guard covers all non-Initial states and that `UpdateWageButton` explicitly does NOT receive a guard (dialog launcher)
+
+**Deferred from this review:**
+- DEFER-CR-1: `FetchWagePage._ActionWidget.onPressed` is a no-op `() {}` — retry button does nothing on error state. Pre-existing (DEFERRED-4). Out of scope per PRD. → Epic 4/5 scope.
+
 ### Change Log
 
 - 2026-03-19: Implemented story 3.6 — added structural equality (`==`/`hashCode` + `@immutable`) to all 7 failure variants; deleted dead code `EmptyWageHourlyView`; added loading guards to `UpdateTimeButton` and `DeleteTimeButton`; renamed screen→page files (`ListTimesPage`, `FetchWagePage`) with all references updated; added 10 equality tests; flutter analyze zero issues, 116 tests green.
+- 2026-03-19: Code review passed — 2 patches applied (expanded button guard to all non-Initial states; added canPop() to Navigator.pop() calls); AC5 amended; 1 defer documented (FetchWagePage no-op retry button → Epic 4/5).
 
 ### File List
 

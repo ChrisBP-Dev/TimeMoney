@@ -9,19 +9,21 @@ class UpdateTimeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<UpdateTimeBloc, UpdateTimeState>(
       listenWhen: (prev, curr) => curr is UpdateTimeSuccess,
-      listener: (context, state) => Navigator.of(context).pop(),
+      listener: (context, state) {
+        if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+      },
       builder: (context, state) {
         return FilledButton(
           style: FilledButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 32, 137, 86),
           ),
-          onPressed: state is UpdateTimeLoading
-              ? null
-              : () {
+          onPressed: state is UpdateTimeInitial
+              ? () {
                   context.read<UpdateTimeBloc>().add(
                         const UpdateTimeSubmitted(),
                       );
-                },
+                }
+              : null,
           child: switch (state) {
             UpdateTimeInitial() => const Text('Update'),
             UpdateTimeLoading() => const SizedBox(
