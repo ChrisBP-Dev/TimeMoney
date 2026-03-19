@@ -4,8 +4,8 @@ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit
 import 'package:time_money/src/features/wage/presentation/bloc/fetch_wage_bloc.dart';
 import 'package:time_money/src/features/wage/presentation/widgets/widgets.dart';
 
-class FetchWageScreen extends StatelessWidget {
-  const FetchWageScreen({super.key});
+class FetchWagePage extends StatelessWidget {
+  const FetchWagePage({super.key});
 
   @override
   Widget build(BuildContext context) {

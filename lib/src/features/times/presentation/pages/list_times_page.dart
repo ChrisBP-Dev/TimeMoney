@@ -4,8 +4,8 @@ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit
 import 'package:time_money/src/features/times/presentation/bloc/list_times_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
-class ListTimesScreen extends StatelessWidget {
-  const ListTimesScreen({super.key});
+class ListTimesPage extends StatelessWidget {
+  const ListTimesPage({super.key});
 
   @override
   Widget build(BuildContext context) {

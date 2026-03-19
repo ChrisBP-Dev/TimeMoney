@@ -38,8 +38,8 @@ TimeMoney uses Flutter's widget system with Material 3 design. Components are or
 Scaffold
 ├── AppBar: "Work Payment Controller"
 └── Column
-    ├── FetchWageScreen          (wage display card)
-    ├── Expanded: ListTimesScreen (scrollable time entries)
+    ├── FetchWagePage            (wage display card)
+    ├── Expanded: ListTimesPage  (scrollable time entries)
     └── SafeArea: Bottom Action Bar
         ├── CalculatePaymentButton (FAB)
         └── FloatingActionButton "Add Time" → CreateTimeCard dialog
@@ -62,7 +62,7 @@ Scaffold
 
 | Component | Type | Location | Description |
 |-----------|------|----------|-------------|
-| `ListTimesScreen` | StatelessWidget | list_times/ | State-based rendering: dispatches getTimes, renders appropriate view |
+| `ListTimesPage` | StatelessWidget | list_times/ | State-based rendering: dispatches getTimes, renders appropriate view |
 | `ListTimesDataView` | StatelessWidget | list_times/views/ | StreamBuilder → ListView.builder of TimeCards |
 | `ErrorListTimesView` | StatelessWidget | list_times/views/ | Error display delegating to ErrorView |
 | `ShimmerListTimesView` | StatelessWidget | list_times/views/ | CircularProgressIndicator loading state |
@@ -95,11 +95,10 @@ Scaffold
 
 | Component | Type | Location | Description |
 |-----------|------|----------|-------------|
-| `FetchWageScreen` | StatelessWidget | fetch_wage/ | State-based rendering: dispatches getWage |
+| `FetchWagePage` | StatelessWidget | fetch_wage/ | State-based rendering: dispatches getWage |
 | `WageHourlyDataView` | StatelessWidget | fetch_wage/views/ | StreamBuilder → WageHourlyCard |
 | `ErrorFetchWageHourlyView` | StatelessWidget | fetch_wage/views/ | Error display delegating to ErrorView |
 | `ShimmerWageHourlyView` | StatelessWidget | fetch_wage/views/ | CircularProgressIndicator loading state |
-| `EmptyWageHourlyView` | StatelessWidget | fetch_wage/views/ | ShowInfoSection with clock emoji |
 | `WageHourlyCard` | StatelessWidget | fetch_wage/widgets/ | Primary color card: WageHourlyInfo + UpdateWageButton |
 | `WageHourlyInfo` | StatelessWidget | fetch_wage/widgets/ | Column: "hourly:" label + wage value |
 | `UpdateWageButton` | StatelessWidget | fetch_wage/widgets/ | ElevatedButton "change" → opens WageHourlyView dialog |

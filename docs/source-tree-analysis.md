@@ -90,7 +90,7 @@ TimeMoney/
 │       │   │   │   │   └── widgets/              # DeleteTimeButton (red)
 │       │   │   │   ├── list_times/               # List time entries
 │       │   │   │   │   ├── bloc/                 # ListTimesBloc (event/state/bloc)
-│       │   │   │   │   ├── list_times_screen.dart # State-based screen rendering
+│       │   │   │   │   ├── list_times_page.dart   # State-based page rendering
 │       │   │   │   │   ├── views/                # Data, error, shimmer, empty views
 │       │   │   │   │   └── widgets/              # TimeCard, InfoTime, EditButton
 │       │   │   │   └── update_time/              # Update time entry
@@ -101,7 +101,7 @@ TimeMoney/
 │       │   │       ├── wage_hourly_blocs.dart    # BlocProvider aggregation
 │       │   │       ├── fetch_wage/               # Display current wage
 │       │   │       │   ├── bloc/                 # FetchWageHourlyBloc
-│       │   │       │   ├── fetch_wage_screen.dart # State-based screen rendering
+│       │   │       │   ├── fetch_wage_page.dart   # State-based page rendering
 │       │   │       │   ├── views/                # Data, error, shimmer, empty views
 │       │   │       │   └── widgets/              # WageHourlyCard, WageHourlyInfo, UpdateButton
 │       │   │       └── update_wage/              # Update hourly wage

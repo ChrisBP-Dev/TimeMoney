@@ -1,6 +1,6 @@
 # Story 3.6: Domain Entities & Naming Conventions Final Pass
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -28,46 +28,46 @@ so that domain data classes support copyWith/equality/JSON, all code follows con
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Verify Freezed entities (AC: #1)
-  - [ ] 1.1 Confirm `time_entry.dart` uses `@freezed` with `.freezed.dart` and `.g.dart` present — READ ONLY, no code changes
-  - [ ] 1.2 Confirm `wage_hourly.dart` uses `@freezed` with `.freezed.dart` and `.g.dart` present — READ ONLY, no code changes
-  - [ ] 1.3 Confirm Freezed annotation is NOT used in any BLoC event, BLoC state, or failure type file — READ ONLY
+- [x] Task 1: Verify Freezed entities (AC: #1)
+  - [x] 1.1 Confirm `time_entry.dart` uses `@freezed` with `.freezed.dart` and `.g.dart` present — READ ONLY, no code changes
+  - [x] 1.2 Confirm `wage_hourly.dart` uses `@freezed` with `.freezed.dart` and `.g.dart` present — READ ONLY, no code changes
+  - [x] 1.3 Confirm Freezed annotation is NOT used in any BLoC event, BLoC state, or failure type file — READ ONLY
 
-- [ ] Task 2: Fix GlobalFailure and ValueFailure equality (AC: #2, DEFERRED-1)
-  - [ ] 2.1 Add `==` and `hashCode` to `InternalError` — compare `error` only, NOT `stackTrace`
-  - [ ] 2.2 Add `==` and `hashCode` to `ServerError` — compare `failure` field
-  - [ ] 2.3 Add `==` and `hashCode` to `NotConnection` — no fields, runtimeType-based
-  - [ ] 2.4 Add `==` and `hashCode` to `TimeOutExceeded` — no fields, runtimeType-based
-  - [ ] 2.5 Add `==` and `hashCode` to `CharacterLimitExceeded<T>` — compare `failedValue`
-  - [ ] 2.6 Add `==` and `hashCode` to `ShortOrNullCharacters<T>` — compare `failedValue`
-  - [ ] 2.7 Add `==` and `hashCode` to `InvalidFormat<T>` — compare `failedValue`
-  - [ ] 2.8 Update `test/src/core/errors/failures_test.dart` — add structural equality tests (see Testing Requirements)
+- [x] Task 2: Fix GlobalFailure and ValueFailure equality (AC: #2, DEFERRED-1)
+  - [x] 2.1 Add `==` and `hashCode` to `InternalError` — compare `error` only, NOT `stackTrace`
+  - [x] 2.2 Add `==` and `hashCode` to `ServerError` — compare `failure` field
+  - [x] 2.3 Add `==` and `hashCode` to `NotConnection` — no fields, runtimeType-based
+  - [x] 2.4 Add `==` and `hashCode` to `TimeOutExceeded` — no fields, runtimeType-based
+  - [x] 2.5 Add `==` and `hashCode` to `CharacterLimitExceeded<T>` — compare `failedValue`
+  - [x] 2.6 Add `==` and `hashCode` to `ShortOrNullCharacters<T>` — compare `failedValue`
+  - [x] 2.7 Add `==` and `hashCode` to `InvalidFormat<T>` — compare `failedValue`
+  - [x] 2.8 Update `test/src/core/errors/failures_test.dart` — add structural equality tests (see Testing Requirements)
 
-- [ ] Task 3: Delete EmptyWageHourlyView (AC: #3, DEFERRED-2)
-  - [ ] 3.1 Remove `EmptyWageHourlyView` class from `wage_hourly_other_view.dart`; keep `ShimmerWageHourlyView`
-  - [ ] 3.2 Verify `fetch_wage_page.dart` still uses only `ShimmerWageHourlyView` — no breakage
+- [x] Task 3: Delete EmptyWageHourlyView (AC: #3, DEFERRED-2)
+  - [x] 3.1 Remove `EmptyWageHourlyView` class from `wage_hourly_other_view.dart`; keep `ShimmerWageHourlyView`
+  - [x] 3.2 Verify `fetch_wage_page.dart` still uses only `ShimmerWageHourlyView` — no breakage
 
-- [ ] Task 4: Confirm StackTrace resolution (AC: #4, DEFERRED-3)
-  - [ ] 4.1 READ `lib/src/core/errors/failures.dart` — confirm `GlobalFailure.fromException` logs via `developer.log` (already verified, line 33)
-  - [ ] 4.2 No code changes required — this deferred is resolved by existing debug logging
+- [x] Task 4: Confirm StackTrace resolution (AC: #4, DEFERRED-3)
+  - [x] 4.1 READ `lib/src/core/errors/failures.dart` — confirm `GlobalFailure.fromException` logs via `developer.log` (already verified, line 33)
+  - [x] 4.2 No code changes required — this deferred is resolved by existing debug logging
 
-- [ ] Task 5: Add loading guard to action buttons (AC: #5, DEFERRED-6)
-  - [ ] 5.1 Update `update_time_button.dart` — add `state is UpdateTimeLoading ? null :` guard on `onPressed`
-  - [ ] 5.2 Update `delete_time_button.dart` — add `state is DeleteTimeLoading ? null :` guard on `onPressed`
-  - [ ] 5.3 READ `lib/src/features/wage/presentation/widgets/update_wage_button.dart` — CONFIRM it is a dialog launcher (`showDialog` → `UpdateWagePage`), NOT a submit action; NO loading guard needed — the guard already lives in `SetWageButton` (set_wage_button.dart:18) inside `UpdateWagePage`; no code change required on `UpdateWageButton`
+- [x] Task 5: Add loading guard to action buttons (AC: #5, DEFERRED-6)
+  - [x] 5.1 Update `update_time_button.dart` — add `state is UpdateTimeLoading ? null :` guard on `onPressed`
+  - [x] 5.2 Update `delete_time_button.dart` — add `state is DeleteTimeLoading ? null :` guard on `onPressed`
+  - [x] 5.3 READ `lib/src/features/wage/presentation/widgets/update_wage_button.dart` — CONFIRM it is a dialog launcher (`showDialog` → `UpdateWagePage`), NOT a submit action; NO loading guard needed — the guard already lives in `SetWageButton` (set_wage_button.dart:18) inside `UpdateWagePage`; no code change required on `UpdateWageButton`
 
-- [ ] Task 6: Rename screen → page files (AC: #6, NFR8)
-  - [ ] 6.1 Rename `list_times_screen.dart` → `list_times_page.dart`; rename class `ListTimesScreen` → `ListTimesPage`
-  - [ ] 6.2 Update `lib/src/features/times/presentation/pages/pages.dart` barrel: `list_times_screen.dart` → `list_times_page.dart`
-  - [ ] 6.3 Update `lib/src/features/home/presentation/pages/home_page.dart`: update import path and widget usage (`ListTimesScreen()` → `ListTimesPage()`)
-  - [ ] 6.4 Rename `fetch_wage_screen.dart` → `fetch_wage_page.dart`; rename class `FetchWageScreen` → `FetchWagePage`
-  - [ ] 6.5 Update `lib/src/features/wage/presentation/pages/pages.dart` barrel: `fetch_wage_screen.dart` → `fetch_wage_page.dart`
-  - [ ] 6.6 Update `lib/src/features/home/presentation/pages/home_page.dart`: update import path and widget usage (`FetchWageScreen()` → `FetchWagePage()`)
-  - [ ] 6.7 Grep entire codebase (including `lib/`, `test/`, and root) for any remaining `ListTimesScreen`, `list_times_screen`, `FetchWageScreen`, `fetch_wage_screen` references — update all found
+- [x] Task 6: Rename screen → page files (AC: #6, NFR8)
+  - [x] 6.1 Rename `list_times_screen.dart` → `list_times_page.dart`; rename class `ListTimesScreen` → `ListTimesPage`
+  - [x] 6.2 Update `lib/src/features/times/presentation/pages/pages.dart` barrel: `list_times_screen.dart` → `list_times_page.dart`
+  - [x] 6.3 Update `lib/src/features/home/presentation/pages/home_page.dart`: update import path and widget usage (`ListTimesScreen()` → `ListTimesPage()`)
+  - [x] 6.4 Rename `fetch_wage_screen.dart` → `fetch_wage_page.dart`; rename class `FetchWageScreen` → `FetchWagePage`
+  - [x] 6.5 Update `lib/src/features/wage/presentation/pages/pages.dart` barrel: `fetch_wage_screen.dart` → `fetch_wage_page.dart`
+  - [x] 6.6 Update `lib/src/features/home/presentation/pages/home_page.dart`: update import path and widget usage (`FetchWageScreen()` → `FetchWagePage()`)
+  - [x] 6.7 Grep entire codebase (including `lib/`, `test/`, and root) for any remaining `ListTimesScreen`, `list_times_screen`, `FetchWageScreen`, `fetch_wage_screen` references — update all found
 
-- [ ] Task 7: Verification (AC: #7)
-  - [ ] 7.1 Run `flutter analyze` — zero issues
-  - [ ] 7.2 Run `flutter test` — all tests pass (existing 106 + new equality tests)
+- [x] Task 7: Verification (AC: #7)
+  - [x] 7.1 Run `flutter analyze` — zero issues
+  - [x] 7.2 Run `flutter test` — all tests pass (existing 106 + new equality tests)
 
 ## Dev Notes
 
@@ -517,7 +517,7 @@ Epic 5 scope (Story 5.1) — not required in this story.
 
 ### Agent Model Used
 
-<!-- To be filled by dev agent -->
+claude-opus-4-6
 
 ### Debug Log References
 
@@ -525,11 +525,17 @@ N/A
 
 ### Completion Notes List
 
-<!-- To be filled by dev agent -->
+- ✅ Task 1: Verified Freezed entities — `time_entry.dart` and `wage_hourly.dart` both have `@freezed` with `.freezed.dart` and `.g.dart` present. `@freezed` annotation is absent from all BLoC event/state/failure files (confirmed grep). No code changes required.
+- ✅ Task 2: Added `==` and `hashCode` to all 7 failure variants in `failures.dart`. Added `@immutable` to all `final class` failure types to satisfy `avoid_equals_and_hash_code_on_mutable_classes` lint rule. `InternalError.==` compares `error` only, ignoring `stackTrace` per design decision. Added 10 new structural equality tests to `failures_test.dart`. Tests use genuinely non-const runtime instances (InternalError with StackTrace.current, fromException for NotConnection/TimeOutExceeded, StringBuffer().toString() for value types) to verify the == override is exercised, not Dart's const canonicalization (identical() fast path).
+- ✅ Task 3: Deleted `EmptyWageHourlyView` from `wage_hourly_other_view.dart`. Also removed the now-unused `widgets.dart` import. `ShimmerWageHourlyView` remains and is used correctly by `fetch_wage_page.dart`.
+- ✅ Task 4: Confirmed `GlobalFailure.fromException` already logs via `developer.log` in debug mode (line 33 of failures.dart). No code changes required. DEFERRED-3 closed.
+- ✅ Task 5: Added `state is UpdateTimeLoading ? null :` guard to `UpdateTimeButton.onPressed`. Added `state is DeleteTimeLoading ? null :` guard to `DeleteTimeButton.onPressed`. `BlocConsumer` pattern preserved (listeners call `Navigator.of(context).pop()` on success). Confirmed `UpdateWageButton` is a dialog launcher — no guard needed.
+- ✅ Task 6: Renamed `list_times_screen.dart` → `list_times_page.dart` (class `ListTimesPage`); renamed `fetch_wage_screen.dart` → `fetch_wage_page.dart` (class `FetchWagePage`). Updated both barrel files and `home_page.dart`. BlocConsumer listener that calls `context.read<PaymentCubit>().setTimes(const [])` preserved verbatim. Updated `docs/component-inventory.md` and `docs/source-tree-analysis.md`. Codebase-wide grep confirmed zero remaining references to old names in `lib/` and `test/`.
+- ✅ Task 7: `flutter analyze` — zero issues. `flutter test` — 116 tests passed (106 existing + 10 new equality tests). Zero regressions.
 
 ### Change Log
 
-<!-- To be filled by dev agent -->
+- 2026-03-19: Implemented story 3.6 — added structural equality (`==`/`hashCode` + `@immutable`) to all 7 failure variants; deleted dead code `EmptyWageHourlyView`; added loading guards to `UpdateTimeButton` and `DeleteTimeButton`; renamed screen→page files (`ListTimesPage`, `FetchWagePage`) with all references updated; added 10 equality tests; flutter analyze zero issues, 116 tests green.
 
 ### File List
 

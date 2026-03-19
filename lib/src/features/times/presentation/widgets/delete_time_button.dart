@@ -21,11 +21,13 @@ class DeleteTimeButton extends StatelessWidget {
           style: FilledButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 163, 70, 64),
           ),
-          onPressed: () {
-            context.read<DeleteTimeBloc>().add(
-                  DeleteTimeRequested(time: time),
-                );
-          },
+          onPressed: state is DeleteTimeLoading
+              ? null
+              : () {
+                  context.read<DeleteTimeBloc>().add(
+                        DeleteTimeRequested(time: time),
+                      );
+                },
           child: switch (state) {
             DeleteTimeInitial() => const Text('Delete'),
             DeleteTimeLoading() => const SizedBox(

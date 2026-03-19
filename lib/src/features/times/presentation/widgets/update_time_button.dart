@@ -15,11 +15,13 @@ class UpdateTimeButton extends StatelessWidget {
           style: FilledButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 32, 137, 86),
           ),
-          onPressed: () {
-            context.read<UpdateTimeBloc>().add(
-                  const UpdateTimeSubmitted(),
-                );
-          },
+          onPressed: state is UpdateTimeLoading
+              ? null
+              : () {
+                  context.read<UpdateTimeBloc>().add(
+                        const UpdateTimeSubmitted(),
+                      );
+                },
           child: switch (state) {
             UpdateTimeInitial() => const Text('Update'),
             UpdateTimeLoading() => const SizedBox(
