@@ -15,9 +15,11 @@ class SetWageButton extends StatelessWidget {
           style: FilledButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 32, 137, 86),
           ),
-          onPressed: () => context.read<UpdateWageBloc>().add(
-                const UpdateWageSubmitted(),
-              ),
+          onPressed: state is UpdateWageLoading
+              ? null
+              : () => context.read<UpdateWageBloc>().add(
+                    const UpdateWageSubmitted(),
+                  ),
           child: switch (state) {
             UpdateWageInitial() => const Text('Update'),
             UpdateWageLoading() => const SizedBox(

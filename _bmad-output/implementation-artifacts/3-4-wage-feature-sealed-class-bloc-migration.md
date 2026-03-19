@@ -1,6 +1,6 @@
 # Story 3.4: Wage Feature — Sealed Class BLoC Migration
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -600,6 +600,7 @@ N/A — no blocking issues encountered.
 ### Change Log
 
 - 2026-03-18: Story 3.4 implemented — wage feature sealed class BLoC migration complete.
+- 2026-03-18: Code review passed — 3-layer adversarial review (Blind Hunter, Edge Case Hunter, Acceptance Auditor). 19 findings raised, 1 patch applied (P-1: disable `SetWageButton.onPressed` during `UpdateWageLoading` to prevent double-submit race), 1 bad-spec documented (BS-1: pop-before-success-feedback accepted as established pattern — same design as Story 3.3 `UpdateTimeButton`/`DeleteTimeButton`, UX feedback is provided by loading spinner), 5 deferred as pre-existing (_ActionWidget no-op, Future.delayed closed-emitter, zero/negative wage validation, rebuild dispatch, GlobalFailure equality), 8 rejected as noise. 90/90 tests passing, 0 warnings. Story done.
 
 ### File List
 
