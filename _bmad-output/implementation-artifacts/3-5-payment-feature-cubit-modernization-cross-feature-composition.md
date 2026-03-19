@@ -409,6 +409,7 @@ context.read<PaymentCubit>().setList(times);
 context.read<PaymentCubit>().setTimes(times);
 ```
 - BlocConsumer listener is meaningful (syncs times to PaymentCubit) — keep `BlocConsumer`, only rename method
+- `listenWhen` guard (P-2) would be an optimization here but is OUT OF SCOPE — only rename the method, do not refactor this widget
 - The `bloc: context.read<ListTimesBloc>()..add(const ListTimesRequested())` line — NO CHANGE
 
 **`lib/src/features/wage/presentation/pages/fetch_wage_screen.dart` — NO CHANGE:**
@@ -468,6 +469,7 @@ Large data set (NFR4 — under 50ms):
 
 - **No mocks** — use `const CalculatePaymentUseCase()` directly (pure, no I/O)
 - Use `blocTest<PaymentCubit, PaymentState>` from `bloc_test`
+- **No `wait:` parameter** — all PaymentCubit operations are synchronous (no async delays, no `AppDurations.actionFeedback`); do NOT copy `wait: const Duration(seconds: 2)` from story 3.4 BLoC tests
 - Helper: `const testEntry = TimeEntry(hour: 2, minutes: 30, id: 1)`
 
 **Required tests:**
@@ -587,6 +589,8 @@ The established patterns from stories 3.2-3.4 apply directly:
 
 ### Accumulated Deferred Items → Story 3.6
 
+> **SCOPE BOUNDARY — story 3.5:** Do NOT address, fix, or refactor any of these items during story 3.5 implementation. They are documented here exclusively for traceability so `create-story 3.6` picks them up. Touching these items in story 3.5 is scope creep.
+
 These items were explicitly deferred across stories 3.1–3.4 and must NOT be ignored again in 3.6. The `create-story 3.6` agent must address each one as part of the "Domain Entities & Naming Conventions Final Pass" or flag them for a dedicated cleanup decision.
 
 #### 🔴 High Priority — Affects Test Correctness
@@ -631,17 +635,9 @@ These items were explicitly deferred across stories 3.1–3.4 and must NOT be ig
 
 ### References
 
-- [Source: _bmad-output/planning-artifacts/epics.md — Epic 3, Story 3.5, FR12-FR14, FR44]
-- [Source: _bmad-output/planning-artifacts/architecture.md — Cross-Feature Composition, PaymentCubit data flow, Feature Boundaries, Widget State Rendering Pattern]
-- [Source: _bmad-output/implementation-artifacts/3-4-wage-feature-sealed-class-bloc-migration.md — Anti-patterns (BS-1, P-1, P-2), sealed class patterns, `==` and `hashCode` requirements]
-- [Source: lib/src/features/payment/presentation/cubit/payment_cubit.dart — Current implementation to replace]
-- [Source: lib/src/features/payment/presentation/cubit/payment_state.dart — Current state to replace]
-- [Source: lib/src/features/payment/aplication/calculate_payment_use_case.dart — Current use case to move/update]
-- [Source: lib/src/features/payment/presentation/pages/payment_result_page.dart — Current page to update]
-- [Source: lib/src/features/home/presentation/widgets/calculate_payment_button.dart — Current button to rewrite]
-- [Source: lib/src/features/times/presentation/pages/list_times_screen.dart — Cross-feature integration (setList → setTimes)]
-- [Source: lib/src/features/times/domain/entities/time_entry.dart — CalculatePay extension (totalHours, totalMinutes, calculatePayment)]
-- [Source: lib/src/features/wage/presentation/pages/fetch_wage_screen.dart — setWage() call already in place, no change needed]
+- [epics.md — Epic 3, Story 3.5, FR12-FR14, FR44] | [architecture.md — Cross-Feature Composition, Feature Boundaries]
+- [3-4-wage-feature-sealed-class-bloc-migration.md — Anti-patterns (BS-1, P-1, P-2), sealed class patterns]
+- [time_entry.dart — CalculatePay extension (totalHours, totalMinutes, calculatePayment)]
 
 ## Dev Agent Record
 
