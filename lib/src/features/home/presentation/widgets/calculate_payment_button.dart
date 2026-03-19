@@ -5,7 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:time_money/src/features/payment/presentation/pages/pages.dart';
 
+/// FAB that triggers payment calculation when the [PaymentCubit] is ready.
+///
+/// Disabled when the cubit is in [PaymentInitial] state. On tap, computes
+/// the payment and shows the result in a [PaymentResultPage] dialog.
 class CalculatePaymentButton extends StatelessWidget {
+  /// Creates a [CalculatePaymentButton].
   const CalculatePaymentButton({super.key});
 
   @override

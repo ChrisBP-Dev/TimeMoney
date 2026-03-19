@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/wage/presentation/bloc/update_wage_bloc.dart';
 
+/// Button that submits the wage update and shows feedback state.
+///
+/// Listens to [UpdateWageBloc] state changes: disables during loading,
+/// shows success/error labels, and pops the dialog on success.
 class SetWageButton extends StatelessWidget {
+  /// Creates a [SetWageButton].
   const SetWageButton({super.key});
 
   @override

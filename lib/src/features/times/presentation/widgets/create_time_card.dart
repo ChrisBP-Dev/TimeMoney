@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
+/// Card containing the form fields for creating a new time entry.
+///
+/// Lays out `CreateHourField`, `CreateMinutesField`, and
+/// `CreateTimeButton` in a row within a sized card. Used inside
+/// `CreateTimePage` as the main form content.
 class CreateTimeCard extends StatelessWidget {
+  /// Creates a [CreateTimeCard].
   const CreateTimeCard({super.key});
 
   @override

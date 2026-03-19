@@ -1,3 +1,12 @@
+/// Tests for [FetchWageBloc].
+///
+/// Uses `bloc_test` to verify the state transitions when fetching the wage:
+/// - Initial state is [FetchWageInitial].
+/// - On [FetchWageRequested], transitions through [FetchWageLoading] to
+///   [FetchWageLoaded] or [FetchWageError] depending on the use-case result.
+/// - Covers the `emit.forEach` onError path when the stream itself errors.
+library;
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -17,7 +26,13 @@ void main() {
 
   const testWage = WageHourly(id: 1, value: 25);
 
+  // FetchWageBloc subscribes to a reactive wage stream.
+  // It must transition through loading to loaded/error
+  // and handle stream-level errors gracefully.
   group('FetchWageBloc', () {
+    // Sanity check: bloc starts in the initial state
+    // before any event is added, so the UI can show a
+    // placeholder or trigger a fetch on build.
     test('initial state is FetchWageInitial', () {
       expect(
         FetchWageBloc(mockUseCase).state,
@@ -25,6 +40,9 @@ void main() {
       );
     });
 
+    // Happy path: use case returns a stream with valid
+    // data. Bloc must show loading then deliver the
+    // WageHourly so the UI can render the wage value.
     blocTest<FetchWageBloc, FetchWageState>(
       'emits [loading, loaded] when stream emits data',
       build: () {
@@ -42,6 +60,9 @@ void main() {
       ],
     );
 
+    // Failure path: use case returns Left immediately
+    // (e.g. DB unavailable). Bloc transitions to error
+    // so the UI can prompt the user to retry.
     blocTest<FetchWageBloc, FetchWageState>(
       'emits [loading, error] when use case returns Left',
       build: () {
@@ -59,6 +80,9 @@ void main() {
       ],
     );
 
+    // Edge case: use case returns Right but the stream
+    // itself errors (e.g. mid-flight DB crash). Covers
+    // the emit.forEach onError callback path in the bloc.
     blocTest<FetchWageBloc, FetchWageState>(
       'emits [loading, error] when stream itself emits an error event '
       '(emit.forEach onError path)',

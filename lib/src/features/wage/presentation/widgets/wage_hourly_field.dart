@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/wage/presentation/bloc/update_wage_bloc.dart';
 
+/// Text input field for entering a new hourly wage value.
+///
+/// Dispatches [UpdateWageHourlyChanged] events to [UpdateWageBloc]
+/// on each keystroke for real-time validation.
 class WageHourlyField extends StatefulWidget {
+  /// Creates a [WageHourlyField].
   const WageHourlyField({super.key});
 
   @override

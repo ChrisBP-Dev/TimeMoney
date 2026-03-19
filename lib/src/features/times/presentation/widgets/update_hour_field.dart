@@ -3,7 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
+/// Hour input field for the update-time form.
+///
+/// Wraps [CustomUpdateField] with BLoC integration. Pre-populates
+/// the field with the current hour value from [UpdateTimeBloc] and
+/// dispatches [UpdateTimeHourChanged] events on value change.
 class UpdateHourField extends StatefulWidget {
+  /// Creates an [UpdateHourField].
   const UpdateHourField({super.key});
 
   @override

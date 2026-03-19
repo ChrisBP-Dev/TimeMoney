@@ -1,3 +1,6 @@
+/// Barrel file exporting Wage presentation widgets public API.
+library;
+
 export 'error_fetch_wage_hourly_view.dart';
 export 'set_wage_button.dart';
 export 'update_wage_button.dart';

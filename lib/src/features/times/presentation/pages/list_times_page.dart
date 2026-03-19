@@ -4,7 +4,14 @@ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit
 import 'package:time_money/src/features/times/presentation/bloc/list_times_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
+/// Page that displays the list of time entries.
+///
+/// Uses [BlocConsumer] to reactively render different views based on
+/// [ListTimesBloc] state: loading shimmer, empty state, error state,
+/// or a scrollable data list. Also synchronises loaded times with
+/// the [PaymentCubit] so payment calculations stay up-to-date.
 class ListTimesPage extends StatelessWidget {
+  /// Creates a [ListTimesPage].
   const ListTimesPage({super.key});
 
   @override

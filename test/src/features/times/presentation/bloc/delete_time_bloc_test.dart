@@ -1,3 +1,11 @@
+/// Tests for [DeleteTimeBloc].
+///
+/// Uses `bloc_test` to verify the state transitions when deleting a time entry:
+/// - Initial state is [DeleteTimeInitial].
+/// - On [DeleteTimeRequested], transitions through loading -> success -> reset
+///   on success, or loading -> error -> reset on failure.
+library;
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -21,12 +29,19 @@ void main() {
 
   const testTime = TimeEntry(hour: 1, minutes: 30);
 
+  // State transitions for deleting a time entry:
+  // success path and network-failure path.
   group('DeleteTimeBloc', () {
+    // BLoC must start idle so no delete confirmation
+    // or spinner is shown before the user acts.
     test('initial state is DeleteTimeInitial', () {
       final bloc = DeleteTimeBloc(mockUseCase);
       expect(bloc.state, const DeleteTimeInitial());
     });
 
+    // Happy path: entry removed from backend. The auto-
+    // reset to initial lets the UI dismiss any success
+    // feedback and return to a neutral state.
     blocTest<DeleteTimeBloc, DeleteTimeState>(
       'emits [loading, success, initial] on successful delete',
       build: () {
@@ -44,6 +59,9 @@ void main() {
       ],
     );
 
+    // Network failure during delete. Error auto-resets
+    // to initial so the UI can recover and the user
+    // can retry the deletion without a stuck spinner.
     blocTest<DeleteTimeBloc, DeleteTimeState>(
       'emits [loading, error, initial] on failed delete',
       build: () {

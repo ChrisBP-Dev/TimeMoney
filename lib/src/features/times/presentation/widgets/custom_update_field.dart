@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
+/// Reusable numeric text field for the update-time form.
+///
+/// Displays a labelled [TextField] configured for numeric input.
+/// The [controller] manages the field's text state, and [onChanged]
+/// is called whenever the user modifies the value.
 class CustomUpdateField extends StatelessWidget {
+  /// Creates a [CustomUpdateField] with the given [title] and [controller].
   const CustomUpdateField({
     required this.title,
     required this.controller,
@@ -8,8 +14,13 @@ class CustomUpdateField extends StatelessWidget {
     this.onChanged,
   });
 
+  /// The label displayed above the text field.
   final String title;
+
+  /// Controller for the text field's current value.
   final TextEditingController? controller;
+
+  /// Callback invoked when the text field value changes.
   final void Function(String)? onChanged;
 
   @override

@@ -1,3 +1,10 @@
+/// Tests for [FetchWageUseCase].
+///
+/// Validates that the use case transparently forwards the reactive wage
+/// stream from `WageRepository.fetchWageHourly` on success, and propagates
+/// the exact [GlobalFailure] on error without modification.
+library;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -18,7 +25,13 @@ void main() {
 
   const testWage = WageHourly(id: 1, value: 25);
 
+  // Use case is a thin pass-through: it must forward
+  // the reactive wage stream or the failure from the
+  // repository without any transformation.
   group('FetchWageUseCase', () {
+    // Happy path: repo provides a valid stream.
+    // Confirms the use case delegates once and the
+    // stream content reaches the caller intact.
     test('returns Right with stream on success', () async {
       final stream = Stream.value(testWage);
       when(() => mockRepository.fetchWageHourly()).thenReturn(
@@ -33,6 +46,9 @@ void main() {
       verify(() => mockRepository.fetchWageHourly()).called(1);
     });
 
+    // Failure path: repo returns Left(NotConnection).
+    // The use case must not swallow or remap the failure
+    // so the presentation layer can show the right error.
     test('returns Left with the exact GlobalFailure on error', () {
       when(() => mockRepository.fetchWageHourly()).thenReturn(
         const Left<GlobalFailure, Stream<WageHourly>>(

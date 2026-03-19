@@ -7,7 +7,12 @@ import 'package:time_money/src/features/times/presentation/bloc/delete_time_stat
 export 'delete_time_event.dart';
 export 'delete_time_state.dart';
 
+/// BLoC responsible for deleting an existing time entry.
+///
+/// Delegates removal to [DeleteTimeUseCase] and auto-resets to the
+/// initial state after a brief feedback delay.
 class DeleteTimeBloc extends Bloc<DeleteTimeEvent, DeleteTimeState> {
+  /// Creates a [DeleteTimeBloc] with the given [useCase].
   DeleteTimeBloc(DeleteTimeUseCase useCase)
       : _deleteTimeUseCase = useCase,
         super(const DeleteTimeInitial()) {

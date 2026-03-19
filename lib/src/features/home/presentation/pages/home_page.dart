@@ -7,7 +7,12 @@ import 'package:time_money/src/features/times/presentation/pages/list_times_page
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/wage/presentation/pages/fetch_wage_page.dart';
 
+/// Main landing page of the application.
+///
+/// Composes the wage input section, the time entries list, and the
+/// bottom action bar with calculate-payment and add-time buttons.
 class HomePage extends StatelessWidget {
+  /// Creates a [HomePage].
   const HomePage({super.key});
 
   @override

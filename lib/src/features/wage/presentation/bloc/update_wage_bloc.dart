@@ -8,7 +8,14 @@ import 'package:time_money/src/features/wage/presentation/bloc/update_wage_state
 export 'update_wage_event.dart';
 export 'update_wage_state.dart';
 
+/// BLoC responsible for validating and submitting wage updates.
+///
+/// Handles [UpdateWageHourlyChanged] for input validation and
+/// [UpdateWageSubmitted] for persisting the new value via
+/// [UpdateWageUseCase]. Emits a brief feedback state after each
+/// submission before resetting.
 class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
+  /// Creates an [UpdateWageBloc] with the given [useCase].
   UpdateWageBloc(UpdateWageUseCase useCase)
       : _updateWageUseCase = useCase,
         super(const UpdateWageInitial()) {

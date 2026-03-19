@@ -9,7 +9,13 @@ import 'package:time_money/src/features/wage/data/datasources/wage_objectbox_dat
 import 'package:time_money/src/features/wage/data/models/wage_hourly_box.dart';
 import 'package:time_money/src/features/wage/data/repositories/objectbox_wage_repository.dart';
 
+/// Global ObjectBox instance for the production environment.
 late final ObjectBox objectbox;
+
+/// Production entry point.
+///
+/// Initializes ObjectBox with the `prod-1` database directory and
+/// bootstraps the app with ObjectBox-backed repositories.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   objectbox = await ObjectBox.create('prod-1');

@@ -1,3 +1,6 @@
+/// Barrel file exporting the Times feature widgets public API.
+library;
+
 export 'create_hour_field.dart';
 export 'create_minutes_field.dart';
 export 'create_time_button.dart';

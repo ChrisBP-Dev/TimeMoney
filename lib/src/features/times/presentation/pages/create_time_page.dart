@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
+/// Dialog page for creating a new time entry.
+///
+/// Presents an [AlertDialog] containing the [CreateTimeCard] form
+/// with hour and minutes input fields. The dialog can be dismissed
+/// via the close icon button.
 class CreateTimePage extends StatelessWidget {
+  /// Creates a [CreateTimePage].
   const CreateTimePage({super.key});
 
   @override

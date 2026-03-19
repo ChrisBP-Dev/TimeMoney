@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 
+/// Submit button for creating a new time entry.
+///
+/// Uses [BlocConsumer] to react to [CreateTimeBloc] state changes.
+/// Shows contextual labels (Create, loading spinner, Success, Error)
+/// and pops the dialog on successful creation.
 class CreateTimeButton extends StatelessWidget {
+  /// Creates a [CreateTimeButton].
   const CreateTimeButton({super.key});
 
   @override

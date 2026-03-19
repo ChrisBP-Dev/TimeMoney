@@ -4,7 +4,14 @@ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit
 import 'package:time_money/src/features/wage/presentation/bloc/fetch_wage_bloc.dart';
 import 'package:time_money/src/features/wage/presentation/widgets/widgets.dart';
 
+/// Page that fetches and displays the current hourly wage.
+///
+/// Dispatches [FetchWageRequested] on build and reacts to
+/// [FetchWageState] changes, rendering the appropriate loading,
+/// loaded, or error view. On a successful load it also pushes
+/// the wage value into [PaymentCubit].
 class FetchWagePage extends StatelessWidget {
+  /// Creates a [FetchWagePage].
   const FetchWagePage({super.key});
 
   @override

@@ -9,7 +9,13 @@ import 'package:time_money/src/features/wage/data/datasources/wage_objectbox_dat
 import 'package:time_money/src/features/wage/data/models/wage_hourly_box.dart';
 import 'package:time_money/src/features/wage/data/repositories/objectbox_wage_repository.dart';
 
+/// Global ObjectBox instance for the staging environment.
 late final ObjectBox objectbox;
+
+/// Staging entry point.
+///
+/// Initializes ObjectBox with the `stg-1` database directory and
+/// bootstraps the app with ObjectBox-backed repositories.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   objectbox = await ObjectBox.create('stg-1');

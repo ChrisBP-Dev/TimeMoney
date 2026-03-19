@@ -3,7 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/custom_update_field.dart';
 
+/// Minutes input field for the update-time form.
+///
+/// Wraps [CustomUpdateField] with BLoC integration. Pre-populates
+/// the field with the current minutes value from [UpdateTimeBloc]
+/// and dispatches [UpdateTimeMinutesChanged] events on value change.
 class UpdateMinutesField extends StatefulWidget {
+  /// Creates an [UpdateMinutesField].
   const UpdateMinutesField({super.key});
 
   @override

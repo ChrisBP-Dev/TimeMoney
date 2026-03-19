@@ -1,3 +1,15 @@
+/// Tests for [CreateTimeBloc].
+///
+/// Uses `bloc_test` to verify the full lifecycle of creating a time entry:
+/// - Initial state holds default hour/minutes of zero.
+/// - [CreateTimeHourChanged] / [CreateTimeMinutesChanged] update form values
+///   or emit a transient error then auto-recover on invalid input.
+/// - [CreateTimeSubmitted] transitions through loading -> success -> reset on
+///   success, or loading -> error -> initial-with-preserved-values on failure.
+/// - Validation rejects submission when both hour and minutes are zero.
+/// - [CreateTimeReset] clears the form back to defaults (D-5 fix).
+library;
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -23,7 +35,11 @@ void main() {
 
   const testTime = TimeEntry(hour: 1, minutes: 30);
 
+  // Full lifecycle of the create-time form BLoC:
+  // input changes, validation, submission, and reset.
   group('CreateTimeBloc', () {
+    // Verifies default form state. hour/minutes must be
+    // zero so the form starts blank for new entries.
     test('initial state is CreateTimeInitial(hour: 0, minutes: 0)',
         () {
       final bloc = CreateTimeBloc(mockUseCase);
@@ -32,6 +48,8 @@ void main() {
       expect(bloc.state.minutes, 0);
     });
 
+    // Happy path for hour input: a valid numeric string
+    // updates the form state so it is ready for submit.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits CreateTimeInitial with updated hour '
       'on valid CreateTimeHourChanged',
@@ -44,6 +62,9 @@ void main() {
       ],
     );
 
+    // Non-numeric hour input (e.g. "abc") must show a
+    // transient error then auto-recover to initial so
+    // the user can correct without manual dismissal.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits error then recovers '
       'on invalid CreateTimeHourChanged',
@@ -62,6 +83,8 @@ void main() {
       ],
     );
 
+    // Happy path for minutes input: mirrors the hour
+    // test to cover the second form field independently.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits CreateTimeInitial with updated minutes '
       'on valid CreateTimeMinutesChanged',
@@ -74,6 +97,8 @@ void main() {
       ],
     );
 
+    // Non-numeric minutes input triggers the same
+    // transient-error-then-recover pattern as hours.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits error then recovers '
       'on invalid CreateTimeMinutesChanged',
@@ -92,6 +117,9 @@ void main() {
       ],
     );
 
+    // Successful creation: loading -> success -> auto-
+    // reset to blank form. The reset lets the user
+    // immediately create another entry without friction.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits [loading, success, initial] on successful submit',
       build: () {
@@ -115,6 +143,9 @@ void main() {
       ],
     );
 
+    // Critical UX: on failure the form must keep the
+    // user's hour/minutes so they can retry without
+    // re-typing. Losing input here would be frustrating.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits [loading, error, initial-with-values] on failed submit '
       '(preserves user input for retry)',
@@ -140,6 +171,9 @@ void main() {
       ],
     );
 
+    // Zero-time guard: submitting 0h 0m is meaningless
+    // and must be rejected before calling the use case.
+    // Ensures no empty entries pollute the database.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits [loading, validation error, initial] '
       'when hour=0 and minutes=0',
@@ -157,6 +191,9 @@ void main() {
       ],
     );
 
+    // D-5 regression fix: explicit reset clears stale
+    // form data. Before this fix, navigating away and
+    // back could show leftover values from a prior entry.
     blocTest<CreateTimeBloc, CreateTimeState>(
       'emits CreateTimeInitial on CreateTimeReset (D-5 fix)',
       build: () => CreateTimeBloc(mockUseCase),

@@ -1,3 +1,13 @@
+/// Tests for [ListTimesBloc].
+///
+/// Uses `bloc_test` to verify the state transitions when listing time entries:
+/// - Initial state is [ListTimesInitial].
+/// - On [ListTimesRequested], transitions through [ListTimesLoading] to
+///   [ListTimesLoaded], [ListTimesEmpty], or [ListTimesError] depending on
+///   the use-case result and stream content.
+/// - Covers the `emit.forEach` onError path when the stream itself errors.
+library;
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -17,7 +27,11 @@ void main() {
 
   const testTime = TimeEntry(hour: 1, minutes: 30, id: 1);
 
+  // All state transitions for the list-times BLoC,
+  // covering happy path, empty data, and error scenarios.
   group('ListTimesBloc', () {
+    // Sanity check: BLoC must start in initial state so
+    // the UI shows a neutral screen before any fetch.
     test('initial state is ListTimesInitial', () {
       expect(
         ListTimesBloc(mockUseCase).state,
@@ -25,6 +39,8 @@ void main() {
       );
     });
 
+    // Happy path: use case returns a stream with entries.
+    // Ensures loading indicator shows, then data renders.
     blocTest<ListTimesBloc, ListTimesState>(
       'emits [loading, loaded] when stream emits data',
       build: () {
@@ -42,6 +58,8 @@ void main() {
       ],
     );
 
+    // Edge case: database has no entries yet. The UI must
+    // show an empty-state placeholder, not a stale list.
     blocTest<ListTimesBloc, ListTimesState>(
       'emits [loading, empty] when stream emits empty list',
       build: () {
@@ -59,6 +77,8 @@ void main() {
       ],
     );
 
+    // Use-case failure (e.g. no network). Left branch
+    // of Either must surface a typed error to the UI.
     blocTest<ListTimesBloc, ListTimesState>(
       'emits [loading, error] when use case returns Left',
       build: () {
@@ -76,6 +96,10 @@ void main() {
       ],
     );
 
+    // Covers the emit.forEach onError callback: the
+    // stream itself throws (e.g. DB crash mid-read).
+    // Without this, an unhandled stream error would
+    // leave the BLoC stuck in loading forever.
     blocTest<ListTimesBloc, ListTimesState>(
       'emits [loading, error] when stream itself emits an error event '
       '(emit.forEach onError path)',

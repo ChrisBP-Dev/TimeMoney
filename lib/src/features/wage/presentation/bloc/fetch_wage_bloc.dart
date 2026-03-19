@@ -8,7 +8,12 @@ import 'package:time_money/src/features/wage/presentation/bloc/fetch_wage_state.
 export 'fetch_wage_event.dart';
 export 'fetch_wage_state.dart';
 
+/// BLoC responsible for fetching the current hourly wage.
+///
+/// Listens for [FetchWageRequested] events and emits a reactive stream
+/// of [FetchWageState] updates sourced from [FetchWageUseCase].
 class FetchWageBloc extends Bloc<FetchWageEvent, FetchWageState> {
+  /// Creates a [FetchWageBloc] with the given [useCase].
   FetchWageBloc(FetchWageUseCase useCase)
       : _fetchWageUseCase = useCase,
         super(const FetchWageInitial()) {

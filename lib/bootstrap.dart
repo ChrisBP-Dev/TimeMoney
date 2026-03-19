@@ -4,7 +4,9 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 
+/// BLoC observer that logs state changes and errors for debugging.
 class AppBlocObserver extends BlocObserver {
+  /// Creates a const [AppBlocObserver].
   const AppBlocObserver();
 
   @override
@@ -20,6 +22,8 @@ class AppBlocObserver extends BlocObserver {
   }
 }
 
+/// Initializes error handling, registers the [AppBlocObserver], and
+/// runs the application widget returned by [builder] inside a guarded zone.
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   FlutterError.onError = (details) {
     log(details.exceptionAsString(), stackTrace: details.stack);

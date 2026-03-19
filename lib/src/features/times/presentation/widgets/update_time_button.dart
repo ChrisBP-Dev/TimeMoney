@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc.dart';
 
+/// Submit button for updating an existing time entry.
+///
+/// Uses [BlocConsumer] to react to [UpdateTimeBloc] state changes.
+/// Shows contextual labels (Update, loading spinner, Success, Error),
+/// disables itself during non-initial states, and pops the dialog
+/// on successful update.
 class UpdateTimeButton extends StatelessWidget {
+  /// Creates an [UpdateTimeButton].
   const UpdateTimeButton({super.key});
 
   @override

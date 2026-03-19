@@ -5,7 +5,12 @@ import 'package:time_money/src/features/wage/data/models/wage_hourly_box.dart';
 import 'package:time_money/src/features/wage/domain/entities/wage_hourly.dart';
 import 'package:time_money/src/features/wage/domain/repositories/wage_repository.dart';
 
+/// ObjectBox-backed implementation of [WageRepository].
+///
+/// Translates between [WageHourly] domain entities and
+/// [WageHourlyBox] data models via [WageObjectboxDatasource].
 class ObjectboxWageRepository implements WageRepository {
+  /// Creates the repository with the given ObjectBox [_datasource].
   const ObjectboxWageRepository(this._datasource);
   final WageObjectboxDatasource _datasource;
 

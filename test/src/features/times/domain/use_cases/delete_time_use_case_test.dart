@@ -1,3 +1,10 @@
+/// Tests for [DeleteTimeUseCase].
+///
+/// Validates that the use case delegates to `TimesRepository.delete` and
+/// returns either a `Right` containing `Unit` on successful deletion, or a
+/// `Left` with the exact [GlobalFailure] on error.
+library;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -22,7 +29,12 @@ void main() {
 
   const testTime = TimeEntry(hour: 1, minutes: 30);
 
+  // Thin use case: delegates deletion to the repository.
+  // Returns Unit on success since no data needs to come back.
   group('DeleteTimeUseCase', () {
+    // Happy path: entry is removed from persistence. Right(unit)
+    // tells the Bloc the operation succeeded so the reactive
+    // stream will reflect the deletion automatically.
     test('returns Right with Unit on success', () async {
       when(() => mockRepository.delete(testTime)).thenAnswer(
         (_) async => const Right<GlobalFailure, Unit>(unit),
@@ -37,6 +49,9 @@ void main() {
       verify(() => mockRepository.delete(testTime)).called(1);
     });
 
+    // Failure path: deletion fails (e.g., connectivity loss).
+    // The exact failure type must propagate so the Bloc can
+    // distinguish between error scenarios for UI feedback.
     test('returns Left with the exact GlobalFailure on error', () async {
       when(() => mockRepository.delete(testTime)).thenAnswer(
         (_) async => const Left<GlobalFailure, Unit>(

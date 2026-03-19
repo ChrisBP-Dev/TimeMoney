@@ -3,7 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
+/// Hour input field for the create-time form.
+///
+/// Wraps [CustomCreateField] with BLoC integration. Dispatches
+/// [CreateTimeHourChanged] events to [CreateTimeBloc] on value change
+/// and clears the field when the BLoC resets to its initial state.
 class CreateHourField extends StatefulWidget {
+  /// Creates a [CreateHourField].
   const CreateHourField({super.key});
 
   @override

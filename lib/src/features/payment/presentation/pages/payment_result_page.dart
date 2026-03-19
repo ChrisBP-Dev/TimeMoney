@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:time_money/src/features/payment/domain/entities/payment_result.dart';
 
+/// Dialog page that displays a [PaymentResult] summary.
+///
+/// Shows total hours, minutes, hourly rate, worked days, and the
+/// computed total payment in a scrollable [AlertDialog].
 class PaymentResultPage extends StatelessWidget {
+  /// Creates a [PaymentResultPage] for the given [result].
   const PaymentResultPage({required this.result, super.key});
 
+  /// The payment result to display.
   final PaymentResult result;
 
   @override

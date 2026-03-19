@@ -1,3 +1,16 @@
+/// Tests for [UpdateTimeBloc].
+///
+/// Uses `bloc_test` to verify the full lifecycle of updating a time entry:
+/// - Initial state holds default hour/minutes of zero and a null time.
+/// - [UpdateTimeInit] seeds the bloc with the existing [TimeEntry] to edit.
+/// - [UpdateTimeHourChanged] / [UpdateTimeMinutesChanged] update form values
+///   or emit a transient error then auto-recover on invalid input.
+/// - [UpdateTimeSubmitted] transitions through loading -> success -> reset on
+///   success, or loading -> error -> reset on failure (preserving form values).
+/// - Submitting without a loaded time emits a validation error and never
+///   calls the use case.
+library;
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -21,7 +34,12 @@ void main() {
 
   const testTime = TimeEntry(hour: 1, minutes: 30);
 
+  // Full lifecycle of the update-time form BLoC:
+  // init with existing entry, field edits, validation,
+  // submission, and null-time guard.
   group('UpdateTimeBloc', () {
+    // Default state must carry null time and zero fields
+    // so the edit screen knows no entry is loaded yet.
     test('initial state is UpdateTimeInitial(hour: 0, minutes: 0, time: null)',
         () {
       final bloc = UpdateTimeBloc(mockUseCase);
@@ -31,6 +49,9 @@ void main() {
       expect(bloc.state.time, isNull);
     });
 
+    // Seeds the BLoC with an existing entry for editing.
+    // The form fields must reflect the entry's current
+    // values so the user sees what they are modifying.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits UpdateTimeInitial with time, hour, minutes on UpdateTimeInit',
       build: () => UpdateTimeBloc(mockUseCase),
@@ -44,6 +65,9 @@ void main() {
       ],
     );
 
+    // Valid hour change: both the form field and the
+    // underlying TimeEntry.hour must update together
+    // so the copyWith stays in sync for submission.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits UpdateTimeInitial with updated hour '
       'on valid UpdateTimeHourChanged',
@@ -63,6 +87,9 @@ void main() {
       ],
     );
 
+    // Non-numeric hour input: transient error then
+    // auto-recover. Existing form values (hour, minutes,
+    // time) must be preserved through the cycle.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits error then recovers on invalid UpdateTimeHourChanged',
       build: () => UpdateTimeBloc(mockUseCase),
@@ -88,6 +115,8 @@ void main() {
       ],
     );
 
+    // Valid minutes change: same copyWith-sync pattern
+    // as the hour test, covering the other form field.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits UpdateTimeInitial with updated minutes '
       'on valid UpdateTimeMinutesChanged',
@@ -107,6 +136,8 @@ void main() {
       ],
     );
 
+    // Non-numeric minutes input: mirrors the invalid
+    // hour test for symmetry across both form fields.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits error then recovers on invalid UpdateTimeMinutesChanged',
       build: () => UpdateTimeBloc(mockUseCase),
@@ -132,6 +163,9 @@ void main() {
       ],
     );
 
+    // Successful update: loading -> success -> auto-
+    // reset. Form values stay in the reset state so
+    // the UI can navigate back or show confirmation.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits [loading, success, initial] on successful submit',
       build: () {
@@ -159,6 +193,9 @@ void main() {
       ],
     );
 
+    // Critical UX: on failure the form must preserve
+    // hour, minutes, and the loaded TimeEntry so the
+    // user can retry without losing their edits.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits [loading, error, initial] on failed submit '
       '(preserves form values)',
@@ -189,6 +226,10 @@ void main() {
       ],
     );
 
+    // Null-time guard: if no entry was loaded before
+    // submit (e.g. race condition), the BLoC must
+    // reject and never call the use case. Verified by
+    // verifyNever in the verify callback.
     blocTest<UpdateTimeBloc, UpdateTimeState>(
       'emits [loading, error, initial] when time is null on submit',
       build: () => UpdateTimeBloc(mockUseCase),

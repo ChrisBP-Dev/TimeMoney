@@ -4,7 +4,10 @@ import 'package:time_money/src/features/wage/domain/use_cases/update_wage_use_ca
 import 'package:time_money/src/features/wage/presentation/bloc/fetch_wage_bloc.dart';
 import 'package:time_money/src/features/wage/presentation/bloc/update_wage_bloc.dart';
 
+/// Dependency-injection helper that registers all Wage BLoCs
+/// as [BlocProvider]s in the widget tree.
 class WageBlocs {
+  /// Returns the list of [BlocProvider]s for every Wage BLoC.
   static List<BlocProvider> list() => [
         BlocProvider<FetchWageBloc>(
           create: (context) => FetchWageBloc(

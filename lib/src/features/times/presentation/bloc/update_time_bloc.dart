@@ -8,7 +8,12 @@ import 'package:time_money/src/features/times/presentation/bloc/update_time_stat
 export 'update_time_event.dart';
 export 'update_time_state.dart';
 
+/// BLoC responsible for updating an existing time entry.
+///
+/// Initialized with a time entry to edit, manages form field changes,
+/// validates input, and delegates persistence to the update use case.
 class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
+  /// Creates an [UpdateTimeBloc] with the given [useCase].
   UpdateTimeBloc(UpdateTimeUseCase useCase)
       : _updateTimeUseCase = useCase,
         super(const UpdateTimeInitial()) {

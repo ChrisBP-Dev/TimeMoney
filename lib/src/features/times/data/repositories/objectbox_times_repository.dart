@@ -5,7 +5,13 @@ import 'package:time_money/src/features/times/data/models/time_box.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 import 'package:time_money/src/features/times/domain/repositories/times_repository.dart';
 
+/// ObjectBox-backed implementation of [TimesRepository].
+///
+/// Each method delegates to [TimesObjectboxDatasource], maps between
+/// [TimeBox] models and [TimeEntry] domain entities, and wraps results
+/// in [Either] to surface [GlobalFailure] on errors.
 class ObjectboxTimesRepository implements TimesRepository {
+  /// Creates the repository with the given ObjectBox datasource.
   const ObjectboxTimesRepository(this._datasource);
   final TimesObjectboxDatasource _datasource;
 

@@ -4,7 +4,10 @@ import 'package:time_money/src/features/wage/domain/use_cases/fetch_wage_use_cas
 import 'package:time_money/src/features/wage/domain/use_cases/set_wage_use_case.dart';
 import 'package:time_money/src/features/wage/domain/use_cases/update_wage_use_case.dart';
 
+/// Dependency-injection helper that registers all Wage use cases
+/// as [RepositoryProvider]s in the widget tree.
 class WageUseCasesInjections {
+  /// Returns the list of [RepositoryProvider]s for every Wage use case.
   static List<RepositoryProvider<Object>> list() => [
         RepositoryProvider<FetchWageUseCase>(
           create: (context) =>

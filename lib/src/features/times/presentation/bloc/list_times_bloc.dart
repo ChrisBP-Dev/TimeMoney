@@ -8,7 +8,12 @@ import 'package:time_money/src/features/times/presentation/bloc/list_times_state
 export 'list_times_event.dart';
 export 'list_times_state.dart';
 
+/// BLoC responsible for listing time entries.
+///
+/// Subscribes to a reactive stream of [TimeEntry] lists returned by
+/// [ListTimesUseCase] and maps the results into the appropriate state.
 class ListTimesBloc extends Bloc<ListTimesEvent, ListTimesState> {
+  /// Creates a [ListTimesBloc] with the given [useCase].
   ListTimesBloc(ListTimesUseCase useCase)
       : _listTimesUseCase = useCase,
         super(const ListTimesInitial()) {

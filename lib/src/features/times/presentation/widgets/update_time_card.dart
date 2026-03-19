@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
+/// Card containing the form fields for updating an existing time entry.
+///
+/// Lays out `UpdateHourField` and `UpdateMinutesField` in a row
+/// within a card. Used inside `UpdateTimePage` as the main form content.
 class UpdateTimeCard extends StatelessWidget {
+  /// Creates an [UpdateTimeCard].
   const UpdateTimeCard({super.key});
 
   @override

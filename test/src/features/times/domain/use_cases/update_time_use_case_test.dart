@@ -1,3 +1,10 @@
+/// Tests for [UpdateTimeUseCase].
+///
+/// Validates that the use case delegates to `TimesRepository.update` and
+/// returns either a `Right` containing the updated [TimeEntry] on success,
+/// or a `Left` with the exact [GlobalFailure] on error.
+library;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -22,7 +29,12 @@ void main() {
 
   const testTime = TimeEntry(hour: 1, minutes: 30);
 
+  // Thin use case: delegates update to the repository.
+  // Must return the updated entity or the exact failure.
   group('UpdateTimeUseCase', () {
+    // Happy path: user edits an existing time entry. The
+    // returned TimeEntry confirms the update was persisted,
+    // letting the Bloc trust the data is current.
     test('returns Right with TimeEntry on success', () async {
       when(() => mockRepository.update(testTime)).thenAnswer(
         (_) async => const Right<GlobalFailure, TimeEntry>(testTime),
@@ -37,6 +49,9 @@ void main() {
       verify(() => mockRepository.update(testTime)).called(1);
     });
 
+    // Failure path: update fails (e.g., stale record or DB
+    // error). The exact GlobalFailure must propagate so the
+    // presentation layer can show a meaningful error message.
     test('returns Left with the exact GlobalFailure on error', () async {
       when(() => mockRepository.update(testTime)).thenAnswer(
         (_) async => const Left<GlobalFailure, TimeEntry>(

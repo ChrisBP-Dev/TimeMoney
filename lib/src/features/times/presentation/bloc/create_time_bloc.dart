@@ -11,7 +11,13 @@ import 'package:time_money/src/features/times/presentation/bloc/create_time_stat
 export 'create_time_event.dart';
 export 'create_time_state.dart';
 
+/// BLoC responsible for creating a new time entry.
+///
+/// Manages form field changes for hour and minutes, validates input,
+/// delegates persistence to [CreateTimeUseCase], and auto-resets
+/// the form after a successful creation.
 class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
+  /// Creates a [CreateTimeBloc] with the given [useCase].
   CreateTimeBloc(CreateTimeUseCase useCase)
       : _createTimeUseCase = useCase,
         super(const CreateTimeInitial()) {
