@@ -29,14 +29,13 @@ class _UpdateHourFieldState extends State<UpdateHourField> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UpdateTimeBloc, UpdateTimeState>(
-      listener: (context, state) => state,
+    return BlocBuilder<UpdateTimeBloc, UpdateTimeState>(
       builder: (context, state) {
         return CustomUpdateField(
           title: 'Hour',
           controller: _controller,
           onChanged: (value) => context.read<UpdateTimeBloc>().add(
-                UpdateTimeEvent.changeHour(value: value),
+                UpdateTimeHourChanged(value: value),
               ),
         );
       },

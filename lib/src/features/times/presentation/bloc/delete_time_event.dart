@@ -1,6 +1,10 @@
-part of 'delete_time_bloc.dart';
+import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
-@freezed
-abstract class DeleteTimeEvent with _$DeleteTimeEvent {
-  const factory DeleteTimeEvent.delete({required TimeEntry time}) = _Delete;
+sealed class DeleteTimeEvent {
+  const DeleteTimeEvent();
+}
+
+final class DeleteTimeRequested extends DeleteTimeEvent {
+  const DeleteTimeRequested({required this.time});
+  final TimeEntry time;
 }

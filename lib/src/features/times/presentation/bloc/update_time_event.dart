@@ -1,16 +1,24 @@
-part of 'update_time_bloc.dart';
+import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
-@freezed
-abstract class UpdateTimeEvent with _$UpdateTimeEvent {
-  const factory UpdateTimeEvent.init({required TimeEntry time}) = _Init;
+sealed class UpdateTimeEvent {
+  const UpdateTimeEvent();
+}
 
-  const factory UpdateTimeEvent.changeHour({
-    required String value,
-  }) = _ChangeHour;
+final class UpdateTimeInit extends UpdateTimeEvent {
+  const UpdateTimeInit({required this.time});
+  final TimeEntry time;
+}
 
-  const factory UpdateTimeEvent.changeMinutes({
-    required String value,
-  }) = _ChangeMinutes;
+final class UpdateTimeHourChanged extends UpdateTimeEvent {
+  const UpdateTimeHourChanged({required this.value});
+  final String value;
+}
 
-  const factory UpdateTimeEvent.update() = _Update;
+final class UpdateTimeMinutesChanged extends UpdateTimeEvent {
+  const UpdateTimeMinutesChanged({required this.value});
+  final String value;
+}
+
+final class UpdateTimeSubmitted extends UpdateTimeEvent {
+  const UpdateTimeSubmitted();
 }

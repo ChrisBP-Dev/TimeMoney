@@ -66,4 +66,46 @@ void main() {
       expect(result.isLeft(), true);
     });
   });
+
+  group('update', () {
+    const testTime = TimeEntry(hour: 2, minutes: 45);
+
+    test('returns Right with time entry on success', () async {
+      when(() => mockDatasource.put(any())).thenReturn(1);
+
+      final result = await repository.update(testTime);
+
+      expect(result, const Right<dynamic, TimeEntry>(testTime));
+      verify(() => mockDatasource.put(any())).called(1);
+    });
+
+    test('returns Left on exception', () async {
+      when(() => mockDatasource.put(any())).thenThrow(Exception('fail'));
+
+      final result = await repository.update(testTime);
+
+      expect(result.isLeft(), true);
+    });
+  });
+
+  group('delete', () {
+    const testTime = TimeEntry(hour: 1, minutes: 15);
+
+    test('returns Right with unit on success', () async {
+      when(() => mockDatasource.remove(any())).thenReturn(true);
+
+      final result = await repository.delete(testTime);
+
+      expect(result, const Right<dynamic, Unit>(unit));
+      verify(() => mockDatasource.remove(any())).called(1);
+    });
+
+    test('returns Left on exception', () async {
+      when(() => mockDatasource.remove(any())).thenThrow(Exception('fail'));
+
+      final result = await repository.delete(testTime);
+
+      expect(result.isLeft(), true);
+    });
+  });
 }

@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-17
-last_updated: 2026-03-18 # story 3-3 ready-for-dev
+last_updated: 2026-03-18 # story 3-3 review
 project: TimeMoney
 project_key: NOKEY
 tracking_system: file-system
@@ -63,7 +63,7 @@ development_status:
   epic-3: in-progress
   3-1-core-sealed-classes-test-infrastructure-core-tests: done
   3-2-times-feature-list-create-bloc-migration: done
-  3-3-times-feature-update-delete-bloc-migration: ready-for-dev
+  3-3-times-feature-update-delete-bloc-migration: review
   3-4-wage-feature-sealed-class-bloc-migration: backlog
   3-5-payment-feature-cubit-modernization-cross-feature-composition: backlog
   3-6-domain-entities-naming-conventions-final-pass: backlog

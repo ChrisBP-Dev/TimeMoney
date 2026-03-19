@@ -1,70 +1,107 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:time_money/src/core/constants/app_durations.dart';
 import 'package:time_money/src/core/errors/failures.dart';
-import 'package:time_money/src/core/ui/action_state.dart';
-import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 import 'package:time_money/src/features/times/domain/use_cases/update_time_use_case.dart';
+import 'package:time_money/src/features/times/presentation/bloc/update_time_event.dart';
+import 'package:time_money/src/features/times/presentation/bloc/update_time_state.dart';
 
-part 'update_time_event.dart';
-part 'update_time_state.dart';
-part 'update_time_bloc.freezed.dart';
+export 'update_time_event.dart';
+export 'update_time_state.dart';
 
 class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
   UpdateTimeBloc(UpdateTimeUseCase useCase)
       : _updateTimeUseCase = useCase,
-        super(UpdateTimeState.initial()) {
-    on<_Init>((event, emit) => emit(UpdateTimeState(time: event.time)));
-    on<_ChangeHour>((event, emit) {
-      final hour = int.tryParse(event.value);
-      if (hour == null) return _emitError(emit);
-      emit(state.copyWith(time: state.time?.copyWith(hour: hour)));
-    });
-    on<_ChangeMinutes>((event, emit) {
-      final minutes = int.tryParse(event.value);
-      if (minutes == null) return _emitError(emit);
-      emit(state.copyWith(time: state.time?.copyWith(minutes: minutes)));
-    });
-    on<_Update>((event, emit) async {
-      emit(state.copyWith(currentState: const ActionLoading()));
-
-      await Future<void>.delayed(AppDurations.actionFeedback);
-
-      if (state.time == null) return _emitError(emit);
-
-      final result = await _updateTimeUseCase.call(state.time!);
-
-      emit(
-        state.copyWith(
-          currentState: result.fold(ActionError.new, ActionSuccess.new),
-        ),
-      );
-
-      await Future<void>.delayed(AppDurations.actionFeedback);
-
-      emit(state.copyWith(currentState: const ActionInitial()));
-    });
+        super(const UpdateTimeInitial()) {
+    on<UpdateTimeInit>(_onInit);
+    on<UpdateTimeHourChanged>(_onHourChanged);
+    on<UpdateTimeMinutesChanged>(_onMinutesChanged);
+    on<UpdateTimeSubmitted>(_onSubmitted);
   }
 
   final UpdateTimeUseCase _updateTimeUseCase;
 
-  FutureOr<void> _emitError(Emitter<UpdateTimeState> emit) async {
+  void _onInit(UpdateTimeInit event, Emitter<UpdateTimeState> emit) {
     emit(
-      state.copyWith(
-        currentState: const ActionError(
-          InternalError('invalid number'),
-        ),
+      UpdateTimeInitial(
+        time: event.time,
+        hour: event.time.hour,
+        minutes: event.time.minutes,
+      ),
+    );
+  }
+
+  FutureOr<void> _onHourChanged(
+    UpdateTimeHourChanged event,
+    Emitter<UpdateTimeState> emit,
+  ) {
+    final hour = int.tryParse(event.value);
+    if (hour == null) return _emitError(emit);
+    emit(
+      UpdateTimeInitial(
+        hour: hour,
+        minutes: state.minutes,
+        time: state.time?.copyWith(hour: hour),
+      ),
+    );
+  }
+
+  FutureOr<void> _onMinutesChanged(
+    UpdateTimeMinutesChanged event,
+    Emitter<UpdateTimeState> emit,
+  ) {
+    final minutes = int.tryParse(event.value);
+    if (minutes == null) return _emitError(emit);
+    emit(
+      UpdateTimeInitial(
+        hour: state.hour,
+        minutes: minutes,
+        time: state.time?.copyWith(minutes: minutes),
+      ),
+    );
+  }
+
+  Future<void> _onSubmitted(
+    UpdateTimeSubmitted event,
+    Emitter<UpdateTimeState> emit,
+  ) async {
+    final hour = state.hour;
+    final minutes = state.minutes;
+    final time = state.time;
+
+    emit(UpdateTimeLoading(hour: hour, minutes: minutes, time: time));
+
+    if (time == null) return _emitError(emit);
+
+    final result = await _updateTimeUseCase.call(time);
+
+    result.fold(
+      (failure) => emit(
+        UpdateTimeError(failure, hour: hour, minutes: minutes, time: time),
+      ),
+      (timeEntry) => emit(
+        UpdateTimeSuccess(timeEntry, hour: hour, minutes: minutes, time: time),
       ),
     );
 
     await Future<void>.delayed(AppDurations.actionFeedback);
+    emit(UpdateTimeInitial(hour: hour, minutes: minutes, time: time));
+  }
 
+  FutureOr<void> _emitError(Emitter<UpdateTimeState> emit) async {
+    final hour = state.hour;
+    final minutes = state.minutes;
+    final time = state.time;
     emit(
-      state.copyWith(
-        currentState: const ActionInitial(),
+      UpdateTimeError(
+        const InternalError('invalid number'),
+        hour: hour,
+        minutes: minutes,
+        time: time,
       ),
     );
+    await Future<void>.delayed(AppDurations.actionFeedback);
+    emit(UpdateTimeInitial(hour: hour, minutes: minutes, time: time));
   }
 }

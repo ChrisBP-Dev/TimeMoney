@@ -20,7 +20,7 @@ class EditButton extends StatelessWidget {
       ),
       onPressed: () async {
         context.read<UpdateTimeBloc>().add(
-              UpdateTimeEvent.init(time: time),
+              UpdateTimeInit(time: time),
             );
         await showDialog<void>(
           context: context,
