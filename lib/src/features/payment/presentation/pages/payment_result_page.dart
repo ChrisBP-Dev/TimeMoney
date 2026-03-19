@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
+import 'package:time_money/src/features/payment/domain/entities/payment_result.dart';
 
 class PaymentResultPage extends StatelessWidget {
-  const PaymentResultPage({
-    required this.times,
-    required this.wageHourly,
-    super.key,
-  });
+  const PaymentResultPage({required this.result, super.key});
 
-  final List<TimeEntry> times;
-  final double wageHourly;
+  final PaymentResult result;
 
   @override
   Widget build(BuildContext context) {
@@ -30,25 +25,25 @@ class PaymentResultPage extends StatelessWidget {
         children: [
           ListTile(
             title: const Text('Hours:'),
-            subtitle: Text('${times.totalHours}'),
+            subtitle: Text('${result.totalHours}'),
           ),
           ListTile(
             title: const Text('Minutes:'),
-            subtitle: Text('${times.totalMinutes}'),
+            subtitle: Text('${result.totalMinutes}'),
           ),
           ListTile(
             title: const Text('Hourly:'),
-            subtitle: Text('$wageHourly Dolars'),
+            subtitle: Text('${result.wageHourly} Dolars'),
           ),
           ListTile(
             title: const Text('Worked days:'),
-            subtitle: Text('${times.length}'),
+            subtitle: Text('${result.workedDays}'),
           ),
           const Divider(),
           Card(
             child: Center(
               child: Text(
-                '\$/. ${times.calculatePayment(wageHourly).toStringAsFixed(2)}',
+                '\$/. ${result.totalPayment.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 28,

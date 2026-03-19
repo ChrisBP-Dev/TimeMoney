@@ -1,6 +1,6 @@
 # Story 3.5: Payment Feature — Cubit Modernization & Cross-Feature Composition
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -32,32 +32,32 @@ so that I can see an accurate payment summary with total hours, minutes, rate, a
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create new domain entities and use case (AC: #3, #4)
-  - [ ] 1.1 Create `lib/src/features/payment/domain/entities/payment_result.dart` — `PaymentResult` value object with 5 fields, manual `==`/`hashCode`
-  - [ ] 1.2 Create `lib/src/features/payment/domain/use_cases/calculate_payment_use_case.dart` — new location, `Either<GlobalFailure, PaymentResult>` return type, uses `CalculatePay` extension
-  - [ ] 1.3 Create `lib/src/features/payment/domain/use_cases/use_cases.dart` — barrel export
-  - [ ] 1.4 Delete `lib/src/features/payment/aplication/calculate_payment_use_case.dart` and `aplication/use_cases.dart` (old location)
-- [ ] Task 2: Migrate PaymentState to sealed class (AC: #1)
-  - [ ] 2.1 Rewrite `payment_state.dart` as standalone sealed class — remove `part of`, add own imports, define `PaymentInitial` and `PaymentReady`
-- [ ] Task 3: Migrate PaymentCubit (AC: #2)
-  - [ ] 3.1 Rewrite `payment_cubit.dart` — remove Freezed parts/annotations, inject `CalculatePaymentUseCase`, add internal fields, `setTimes`, `setWage`, `_tryEmitReady`, `calculate()` with exhaustive switch
-  - [ ] 3.2 Delete `payment_cubit.freezed.dart`
-  - [ ] 3.3 Update `payment_cubits.dart` — pass `const CalculatePaymentUseCase()` to `PaymentCubit` constructor; add import for new use case location
-  - [ ] 3.4 Update `cubit.dart` barrel — ensure `payment_state.dart` is exported (via cubit's `export` directive or directly)
-- [ ] Task 4: Update presentation widgets (AC: #5, #6)
-  - [ ] 4.1 Rewrite `payment_result_page.dart` — receive `PaymentResult result`, replace all extension method calls with result field reads
-  - [ ] 4.2 Rewrite `calculate_payment_button.dart` — `BlocBuilder`, handle Either from `calculate()`, `unawaited(showDialog(...))` on Right
-- [ ] Task 5: Update cross-feature integrations (AC: #7)
-  - [ ] 5.1 Update `list_times_screen.dart` — `setList(times)` → `setTimes(times)`
-  - [ ] 5.2 Update `test/helpers/mocks.dart` — fix import path for `MockCalculatePaymentUseCase`
-  - [ ] 5.3 Check `lib/src/shared/injections/use_cases_injection.dart` for any reference to old `aplication/calculate_payment_use_case.dart` — update import if found
-- [ ] Task 6: Write use case test (AC: #8)
-  - [ ] 6.1 Create `test/src/features/payment/domain/use_cases/calculate_payment_use_case_test.dart`
-- [ ] Task 7: Write cubit test (AC: #8)
-  - [ ] 7.1 Create `test/src/features/payment/presentation/cubit/payment_cubit_test.dart`
-- [ ] Task 8: Verification (AC: #9)
-  - [ ] 8.1 Run `flutter analyze` — zero warnings
-  - [ ] 8.2 Run `flutter test` — all pass
+- [x] Task 1: Create new domain entities and use case (AC: #3, #4)
+  - [x] 1.1 Create `lib/src/features/payment/domain/entities/payment_result.dart` — `PaymentResult` value object with 5 fields, manual `==`/`hashCode`
+  - [x] 1.2 Create `lib/src/features/payment/domain/use_cases/calculate_payment_use_case.dart` — new location, `Either<GlobalFailure, PaymentResult>` return type, uses `CalculatePay` extension
+  - [x] 1.3 Create `lib/src/features/payment/domain/use_cases/use_cases.dart` — barrel export
+  - [x] 1.4 Delete `lib/src/features/payment/aplication/calculate_payment_use_case.dart` and `aplication/use_cases.dart` (old location)
+- [x] Task 2: Migrate PaymentState to sealed class (AC: #1)
+  - [x] 2.1 Rewrite `payment_state.dart` as standalone sealed class — remove `part of`, add own imports, define `PaymentInitial` and `PaymentReady`
+- [x] Task 3: Migrate PaymentCubit (AC: #2)
+  - [x] 3.1 Rewrite `payment_cubit.dart` — remove Freezed parts/annotations, inject `CalculatePaymentUseCase`, add internal fields, `setTimes`, `setWage`, `_tryEmitReady`, `calculate()` with exhaustive switch
+  - [x] 3.2 Delete `payment_cubit.freezed.dart`
+  - [x] 3.3 Update `payment_cubits.dart` — pass `const CalculatePaymentUseCase()` to `PaymentCubit` constructor; add import for new use case location
+  - [x] 3.4 Update `cubit.dart` barrel — ensure `payment_state.dart` is exported (via cubit's `export` directive or directly)
+- [x] Task 4: Update presentation widgets (AC: #5, #6)
+  - [x] 4.1 Rewrite `payment_result_page.dart` — receive `PaymentResult result`, replace all extension method calls with result field reads
+  - [x] 4.2 Rewrite `calculate_payment_button.dart` — `BlocBuilder`, handle Either from `calculate()`, `unawaited(showDialog(...))` on Right
+- [x] Task 5: Update cross-feature integrations (AC: #7)
+  - [x] 5.1 Update `list_times_screen.dart` — `setList(times)` → `setTimes(times)`
+  - [x] 5.2 Update `test/helpers/mocks.dart` — fix import path for `MockCalculatePaymentUseCase`
+  - [x] 5.3 Check `lib/src/shared/injections/use_cases_injection.dart` for any reference to old `aplication/calculate_payment_use_case.dart` — no reference found, no change needed
+- [x] Task 6: Write use case test (AC: #8)
+  - [x] 6.1 Create `test/src/features/payment/domain/use_cases/calculate_payment_use_case_test.dart`
+- [x] Task 7: Write cubit test (AC: #8)
+  - [x] 7.1 Create `test/src/features/payment/presentation/cubit/payment_cubit_test.dart`
+- [x] Task 8: Verification (AC: #9)
+  - [x] 8.1 Run `flutter analyze` — zero warnings
+  - [x] 8.2 Run `flutter test` — all 105 tests pass (15 new payment tests + 90 existing)
   - [ ] 8.3 Verify app end-to-end: times → wage → button enables → tap → dialog shows correct result
 
 ## Dev Notes
@@ -643,7 +643,7 @@ These items were explicitly deferred across stories 3.1–3.4 and must NOT be ig
 
 ### Agent Model Used
 
-Claude Sonnet 4.6
+Claude Opus 4.6
 
 ### Debug Log References
 
@@ -651,4 +651,40 @@ N/A
 
 ### Completion Notes List
 
+- PaymentResult value object created with `@immutable`, const constructor, manual `==`/`hashCode` via `Object.hash`
+- CalculatePaymentUseCase moved from `aplication/` to `domain/use_cases/`, return type changed from `double` to `Either<GlobalFailure, PaymentResult>`, uses `on Object catch` for linter compliance
+- PaymentState rewritten as `@immutable sealed class` with `PaymentInitial` and `PaymentReady` variants; uses `listEquals` from `package:flutter/foundation.dart` (project pattern) instead of `ListEquality` from `package:collection` (avoids `depend_on_referenced_packages` linter warning)
+- PaymentCubit modernized: Freezed removed, `CalculatePaymentUseCase` injected via constructor, `setTimes`/`setWage`/`_tryEmitReady`/`calculate()` implemented with exhaustive switch
+- PaymentResultPage receives `PaymentResult result` instead of raw times/wage — visual output identical
+- CalculatePaymentButton: `BlocConsumer` → `BlocBuilder` (BS-1), sealed state check `state is! PaymentReady`, inlined `calculate().fold(...)` to fix `cascade_invocations` warning
+- Cross-feature: `setList` → `setTimes` in `list_times_screen.dart`, import path updated in `mocks.dart`, `use_cases_injection.dart` had no payment reference
+- Test adaptation: bloc 8.x does NOT deduplicate states — test expectations updated to include all emissions (story spec assumed bloc 9.x deduplication behavior)
+- 5 use case tests + 10 cubit tests = 15 new tests, all passing; 105 total tests pass with zero regressions
+- `flutter analyze`: zero issues
+
+### Change Log
+
+- 2026-03-18: Story 3.5 implementation complete — Payment feature cubit modernization and cross-feature composition
+
 ### File List
+
+**New files:**
+- `lib/src/features/payment/domain/entities/payment_result.dart`
+- `lib/src/features/payment/domain/use_cases/calculate_payment_use_case.dart`
+- `lib/src/features/payment/domain/use_cases/use_cases.dart`
+- `test/src/features/payment/domain/use_cases/calculate_payment_use_case_test.dart`
+- `test/src/features/payment/presentation/cubit/payment_cubit_test.dart`
+
+**Modified files:**
+- `lib/src/features/payment/presentation/cubit/payment_state.dart`
+- `lib/src/features/payment/presentation/cubit/payment_cubit.dart`
+- `lib/src/features/payment/presentation/cubit/payment_cubits.dart`
+- `lib/src/features/payment/presentation/pages/payment_result_page.dart`
+- `lib/src/features/home/presentation/widgets/calculate_payment_button.dart`
+- `lib/src/features/times/presentation/pages/list_times_screen.dart`
+- `test/helpers/mocks.dart`
+
+**Deleted files:**
+- `lib/src/features/payment/aplication/calculate_payment_use_case.dart`
+- `lib/src/features/payment/aplication/use_cases.dart`
+- `lib/src/features/payment/presentation/cubit/payment_cubit.freezed.dart`

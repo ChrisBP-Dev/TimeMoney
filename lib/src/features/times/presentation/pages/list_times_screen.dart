@@ -12,7 +12,7 @@ class ListTimesScreen extends StatelessWidget {
     return BlocConsumer<ListTimesBloc, ListTimesState>(
       listener: (context, state) {
         if (state case ListTimesLoaded(:final times)) {
-          context.read<PaymentCubit>().setList(times);
+          context.read<PaymentCubit>().setTimes(times);
         }
       },
       bloc: context.read<ListTimesBloc>()..add(const ListTimesRequested()),
