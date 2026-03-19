@@ -95,9 +95,9 @@ final class UpdateTimeSubmitted extends UpdateTimeEvent {
 - Variants: `UpdateTimeInitial`, `UpdateTimeLoading`, `UpdateTimeSuccess`, `UpdateTimeError`
 - `UpdateTimeSuccess` carries `TimeEntry timeEntry` result field
 - `UpdateTimeError` carries `GlobalFailure failure` field
-- Every data-carrying variant overrides `==` and `hashCode`
+- **ALL variants override `==` and `hashCode`** — every variant inherits `hour`, `minutes`, `time` from the base, making them ALL data-carrying; `UpdateTimeInitial` compares `hour`, `minutes`, `time`; `UpdateTimeLoading` compares `hour`, `minutes`, `time`; `UpdateTimeSuccess` compares `timeEntry`, `hour`, `minutes`, `time`; `UpdateTimeError` compares `failure`, `hour`, `minutes`, `time`; use `Object.hash(...)` for `hashCode`
 - Import `flutter/foundation.dart` for `@immutable`
-- **Follow CreateTimeState pattern exactly** — use `super.hour`, `super.minutes` in variant constructors
+- **Follow CreateTimeState pattern exactly** — use `super.hour`, `super.minutes`, `super.time` in variant constructors
 
 **BLoC rewrite** (`update_time_bloc.dart`):
 - Remove ALL: `part` directives, `freezed_annotation` import, `.freezed.dart` part
@@ -234,36 +234,50 @@ final class DeleteTimeError extends DeleteTimeState {
 
 **Repository tests** — add to existing `objectbox_times_repository_test.dart` (deferred from Story 3.2):
 
-`update` test group:
-- Mock `TimesObjectboxDatasource` (already set up in the test file)
-- Test success: mock `put()` returns id, verify `Right(timeEntry)` returned
-- Test error: mock `put()` throws, verify `Left(GlobalFailure)` returned
+Existing test file structure (must match):
+- Mock: `class MockTimesObjectboxDatasource extends Mock implements TimesObjectboxDatasource {}` (already defined in the file, NOT in `test/helpers/mocks.dart`)
+- `setUpAll`: `registerFallbackValue(TimeBox(hour: 0, minutes: 0))` (already registered)
+- `setUp`: creates fresh `mockDatasource` and `repository = ObjectboxTimesRepository(mockDatasource)` per test
+- Existing groups: `fetchTimesStream` (2 tests), `create` (2 tests)
+- Assertion pattern: `expect(result, const Right<dynamic, TimeEntry>(testTime))` for success, `expect(result.isLeft(), true)` for error
+- Uses `const testTime = TimeEntry(hour: 1, minutes: 30)` (already declared in `create` group — declare equivalent in new groups or share)
 
-`delete` test group:
-- Test success: mock `remove()` returns true, verify `Right(unit)` returned
-- Test error: mock `remove()` throws, verify `Left(GlobalFailure)` returned
+`update` test group — add after `create` group:
+- Test success: `when(() => mockDatasource.put(any())).thenReturn(1)`, call `repository.update(testTime)`, verify `Right(timeEntry)` returned
+- Test error: `when(() => mockDatasource.put(any())).thenThrow(Exception('fail'))`, verify `Left(GlobalFailure)` returned
+- Verify `mockDatasource.put(any())` called once
+
+`delete` test group — add after `update` group:
+- Test success: `when(() => mockDatasource.remove(any())).thenReturn(true)`, call `repository.delete(testTime)`, verify `Right(unit)` returned
+- Test error: `when(() => mockDatasource.remove(any())).thenThrow(Exception('fail'))`, verify `Left(GlobalFailure)` returned
+- Verify `mockDatasource.remove(any())` called once
 
 **BLoC tests** — follow patterns from Story 3.2 (`create_time_bloc_test.dart`, `list_times_bloc_test.dart`):
 
 `update_time_bloc_test.dart`:
 - Use `bloc_test` package with `blocTest<UpdateTimeBloc, UpdateTimeState>`
-- Mock `UpdateTimeUseCase` using `MockUpdateTimeUseCase`
+- Mock `UpdateTimeUseCase` using `MockUpdateTimeUseCase` from `test/helpers/mocks.dart`
+- **`setUpAll`:** `registerFallbackValue(const TimeEntry(hour: 0, minutes: 0))` — required for `any()` matcher on `TimeEntry` parameter in mocktail
+- **`wait` parameter:** ALL `blocTest` calls involving async operations (submit, validation errors with delay) MUST use `wait: const Duration(seconds: 2)` — without it, assertions fail because delay-driven transitions haven't completed
+- **`seed` parameter:** Tests for `UpdateTimeSubmitted` and field changes MUST use `seed: () => UpdateTimeInitial(hour: X, minutes: Y, time: testTime)` to simulate pre-populated edit form
 - Tests required:
-  - Initial state is `UpdateTimeInitial`
-  - `UpdateTimeInit` → emits `UpdateTimeInitial` with time data
-  - `UpdateTimeHourChanged` valid → emits `UpdateTimeInitial` with updated hour
-  - `UpdateTimeHourChanged` invalid → emits Error → delays → emits Initial (restoring values)
+  - Initial state is `UpdateTimeInitial` (hour: 0, minutes: 0, time: null)
+  - `UpdateTimeInit` → emits `UpdateTimeInitial` with time, hour: time.hour, minutes: time.minutes
+  - `UpdateTimeHourChanged` valid → emits `UpdateTimeInitial` with updated hour, preserved minutes and time
+  - `UpdateTimeHourChanged` invalid → emits Error → delays → emits Initial (restoring values) — needs `wait`
   - `UpdateTimeMinutesChanged` valid/invalid — same patterns
-  - `UpdateTimeSubmitted` success → Loading → Success → delay → Initial
-  - `UpdateTimeSubmitted` error → Loading → Error → delay → Initial (preserving form values)
-  - `UpdateTimeSubmitted` with null time → Error → delay → Initial
+  - `UpdateTimeSubmitted` success → Loading → Success → delay → Initial — needs `wait` and `seed`
+  - `UpdateTimeSubmitted` error → Loading → Error → delay → Initial (preserving form values) — needs `wait` and `seed`
+  - `UpdateTimeSubmitted` with null time → Error → delay → Initial — needs `wait`
 
 `delete_time_bloc_test.dart`:
-- Mock `DeleteTimeUseCase` using `MockDeleteTimeUseCase`
+- Mock `DeleteTimeUseCase` using `MockDeleteTimeUseCase` from `test/helpers/mocks.dart`
+- **`setUpAll`:** `registerFallbackValue(const TimeEntry(hour: 0, minutes: 0))` — required for `any()` matcher on `TimeEntry` parameter in mocktail
+- **`wait` parameter:** ALL `blocTest` calls MUST use `wait: const Duration(seconds: 2)` — the handler has `AppDurations.actionFeedback` delay before auto-reset
 - Tests required:
   - Initial state is `DeleteTimeInitial`
-  - `DeleteTimeRequested` success → Loading → Success → delay → Initial
-  - `DeleteTimeRequested` error → Loading → Error → delay → Initial
+  - `DeleteTimeRequested` success → Loading → Success → delay → Initial — needs `wait`
+  - `DeleteTimeRequested` error → Loading → Error → delay → Initial — needs `wait`
 
 ### Existing Mocks Available
 
@@ -273,11 +287,6 @@ All mocks already exist in `test/helpers/mocks.dart`:
 - `MockDeleteTimeUseCase`
 
 No new mocks needed.
-
-### Files to Delete
-
-- `lib/src/features/times/presentation/bloc/update_time_bloc.freezed.dart`
-- `lib/src/features/times/presentation/bloc/delete_time_bloc.freezed.dart`
 
 ### Bug Fixes Included
 
@@ -290,20 +299,23 @@ No new mocks needed.
 
 - Use `.when()` or `.map()` pattern matching (Freezed methods) — use native `switch` expressions
 - Use `if/else` chains on sealed types — always exhaustive `switch`
-- Use `copyWith()` on Freezed state — construct new sealed variants explicitly
+- Use `copyWith()` on Freezed state — construct new sealed variants explicitly (note: `copyWith()` on domain entities like `TimeEntry` IS fine — they remain Freezed)
 - Use `part of`/`part` for event/state files — standalone with own imports
 - Use `ActionState<T>` wrapper for update BLoC states — sealed states ARE the action lifecycle
 - Skip `AppDurations.actionFeedback` delay between transitions
 - Use relative imports — always `package:time_money/src/...`
 - Manually edit generated `.freezed.dart` or `.g.dart` files
-- Skip `==` and `hashCode` overrides on data-carrying state variants
+- Skip `==` and `hashCode` overrides on ANY state variant that inherits or carries data fields
 - Access `state.field` after an `await` without first capturing into a local variable (race condition)
+- Omit `wait: const Duration(seconds: 2)` in `blocTest` calls that involve async delays — assertions will fail silently
+- Use `BlocConsumer` with no-op listener — use `BlocBuilder` unless listener does meaningful work (3.2 review patch P-2)
+- Emit a fold result without actually calling `emit()` inside the fold callback (the DeleteTimeBloc bug being fixed)
 
 ### Project Structure Notes
 
-All files already exist in correct locations. This story modifies existing files and creates test files:
+All source files already exist in correct locations. This story modifies existing files, deletes Freezed generated files, and creates test files.
 
-**Modified files (11):**
+**Modified source files (11):**
 - `lib/src/features/times/presentation/bloc/update_time_event.dart`
 - `lib/src/features/times/presentation/bloc/update_time_state.dart`
 - `lib/src/features/times/presentation/bloc/update_time_bloc.dart`
@@ -328,6 +340,18 @@ All files already exist in correct locations. This story modifies existing files
 
 **Modified test files (1):**
 - `test/src/features/times/data/repositories/objectbox_times_repository_test.dart` — add update/delete test groups (deferred from Story 3.2)
+
+**Unchanged files (verified — NO modification needed):**
+- `lib/src/features/times/presentation/bloc/bloc.dart` — barrel exports BLoC files which already re-export their events/states via `export` directives; no changes required
+- `lib/src/features/times/presentation/bloc/times_blocs.dart` — BLoC provider configurations use `context.read<UseCase>()` injection; constructor signatures for UpdateTimeBloc and DeleteTimeBloc remain `(UseCase)`, so no changes needed
+
+### Story 3.2 Code Review Warnings (Validated Error Patterns to Avoid)
+
+The 3.2 code review found 7 patches across 14 findings. These are the most relevant to 3.3:
+- **P-1 (Stale-state reads):** Capture `state.hour`, `state.minutes`, `state.time` into local variables BEFORE the first `await` in any handler — after `await`, `state` may have changed due to concurrent events
+- **P-2 (listenWhen guards):** `BlocConsumer` listeners MUST use `listenWhen` to prevent false-positive triggers — e.g., `listenWhen: (prev, curr) => curr is UpdateTimeSuccess` prevents the listener from firing on every state change
+- **BS-1 (BlocConsumer vs BlocBuilder):** Use `BlocBuilder` when only rendering UI from state; use `BlocConsumer` only when the listener performs side effects (navigation, snackbar, controller sync)
+- **BS-3 (Form data retention):** On error, emit Error with preserved form values (`hour`, `minutes`, `time`); on success, reset to defaults. Never lose user input on transient errors
 
 ### Approach Order
 
