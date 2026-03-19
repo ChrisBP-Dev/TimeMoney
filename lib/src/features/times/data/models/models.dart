@@ -2,3 +2,4 @@
 library;
 
 export 'time_box.dart';
+export 'times_table.dart';

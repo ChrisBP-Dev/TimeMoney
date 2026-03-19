@@ -9,6 +9,8 @@ environment:
 dependencies:
   bloc: ^9.2.0
   collection: ^1.18.0
+  drift: ^2.32.0
+  drift_flutter: ^0.3.0
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
@@ -28,6 +30,7 @@ dependencies:
 
 dev_dependencies:
   bloc_test: ^10.0.0
+  drift_dev: ^2.32.0
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.0

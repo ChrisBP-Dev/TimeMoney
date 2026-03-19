@@ -1,6 +1,6 @@
 # Story 4.1: drift Database Setup & Core Infrastructure
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -28,69 +28,69 @@ so that the web platform has a fully functional local data layer using SQLite vi
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add drift dependencies to pubspec.yaml (AC: #1)
-  - [ ] 1.1 Add `drift: ^2.32.0` to dependencies section
-  - [ ] 1.2 Add `drift_flutter: ^0.3.0` to dependencies section
-  - [ ] 1.3 Add `drift_dev: ^2.32.0` to dev_dependencies section
-  - [ ] 1.4 Run `flutter pub get` — verify zero conflicts; check `pubspec.lock` to confirm objectbox 5.2.0, freezed 3.2.5, bloc 9.2.0 versions remain unchanged
-  - [ ] 1.5 Do NOT add `sqlite3_flutter_libs` — drift 2.32+ uses Dart build hooks to bundle SQLite automatically
+- [x] Task 1: Add drift dependencies to pubspec.yaml (AC: #1)
+  - [x] 1.1 Add `drift: ^2.32.0` to dependencies section
+  - [x] 1.2 Add `drift_flutter: ^0.3.0` to dependencies section
+  - [x] 1.3 Add `drift_dev: ^2.32.0` to dev_dependencies section
+  - [x] 1.4 Run `flutter pub get` — verify zero conflicts; check `pubspec.lock` to confirm objectbox 5.2.0, freezed 3.2.5, bloc 9.2.0 versions remain unchanged
+  - [x] 1.5 Do NOT add `sqlite3_flutter_libs` — drift 2.32+ uses Dart build hooks to bundle SQLite automatically
 
-- [ ] Task 2: Create TimesTable drift definition (AC: #3)
-  - [ ] 2.1 Create `lib/src/features/times/data/models/times_table.dart`
-  - [ ] 2.2 Define `class TimesTable extends Table` with `id` (autoIncrement integer), `hour` (integer), `minutes` (integer)
-  - [ ] 2.3 Add dartdoc comments on class and all column getters
-  - [ ] 2.4 Add `export 'times_table.dart';` to `lib/src/features/times/data/models/models.dart` barrel (file exists, currently exports only `time_box.dart`)
+- [x] Task 2: Create TimesTable drift definition (AC: #3)
+  - [x] 2.1 Create `lib/src/features/times/data/models/times_table.dart`
+  - [x] 2.2 Define `class TimesTable extends Table` with `id` (autoIncrement integer), `hour` (integer), `minutes` (integer)
+  - [x] 2.3 Add dartdoc comments on class and all column getters
+  - [x] 2.4 Add `export 'times_table.dart';` to `lib/src/features/times/data/models/models.dart` barrel (file exists, currently exports only `time_box.dart`)
 
-- [ ] Task 3: Create WageHourlyTable drift definition (AC: #4)
-  - [ ] 3.1 Create `lib/src/features/wage/data/models/wage_hourly_table.dart`
-  - [ ] 3.2 Define `class WageHourlyTable extends Table` with `id` (autoIncrement integer), `value` (real)
-  - [ ] 3.3 Add dartdoc comments on class and all column getters
-  - [ ] 3.4 Add `export 'wage_hourly_table.dart';` to `lib/src/features/wage/data/models/models.dart` barrel (file exists, currently exports only `wage_hourly_box.dart`)
+- [x] Task 3: Create WageHourlyTable drift definition (AC: #4)
+  - [x] 3.1 Create `lib/src/features/wage/data/models/wage_hourly_table.dart`
+  - [x] 3.2 Define `class WageHourlyTable extends Table` with `id` (autoIncrement integer), `value` (real)
+  - [x] 3.3 Add dartdoc comments on class and all column getters
+  - [x] 3.4 Add `export 'wage_hourly_table.dart';` to `lib/src/features/wage/data/models/models.dart` barrel (file exists, currently exports only `wage_hourly_box.dart`)
 
-- [ ] Task 4: Implement AppDatabase (AC: #2, #6)
-  - [ ] 4.1 Replace placeholder in `lib/src/core/services/app_database.dart` with full drift implementation
-  - [ ] 4.2 Add `import 'package:drift/drift.dart'` and `import 'package:drift_flutter/drift_flutter.dart'`
-  - [ ] 4.3 Import `TimesTable` and `WageHourlyTable` from feature model files
-  - [ ] 4.4 Add `part 'app_database.g.dart';`
-  - [ ] 4.5 Annotate with `@DriftDatabase(tables: [TimesTable, WageHourlyTable])`
-  - [ ] 4.6 Class extends `_$AppDatabase` (generated superclass)
-  - [ ] 4.7 Constructor: `AppDatabase(super.e);` (takes `QueryExecutor`)
-  - [ ] 4.8 Add named factory constructor or static method for creating connection with db name and web options
-  - [ ] 4.9 Override `int get schemaVersion => 1;`
-  - [ ] 4.10 Do NOT override `close()` — drift's `GeneratedDatabase` already provides it via `_$AppDatabase` superclass
-  - [ ] 4.11 Add professional dartdoc comments on all public members
-  - [ ] 4.12 Update `services.dart` barrel if needed (already exports `app_database.dart`)
+- [x] Task 4: Implement AppDatabase (AC: #2, #6)
+  - [x] 4.1 Replace placeholder in `lib/src/core/services/app_database.dart` with full drift implementation
+  - [x] 4.2 Add `import 'package:drift/drift.dart'` and `import 'package:drift_flutter/drift_flutter.dart'`
+  - [x] 4.3 Import `TimesTable` and `WageHourlyTable` from feature model files
+  - [x] 4.4 Add `part 'app_database.g.dart';`
+  - [x] 4.5 Annotate with `@DriftDatabase(tables: [TimesTable, WageHourlyTable])`
+  - [x] 4.6 Class extends `_$AppDatabase` (generated superclass)
+  - [x] 4.7 Constructor: `AppDatabase(super.e);` (takes `QueryExecutor`)
+  - [x] 4.8 Add named factory constructor or static method for creating connection with db name and web options
+  - [x] 4.9 Override `int get schemaVersion => 1;`
+  - [x] 4.10 Do NOT override `close()` — drift's `GeneratedDatabase` already provides it via `_$AppDatabase` superclass
+  - [x] 4.11 Add professional dartdoc comments on all public members
+  - [x] 4.12 Update `services.dart` barrel if needed (already exports `app_database.dart`)
 
-- [ ] Task 5: Run code generation (AC: #2)
-  - [ ] 5.1 Run `dart run build_runner build --delete-conflicting-outputs` — the flag avoids conflicts with existing ObjectBox/Freezed generated files
-  - [ ] 5.2 Verify `app_database.g.dart` is generated in `lib/src/core/services/`
-  - [ ] 5.3 Verify existing ObjectBox and Freezed generated files are NOT corrupted by the run
+- [x] Task 5: Run code generation (AC: #2)
+  - [x] 5.1 Run `dart run build_runner build --delete-conflicting-outputs` — the flag avoids conflicts with existing ObjectBox/Freezed generated files
+  - [x] 5.2 Verify `app_database.g.dart` is generated in `lib/src/core/services/`
+  - [x] 5.3 Verify existing ObjectBox and Freezed generated files are NOT corrupted by the run
 
-- [ ] Task 6: Download and place web assets (AC: #5)
-  - [ ] 6.1 Check `pubspec.lock` for resolved `sqlite3` transitive dependency version (e.g., `3.1.5`)
-  - [ ] 6.2 Download `sqlite3.wasm` from `https://github.com/simolus3/sqlite3.dart/releases` — find the tag matching the resolved version, download the `sqlite3.wasm` asset
-  - [ ] 6.3 Download `drift_worker.dart.js` from `https://github.com/simolus3/drift/releases` — find the tag matching drift 2.32.x, download the `drift_worker.dart.js` asset
-  - [ ] 6.4 Place both files in `web/` directory (alongside existing `index.html`, `favicon.png`, `manifest.json`)
-  - [ ] 6.5 Verify files are accessible (not gitignored, correct permissions)
-  - [ ] 6.6 Alternative: if `drift_dev` provides a CLI command (e.g., `dart run drift_dev make-web`), use it to auto-download both assets
+- [x] Task 6: Download and place web assets (AC: #5)
+  - [x] 6.1 Check `pubspec.lock` for resolved `sqlite3` transitive dependency version (e.g., `3.1.5`)
+  - [x] 6.2 Download `sqlite3.wasm` from `https://github.com/simolus3/sqlite3.dart/releases` — find the tag matching the resolved version, download the `sqlite3.wasm` asset
+  - [x] 6.3 Download `drift_worker.dart.js` from `https://github.com/simolus3/drift/releases` — find the tag matching drift 2.32.x, download the `drift_worker.dart.js` asset
+  - [x] 6.4 Place both files in `web/` directory (alongside existing `index.html`, `favicon.png`, `manifest.json`)
+  - [x] 6.5 Verify files are accessible (not gitignored, correct permissions)
+  - [x] 6.6 Alternative: if `drift_dev` provides a CLI command (e.g., `dart run drift_dev make-web`), use it to auto-download both assets
 
-- [ ] Task 7: Write tests (AC: #7)
-  - [ ] 7.1 Create `test/src/core/services/app_database_test.dart`
-  - [ ] 7.2 Test AppDatabase opens successfully with in-memory executor
-  - [ ] 7.3 Test schemaVersion equals 1
-  - [ ] 7.4 Test TimesTable insert + select roundtrip (verify column types work); verify autoIncrement produces sequential IDs across multiple inserts
-  - [ ] 7.5 Test WageHourlyTable insert + select roundtrip; verify autoIncrement produces sequential IDs across multiple inserts
-  - [ ] 7.6 Test TimesTable watch() emits updated list after insert
-  - [ ] 7.7 Test WageHourlyTable watch() emits updated record after insert
-  - [ ] 7.8 Test AppDatabase.close() completes without error (inherited from GeneratedDatabase)
-  - [ ] 7.9 Test update operations on both tables (modify existing row, verify change persisted)
-  - [ ] 7.10 Test delete operations on both tables (remove row, verify empty result)
-  - [ ] 7.11 Test select on empty table returns empty list for both TimesTable and WageHourlyTable (edge case)
+- [x] Task 7: Write tests (AC: #7)
+  - [x] 7.1 Create `test/src/core/services/app_database_test.dart`
+  - [x] 7.2 Test AppDatabase opens successfully with in-memory executor
+  - [x] 7.3 Test schemaVersion equals 1
+  - [x] 7.4 Test TimesTable insert + select roundtrip (verify column types work); verify autoIncrement produces sequential IDs across multiple inserts
+  - [x] 7.5 Test WageHourlyTable insert + select roundtrip; verify autoIncrement produces sequential IDs across multiple inserts
+  - [x] 7.6 Test TimesTable watch() emits updated list after insert
+  - [x] 7.7 Test WageHourlyTable watch() emits updated record after insert
+  - [x] 7.8 Test AppDatabase.close() completes without error (inherited from GeneratedDatabase)
+  - [x] 7.9 Test update operations on both tables (modify existing row, verify change persisted)
+  - [x] 7.10 Test delete operations on both tables (remove row, verify empty result)
+  - [x] 7.11 Test select on empty table returns empty list for both TimesTable and WageHourlyTable (edge case)
 
-- [ ] Task 8: Verification (AC: #7)
-  - [ ] 8.1 Run `flutter analyze` — zero issues
-  - [ ] 8.2 Run `flutter test` — all 116 existing tests pass + new drift tests pass
-  - [ ] 8.3 Verify generated files are excluded from analysis (existing `*.g.dart` pattern covers drift)
+- [x] Task 8: Verification (AC: #7)
+  - [x] 8.1 Run `flutter analyze` — zero issues
+  - [x] 8.2 Run `flutter test` — all 116 existing tests pass + new drift tests pass (131 total)
+  - [x] 8.3 Verify generated files are excluded from analysis (existing `*.g.dart` pattern covers drift)
 
 ## Dev Notes
 
@@ -405,10 +405,42 @@ Check these folders for existing barrel files that may need updates:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- Watch test pattern required `pumpEventQueue()` to allow initial empty emission before insert — race condition between stream subscription and database write
+- Dartdoc `[ClassName]` references in table files changed to backtick notation to avoid `comment_references` lint on types not imported in scope
+- `prefer_int_literals` lint triggered on `double` values passed to `WageHourlyTableCompanion.insert()` — Dart auto-promotes `int` to `double`
+
 ### Completion Notes List
 
+- drift 2.32.0, drift_flutter 0.3.0, drift_dev 2.32.0 added; objectbox 5.2.0 unchanged
+- TimesTable and WageHourlyTable defined with exact column-to-entity field mapping
+- AppDatabase replaces placeholder with full drift implementation (two constructors: `AppDatabase(QueryExecutor)` for tests, `AppDatabase.named(String)` for production)
+- `app_database.g.dart` generated; all ObjectBox and Freezed generated files intact
+- Web assets downloaded: `sqlite3.wasm` (sqlite3-3.2.0), `drift_worker.dart.js` (drift-2.32.0)
+- 15 new tests (CRUD, watch, close, edge cases for both tables)
+- `flutter analyze`: zero issues
+- `flutter test`: 131 tests passing (116 existing + 15 new), zero regressions
+
+### Change Log
+
+- 2026-03-19: Story 4.1 implemented — drift database setup & core infrastructure complete
+
 ### File List
+
+**Created:**
+- `lib/src/features/times/data/models/times_table.dart`
+- `lib/src/features/wage/data/models/wage_hourly_table.dart`
+- `lib/src/core/services/app_database.g.dart`
+- `web/sqlite3.wasm`
+- `web/drift_worker.dart.js`
+- `test/src/core/services/app_database_test.dart`
+
+**Modified:**
+- `pubspec.yaml` — added drift, drift_flutter, drift_dev dependencies
+- `pubspec.lock` — updated with resolved drift dependencies
+- `lib/src/core/services/app_database.dart` — replaced placeholder with full drift implementation
+- `lib/src/features/times/data/models/models.dart` — added times_table.dart export
+- `lib/src/features/wage/data/models/models.dart` — added wage_hourly_table.dart export

@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WageHourly {
 
- int get id; double get value;
+/// Unique identifier assigned by the persistence layer.
+ int get id;/// Hourly wage amount in the user's currency.
+ double get value;
 /// Create a copy of WageHourly
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -213,7 +215,9 @@ class _WageHourly implements WageHourly {
   const _WageHourly({this.id = 0, this.value = 15.0});
   factory _WageHourly.fromJson(Map<String, dynamic> json) => _$WageHourlyFromJson(json);
 
+/// Unique identifier assigned by the persistence layer.
 @override@JsonKey() final  int id;
+/// Hourly wage amount in the user's currency.
 @override@JsonKey() final  double value;
 
 /// Create a copy of WageHourly

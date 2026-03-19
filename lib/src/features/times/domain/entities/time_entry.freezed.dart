@@ -15,7 +15,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TimeEntry {
 
- int get hour; int get minutes; int get id;
+/// Number of full hours tracked.
+ int get hour;/// Additional minutes beyond full hours.
+ int get minutes;/// Persistence identifier; `0` means the entry has not been saved yet.
+ int get id;
 /// Create a copy of TimeEntry
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -214,8 +217,11 @@ class _TimeEntry extends TimeEntry {
   const _TimeEntry({required this.hour, required this.minutes, this.id = 0}): super._();
   factory _TimeEntry.fromJson(Map<String, dynamic> json) => _$TimeEntryFromJson(json);
 
+/// Number of full hours tracked.
 @override final  int hour;
+/// Additional minutes beyond full hours.
 @override final  int minutes;
+/// Persistence identifier; `0` means the entry has not been saved yet.
 @override@JsonKey() final  int id;
 
 /// Create a copy of TimeEntry
