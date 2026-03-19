@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:time_money/src/core/constants/app_durations.dart';
-import 'package:time_money/src/core/ui/action_state.dart';
 import 'package:time_money/src/features/wage/presentation/bloc/update_wage_bloc.dart';
 
 class SetWageButton extends StatelessWidget {
@@ -10,30 +8,25 @@ class SetWageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UpdateWageBloc, UpdateWageState>(
-      listener: (context, state) => state,
+      listenWhen: (prev, curr) => curr is UpdateWageSuccess,
+      listener: (context, state) => Navigator.of(context).pop(),
       builder: (_, state) {
         return FilledButton(
           style: FilledButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 32, 137, 86),
           ),
-          onPressed: () async {
-            context.read<UpdateWageBloc>().add(
-                  const UpdateWageEvent.update(),
-                );
-
-            await Future<void>.delayed(AppDurations.actionFeedback);
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-          },
-          child: switch (state.currentState) {
-            ActionInitial() => const Text('Update'),
-            ActionLoading() => const SizedBox(
+          onPressed: () => context.read<UpdateWageBloc>().add(
+                const UpdateWageSubmitted(),
+              ),
+          child: switch (state) {
+            UpdateWageInitial() => const Text('Update'),
+            UpdateWageLoading() => const SizedBox(
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(color: Colors.white),
               ),
-            ActionSuccess() => const Text('Success'),
-            ActionError() => const Text('Error'),
+            UpdateWageSuccess() => const Text('Success'),
+            UpdateWageError() => const Text('Error'),
           },
         );
       },

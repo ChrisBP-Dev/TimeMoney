@@ -30,8 +30,7 @@ class _WageHourlyFieldState extends State<WageHourlyField> {
       children: [
         const Text('hourly:'),
         const SizedBox(width: 25),
-        BlocConsumer<UpdateWageBloc, UpdateWageState>(
-          listener: (_, state) => state,
+        BlocBuilder<UpdateWageBloc, UpdateWageState>(
           builder: (context, state) {
             return SizedBox(
               width: 70,
@@ -42,7 +41,7 @@ class _WageHourlyFieldState extends State<WageHourlyField> {
                 ),
                 onChanged: (value) =>
                     context.read<UpdateWageBloc>().add(
-                          UpdateWageEvent.changeHourly(value: value),
+                          UpdateWageHourlyChanged(value: value),
                         ),
                 decoration: const InputDecoration(
                   filled: true,

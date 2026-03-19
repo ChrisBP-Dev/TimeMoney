@@ -1,22 +1,42 @@
-part of 'fetch_wage_bloc.dart';
+import 'package:flutter/foundation.dart';
+import 'package:time_money/src/core/errors/failures.dart';
+import 'package:time_money/src/features/wage/domain/entities/wage_hourly.dart';
 
-@freezed
-abstract class FetchWageState with _$FetchWageState {
-  const factory FetchWageState.initial() = _Initial;
-  const factory FetchWageState.loading() = _Loading;
-  const factory FetchWageState.empty() = _Empty;
-  const factory FetchWageState.error(GlobalFailure err) = _Error;
-  const factory FetchWageState.hasDataStream(
-    Stream<WageHourly> data,
-  ) = _HasDataStream;
+@immutable
+sealed class FetchWageState {
+  const FetchWageState();
 }
 
-extension DataWage on FetchWageState {
-  Future<WageHourly?> wage() async => when(
-        initial: () => null,
-        loading: () => null,
-        empty: () => null,
-        error: (_) => null,
-        hasDataStream: (list) => list.last,
-      );
+final class FetchWageInitial extends FetchWageState {
+  const FetchWageInitial();
+}
+
+final class FetchWageLoading extends FetchWageState {
+  const FetchWageLoading();
+}
+
+final class FetchWageLoaded extends FetchWageState {
+  const FetchWageLoaded(this.wage);
+  final WageHourly wage;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FetchWageLoaded && wage == other.wage;
+
+  @override
+  int get hashCode => wage.hashCode;
+}
+
+final class FetchWageError extends FetchWageState {
+  const FetchWageError(this.failure);
+  final GlobalFailure failure;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FetchWageError && failure == other.failure;
+
+  @override
+  int get hashCode => failure.hashCode;
 }

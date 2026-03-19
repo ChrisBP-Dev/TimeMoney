@@ -1,6 +1,7 @@
-part of 'fetch_wage_bloc.dart';
+sealed class FetchWageEvent {
+  const FetchWageEvent();
+}
 
-@freezed
-abstract class FetchWageEvent with _$FetchWageEvent {
-  const factory FetchWageEvent.getWage() = _GetWage;
+final class FetchWageRequested extends FetchWageEvent {
+  const FetchWageRequested();
 }

@@ -1,9 +1,12 @@
-part of 'update_wage_bloc.dart';
+sealed class UpdateWageEvent {
+  const UpdateWageEvent();
+}
 
-@freezed
-abstract class UpdateWageEvent with _$UpdateWageEvent {
-  const factory UpdateWageEvent.changeHourly({
-    required String value,
-  }) = _ChangeHourly;
-  const factory UpdateWageEvent.update() = _Update;
+final class UpdateWageHourlyChanged extends UpdateWageEvent {
+  const UpdateWageHourlyChanged({required this.value});
+  final String value;
+}
+
+final class UpdateWageSubmitted extends UpdateWageEvent {
+  const UpdateWageSubmitted();
 }

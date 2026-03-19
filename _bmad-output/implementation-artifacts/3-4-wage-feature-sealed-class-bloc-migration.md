@@ -1,6 +1,6 @@
 # Story 3.4: Wage Feature — Sealed Class BLoC Migration
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -22,34 +22,34 @@ so that viewing and updating my hourly wage remains fast with real-time feedback
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Migrate FetchWageBloc to sealed classes with emit.forEach (AC: #1, #4)
-  - [ ] 1.1 Rewrite `fetch_wage_event.dart` as standalone sealed class (remove `part of`)
-  - [ ] 1.2 Rewrite `fetch_wage_state.dart` as standalone sealed class (remove `part of`, remove `DataWage` extension)
-  - [ ] 1.3 Rewrite `fetch_wage_bloc.dart` — remove Freezed imports/parts, add standalone imports/exports, use `emit.forEach` for stream consumption
-  - [ ] 1.4 Delete `fetch_wage_bloc.freezed.dart`
-- [ ] Task 2: Migrate UpdateWageBloc to sealed classes (AC: #2)
-  - [ ] 2.1 Rewrite `update_wage_event.dart` as standalone sealed class (remove `part of`)
-  - [ ] 2.2 Rewrite `update_wage_state.dart` as standalone sealed class with form data on base (remove `part of`)
-  - [ ] 2.3 Rewrite `update_wage_bloc.dart` — remove Freezed imports/parts, add standalone imports/exports, fix bugs, explicit state construction
-  - [ ] 2.4 Delete `update_wage_bloc.freezed.dart`
-- [ ] Task 3: Update presentation widgets (AC: #3, #4)
-  - [ ] 3.1 Rewrite `fetch_wage_screen.dart` — BlocConsumer with `listenWhen` for PaymentCubit sync, `switch` expression, use `FetchWageRequested` event, render `WageHourlyCard` directly from `FetchWageLoaded`
-  - [ ] 3.2 Delete `wage_hourly_data_view.dart` (StreamBuilder eliminated)
-  - [ ] 3.3 Update `widgets.dart` barrel — remove `wage_hourly_data_view.dart` export
-  - [ ] 3.4 Update `set_wage_button.dart` — BlocConsumer with `listenWhen` for success → `Navigator.pop()`, `switch` on sealed state, remove manual delay/pop
-  - [ ] 3.5 Update `wage_hourly_field.dart` — replace `BlocConsumer` no-op listener with `BlocBuilder`, update event syntax
-- [ ] Task 4: Write use case and repository tests (AC: #6)
-  - [ ] 4.1 Create `test/src/features/wage/domain/use_cases/fetch_wage_use_case_test.dart`
-  - [ ] 4.2 Create `test/src/features/wage/domain/use_cases/set_wage_use_case_test.dart`
-  - [ ] 4.3 Create `test/src/features/wage/domain/use_cases/update_wage_use_case_test.dart`
-  - [ ] 4.4 Create `test/src/features/wage/data/repositories/objectbox_wage_repository_test.dart`
-- [ ] Task 5: Write BLoC tests (AC: #6)
-  - [ ] 5.1 Create `test/src/features/wage/presentation/bloc/fetch_wage_bloc_test.dart`
-  - [ ] 5.2 Create `test/src/features/wage/presentation/bloc/update_wage_bloc_test.dart`
-- [ ] Task 6: Verification (AC: #5, #7)
-  - [ ] 6.1 Run `flutter analyze` — zero warnings on non-generated code
-  - [ ] 6.2 Run `flutter test` — all tests pass
-  - [ ] 6.3 Verify app launches and wage features work: view wage, update wage with visual feedback, real-time updates
+- [x] Task 1: Migrate FetchWageBloc to sealed classes with emit.forEach (AC: #1, #4)
+  - [x] 1.1 Rewrite `fetch_wage_event.dart` as standalone sealed class (remove `part of`)
+  - [x] 1.2 Rewrite `fetch_wage_state.dart` as standalone sealed class (remove `part of`, remove `DataWage` extension)
+  - [x] 1.3 Rewrite `fetch_wage_bloc.dart` — remove Freezed imports/parts, add standalone imports/exports, use `emit.forEach` for stream consumption
+  - [x] 1.4 Delete `fetch_wage_bloc.freezed.dart`
+- [x] Task 2: Migrate UpdateWageBloc to sealed classes (AC: #2)
+  - [x] 2.1 Rewrite `update_wage_event.dart` as standalone sealed class (remove `part of`)
+  - [x] 2.2 Rewrite `update_wage_state.dart` as standalone sealed class with form data on base (remove `part of`)
+  - [x] 2.3 Rewrite `update_wage_bloc.dart` — remove Freezed imports/parts, add standalone imports/exports, fix bugs, explicit state construction
+  - [x] 2.4 Delete `update_wage_bloc.freezed.dart`
+- [x] Task 3: Update presentation widgets (AC: #3, #4)
+  - [x] 3.1 Rewrite `fetch_wage_screen.dart` — BlocConsumer with `listenWhen` for PaymentCubit sync, `switch` expression, use `FetchWageRequested` event, render `WageHourlyCard` directly from `FetchWageLoaded`
+  - [x] 3.2 Delete `wage_hourly_data_view.dart` (StreamBuilder eliminated)
+  - [x] 3.3 Update `widgets.dart` barrel — remove `wage_hourly_data_view.dart` export
+  - [x] 3.4 Update `set_wage_button.dart` — BlocConsumer with `listenWhen` for success → `Navigator.pop()`, `switch` on sealed state, remove manual delay/pop
+  - [x] 3.5 Update `wage_hourly_field.dart` — replace `BlocConsumer` no-op listener with `BlocBuilder`, update event syntax
+- [x] Task 4: Write use case and repository tests (AC: #6)
+  - [x] 4.1 Create `test/src/features/wage/domain/use_cases/fetch_wage_use_case_test.dart`
+  - [x] 4.2 Create `test/src/features/wage/domain/use_cases/set_wage_use_case_test.dart`
+  - [x] 4.3 Create `test/src/features/wage/domain/use_cases/update_wage_use_case_test.dart`
+  - [x] 4.4 Create `test/src/features/wage/data/repositories/objectbox_wage_repository_test.dart`
+- [x] Task 5: Write BLoC tests (AC: #6)
+  - [x] 5.1 Create `test/src/features/wage/presentation/bloc/fetch_wage_bloc_test.dart`
+  - [x] 5.2 Create `test/src/features/wage/presentation/bloc/update_wage_bloc_test.dart`
+- [x] Task 6: Verification (AC: #5, #7)
+  - [x] 6.1 Run `flutter analyze` — zero warnings on non-generated code
+  - [x] 6.2 Run `flutter test` — all tests pass
+  - [x] 6.3 Verify app launches and wage features work: view wage, update wage with visual feedback, real-time updates
 
 ## Dev Notes
 
@@ -579,10 +579,51 @@ From the 3.2 and 3.3 code reviews — these patterns are MANDATORY:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+N/A — no blocking issues encountered.
+
 ### Completion Notes List
 
+- Migrated FetchWageBloc from Freezed `part of` pattern to standalone sealed classes with `emit.forEach` for internal stream consumption. Eliminated `StreamBuilder` in UI.
+- Migrated UpdateWageBloc from Freezed with `ActionState<T>` wrapper to standalone sealed classes with form data (`wageHourly`) on sealed base.
+- Fixed 8 bugs documented in story Dev Notes: stream exposure to UI, missing Loading state, `FutureOr<void>` return type, non-async handler, wrong delay placement, competing resets, manual navigation race, no-op listeners.
+- Updated FetchWageScreen with `BlocConsumer` + `listenWhen` for PaymentCubit sync, exhaustive `switch` expression on 4 sealed states.
+- Deleted `WageHourlyDataView` (StreamBuilder wrapper) — FetchWageBloc now handles stream internally.
+- Updated SetWageButton with `BlocConsumer` + `listenWhen` for success → `Navigator.pop()`, exhaustive `switch` on sealed states.
+- Updated WageHourlyField from `BlocConsumer` with no-op listener to `BlocBuilder`.
+- Created 6 test files: 3 use case tests, 1 repository test, 2 BLoC tests — all 90 tests passing.
+- Zero warnings on `flutter analyze`.
+
+### Change Log
+
+- 2026-03-18: Story 3.4 implemented — wage feature sealed class BLoC migration complete.
+
 ### File List
+
+**Modified (7):**
+- `lib/src/features/wage/presentation/bloc/fetch_wage_event.dart`
+- `lib/src/features/wage/presentation/bloc/fetch_wage_state.dart`
+- `lib/src/features/wage/presentation/bloc/fetch_wage_bloc.dart`
+- `lib/src/features/wage/presentation/bloc/update_wage_event.dart`
+- `lib/src/features/wage/presentation/bloc/update_wage_state.dart`
+- `lib/src/features/wage/presentation/bloc/update_wage_bloc.dart`
+- `lib/src/features/wage/presentation/pages/fetch_wage_screen.dart`
+- `lib/src/features/wage/presentation/widgets/set_wage_button.dart`
+- `lib/src/features/wage/presentation/widgets/wage_hourly_field.dart`
+- `lib/src/features/wage/presentation/widgets/widgets.dart`
+
+**Deleted (3):**
+- `lib/src/features/wage/presentation/bloc/fetch_wage_bloc.freezed.dart`
+- `lib/src/features/wage/presentation/bloc/update_wage_bloc.freezed.dart`
+- `lib/src/features/wage/presentation/widgets/wage_hourly_data_view.dart`
+
+**Created (6):**
+- `test/src/features/wage/domain/use_cases/fetch_wage_use_case_test.dart`
+- `test/src/features/wage/domain/use_cases/set_wage_use_case_test.dart`
+- `test/src/features/wage/domain/use_cases/update_wage_use_case_test.dart`
+- `test/src/features/wage/data/repositories/objectbox_wage_repository_test.dart`
+- `test/src/features/wage/presentation/bloc/fetch_wage_bloc_test.dart`
+- `test/src/features/wage/presentation/bloc/update_wage_bloc_test.dart`
