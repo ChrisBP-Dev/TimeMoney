@@ -54,7 +54,7 @@ so that domain data classes support copyWith/equality/JSON, all code follows con
 - [ ] Task 5: Add loading guard to action buttons (AC: #5, DEFERRED-6)
   - [ ] 5.1 Update `update_time_button.dart` — add `state is UpdateTimeLoading ? null :` guard on `onPressed`
   - [ ] 5.2 Update `delete_time_button.dart` — add `state is DeleteTimeLoading ? null :` guard on `onPressed`
-  - [ ] 5.3 READ `lib/src/features/wage/presentation/widgets/update_wage_button.dart` — verify if it already has loading guard; if not, apply same pattern
+  - [ ] 5.3 READ `lib/src/features/wage/presentation/widgets/update_wage_button.dart` — CONFIRM it is a dialog launcher (`showDialog` → `UpdateWagePage`), NOT a submit action; NO loading guard needed — the guard already lives in `SetWageButton` (set_wage_button.dart:18) inside `UpdateWagePage`; no code change required on `UpdateWageButton`
 
 - [ ] Task 6: Rename screen → page files (AC: #6, NFR8)
   - [ ] 6.1 Rename `list_times_screen.dart` → `list_times_page.dart`; rename class `ListTimesScreen` → `ListTimesPage`
@@ -63,7 +63,7 @@ so that domain data classes support copyWith/equality/JSON, all code follows con
   - [ ] 6.4 Rename `fetch_wage_screen.dart` → `fetch_wage_page.dart`; rename class `FetchWageScreen` → `FetchWagePage`
   - [ ] 6.5 Update `lib/src/features/wage/presentation/pages/pages.dart` barrel: `fetch_wage_screen.dart` → `fetch_wage_page.dart`
   - [ ] 6.6 Update `lib/src/features/home/presentation/pages/home_page.dart`: update import path and widget usage (`FetchWageScreen()` → `FetchWagePage()`)
-  - [ ] 6.7 Grep codebase for any remaining `ListTimesScreen` or `FetchWageScreen` references — update all
+  - [ ] 6.7 Grep entire codebase (including `lib/`, `test/`, and root) for any remaining `ListTimesScreen`, `list_times_screen`, `FetchWageScreen`, `fetch_wage_screen` references — update all found
 
 - [ ] Task 7: Verification (AC: #7)
   - [ ] 7.1 Run `flutter analyze` — zero issues
@@ -153,7 +153,7 @@ final class TimeOutExceeded extends GlobalFailure {
 }
 ```
 
-**ValueFailure variants — same pattern (example for CharacterLimitExceeded):**
+**ValueFailure variants — full implementation for all three:**
 
 ```dart
 final class CharacterLimitExceeded<T> extends ValueFailure<T> {
@@ -168,9 +168,33 @@ final class CharacterLimitExceeded<T> extends ValueFailure<T> {
   @override
   int get hashCode => failedValue.hashCode;
 }
-```
 
-Apply the exact same pattern to `ShortOrNullCharacters<T>` and `InvalidFormat<T>`.
+final class ShortOrNullCharacters<T> extends ValueFailure<T> {
+  const ShortOrNullCharacters({required this.failedValue});
+  final T failedValue;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ShortOrNullCharacters<T> && failedValue == other.failedValue;
+
+  @override
+  int get hashCode => failedValue.hashCode;
+}
+
+final class InvalidFormat<T> extends ValueFailure<T> {
+  const InvalidFormat({required this.failedValue});
+  final T failedValue;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InvalidFormat<T> && failedValue == other.failedValue;
+
+  @override
+  int get hashCode => failedValue.hashCode;
+}
+```
 
 **CRITICAL:** `const` constructors with `==` overrides work in Dart — the `==` override coexists with
 const canonicalization. For compile-time constants, `identical()` still returns true (fast path).
@@ -208,15 +232,18 @@ not by class name. After deletion, the barrel still exports the file — which n
 
 ### Task 5: Loading Guard Pattern — Exact Specifications
 
-**Reference implementation (`set_wage_button.dart` — the P-1 pattern):**
+**Reference implementation (`set_wage_button.dart:18` — the P-1 pattern, CONFIRMED in current codebase):**
 
 ```dart
+// set_wage_button.dart — BlocConsumer<UpdateWageBloc, UpdateWageState>
 onPressed: state is UpdateWageLoading
     ? null
     : () => context.read<UpdateWageBloc>().add(
           const UpdateWageSubmitted(),
         ),
 ```
+
+**IMPORTANT:** `UpdateWageButton` (`update_wage_button.dart`) is a **dialog launcher** — it opens `UpdateWagePage` via `showDialog` and needs NO loading guard. The P-1 pattern applies ONLY to `UpdateTimeButton` and `DeleteTimeButton`.
 
 **`update_time_button.dart` — apply guard:**
 
@@ -267,13 +294,15 @@ that calls `Navigator.of(context).pop()` on success. Keep `BlocConsumer` as-is, 
 
 **Rename #1:** `list_times_screen.dart` → `list_times_page.dart` + `ListTimesScreen` → `ListTimesPage`
 
+**⚠️ CRITICAL PRESERVATION:** `list_times_screen.dart` contains a `BlocConsumer` listener added in story 3.5 (CR-3.5 Task 9.4) that calls `context.read<PaymentCubit>().setTimes(const [])` on `ListTimesEmpty` and `ListTimesError` states. This logic **MUST** be preserved verbatim in the renamed file — it prevents stale `PaymentReady` state when all times are deleted or an error occurs. Only rename — do NOT recreate the file from scratch.
+
 Current file content of `list_times_screen.dart` (replace `Screen` → `Page` in class name only):
 
 ```dart
 // list_times_page.dart — RENAME: ListTimesScreen → ListTimesPage
 class ListTimesPage extends StatelessWidget {    // ← changed
   const ListTimesPage({super.key});              // ← changed
-  // ... rest of build() unchanged ...
+  // ... rest of build() unchanged — including BlocConsumer listener ...
 }
 
 class _ActionWidget extends StatelessWidget {
@@ -450,6 +479,7 @@ Epic 5 scope (Story 5.1) — not required in this story.
 - Do NOT add `isClosed` guards to BLoC async handlers — anti-pattern in BLoC 9.x (DEFERRED-5)
 - Do NOT rename `list_times_page.dart` class to anything other than `ListTimesPage` — follow `{Name}Page` convention
 - Do NOT change any logic in renamed screen→page files — class renames only, behavior unchanged
+- Do NOT apply loading guard to `UpdateWageButton` — it is a dialog launcher (`showDialog` → `UpdateWagePage`), not a submit action; the loading guard lives in `SetWageButton` inside the dialog (set_wage_button.dart:18)
 
 ### Project Structure Notes
 
@@ -503,4 +533,20 @@ N/A
 
 ### File List
 
-<!-- To be filled by dev agent -->
+**Modified files:**
+- `lib/src/core/errors/failures.dart`
+- `lib/src/features/wage/presentation/widgets/wage_hourly_other_view.dart`
+- `lib/src/features/times/presentation/widgets/update_time_button.dart`
+- `lib/src/features/times/presentation/widgets/delete_time_button.dart`
+- `lib/src/features/home/presentation/pages/home_page.dart`
+- `lib/src/features/times/presentation/pages/pages.dart`
+- `lib/src/features/wage/presentation/pages/pages.dart`
+- `test/src/core/errors/failures_test.dart`
+
+**Created files (rename output):**
+- `lib/src/features/times/presentation/pages/list_times_page.dart`
+- `lib/src/features/wage/presentation/pages/fetch_wage_page.dart`
+
+**Deleted files (rename source):**
+- `lib/src/features/times/presentation/pages/list_times_screen.dart`
+- `lib/src/features/wage/presentation/pages/fetch_wage_screen.dart`
