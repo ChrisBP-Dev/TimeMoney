@@ -31,21 +31,21 @@ so that I can use TimeMoney on any platform in my preferred language (FR15-FR23,
 ## Tasks / Subtasks
 
 - [ ] Task 1: Extract all hardcoded strings to ARB files (AC: #5, #6)
-  - [ ] 1.1 Audit all 41 hardcoded strings across 19 presentation files (see Dev Notes for complete inventory)
+  - [ ] 1.1 Audit all 48 hardcoded strings across 25 presentation files (see Dev Notes for complete inventory)
   - [ ] 1.2 Define semantic ARB keys in `app_en.arb` for all user-facing strings
   - [ ] 1.3 Add all Spanish translations in `app_es.arb`
   - [ ] 1.4 Run `flutter gen-l10n` to regenerate `AppLocalizations`
   - [ ] 1.5 Fix typos: "Horly" → "Hourly", "Dolars" → "Dollars", "There is no times" → "There are no times"
 - [ ] Task 2: Replace all hardcoded strings with `context.l10n` calls (AC: #5, #6)
   - [ ] 2.1 Update Home feature files (home_page.dart, calculate_payment_button.dart)
-  - [ ] 2.2 Update Times feature files (create_time_page.dart, update_time_page.dart, list_times_page.dart, create_time_card.dart, custom_create_field.dart, custom_update_field.dart, create_time_button.dart, update_time_button.dart, delete_time_button.dart, list_times_other_view.dart)
+  - [ ] 2.2 Update Times feature files (create_time_page.dart, update_time_page.dart, list_times_page.dart, create_time_card.dart, custom_create_field.dart, custom_update_field.dart, custom_info.dart, create_time_button.dart, update_time_button.dart, delete_time_button.dart, list_times_other_view.dart, create_hour_field.dart, create_minutes_field.dart, update_hour_field.dart, update_minutes_field.dart, info_time.dart)
   - [ ] 2.3 Update Wage feature files (update_wage_page.dart, fetch_wage_page.dart, wage_hourly_field.dart, wage_hourly_info.dart, set_wage_button.dart, update_wage_button.dart)
   - [ ] 2.4 Update Payment feature files (payment_result_page.dart)
   - [ ] 2.5 Remove placeholder `counterAppBarTitle` key from both ARB files
 - [ ] Task 3: Update existing tests for localization changes (AC: #5, #8)
   - [ ] 3.1 Verify `pump_app.dart` helper already provides localization delegates (it does — no changes needed)
-  - [ ] 3.2 Update any widget tests that assert hardcoded string values to use localized equivalents
-  - [ ] 3.3 Run full test suite — all 157+ existing tests must pass
+  - [ ] 3.2 Verified: no widget tests assert presentation strings (`find.text()` not used in test suite) — no changes needed
+  - [ ] 3.3 Run full test suite — all 157 existing tests must pass
 - [ ] Task 4: Multi-platform build verification (AC: #1, #2, #3, #4, #7, #8)
   - [ ] 4.1 Verify `flutter build ios` compiles with zero errors (iOS 13+ deployment target)
   - [ ] 4.2 Verify `flutter build apk` compiles with zero errors (API 21+ minSdk)
@@ -62,7 +62,7 @@ so that I can use TimeMoney on any platform in my preferred language (FR15-FR23,
 
 ### What This Story IS
 
-Full localization implementation (extracting 41 hardcoded strings to ARB, replacing with `context.l10n`) + multi-platform build verification. This is the final story in Epic 4 — after this, the app has dual-datasource (ObjectBox + drift), platform-aware DI, bilingual support, and verified builds on all 4 platforms.
+Full localization implementation (extracting 48 hardcoded strings to ARB, replacing with `context.l10n`) + multi-platform build verification. This is the final story in Epic 4 — after this, the app has dual-datasource (ObjectBox + drift), platform-aware DI, bilingual support, and verified builds on all 4 platforms.
 
 ### What This Story IS NOT
 
@@ -84,7 +84,7 @@ Full localization implementation (extracting 41 hardcoded strings to ARB, replac
   - `pump_app.dart` test helper includes localization
   - But only 1 placeholder ARB key exists (`counterAppBarTitle` — unused in app)
   - **Zero `context.l10n` calls anywhere in presentation layer**
-  - **41 hardcoded English strings across 19 presentation files**
+  - **48 hardcoded English strings across 25 presentation files**
 
 ### Complete Hardcoded String Inventory
 
@@ -96,7 +96,7 @@ Full localization implementation (extracting 41 hardcoded strings to ARB, replac
 | `home_page.dart` | `'Add Time'` | `addTime` |
 | `calculate_payment_button.dart` | `'Calculate Payment'` | `calculatePayment` |
 
-**Times Feature (17 strings, 10 files):**
+**Times Feature (24 strings, 16 files):**
 
 | File | String | ARB Key Suggestion |
 |------|--------|--------------------|
@@ -106,6 +106,12 @@ Full localization implementation (extracting 41 hardcoded strings to ARB, replac
 | `create_time_card.dart` | `'Create Time:'` | `createTimeTitle` (reuse) |
 | `custom_create_field.dart` | `'$title:'` | Parameterize: `fieldLabel(title)` |
 | `custom_update_field.dart` | `'$title:'` | Parameterize: `fieldLabel(title)` |
+| `custom_info.dart` | `'$category:'` | Parameterize: `fieldLabel(category)` (reuse same ARB key) |
+| `create_hour_field.dart` | `'Hour'` (passed to CustomCreateField title) | `hourTitle` |
+| `create_minutes_field.dart` | `'Minutes'` (passed to CustomCreateField title) | `minutesTitle` |
+| `update_hour_field.dart` | `'Hour'` (passed to CustomUpdateField title) | `hourTitle` (reuse) |
+| `update_minutes_field.dart` | `'Minutes'` (passed to CustomUpdateField title) | `minutesTitle` (reuse) |
+| `info_time.dart` | `'Hour'`, `'Minutes'` (passed to CustomInfo category) | `hourTitle`, `minutesTitle` (reuse) |
 | `create_time_button.dart` | `'Create'`, `'Success'`, `'Error'` | `create`, `success`, `error` |
 | `update_time_button.dart` | `'Update'`, `'Success'`, `'Error'` | `update`, `success`, `error` |
 | `delete_time_button.dart` | `'Delete'`, `'Success'`, `'Error'` | `delete`, `success`, `error` |
@@ -123,7 +129,7 @@ Full localization implementation (extracting 41 hardcoded strings to ARB, replac
 | `set_wage_button.dart` | `'Update'`, `'Success'`, `'Error'` | Reuse `update`, `success`, `error` |
 | `update_wage_button.dart` | `'change'` | `change` |
 
-**Payment Feature (7 strings, 1 file):**
+**Payment Feature (8 strings, 1 file):**
 
 | File | String | ARB Key Suggestion |
 |------|--------|--------------------|
@@ -133,6 +139,7 @@ Full localization implementation (extracting 41 hardcoded strings to ARB, replac
 | `payment_result_page.dart` | `'Hourly:'` | `hourlyLabel` (reuse) |
 | `payment_result_page.dart` | `' Dolars'` | `dollarsLabel` (FIX TYPO) |
 | `payment_result_page.dart` | `'Worked days:'` | `workedDaysLabel` |
+| `payment_result_page.dart` | `'$/. '` | `currencyPrefix` |
 | `payment_result_page.dart` | `'Save'` | `save` |
 
 ### Known Typos to Fix
@@ -145,9 +152,12 @@ Full localization implementation (extracting 41 hardcoded strings to ARB, replac
 
 - Use camelCase keys: `homeTitle`, `addTime`, `calculatePayment`
 - Reuse common keys: `success`, `error`, `update`, `delete`, `create`
-- For parameterized strings like `'$title:'`, use ARB placeholders: `"fieldLabel": "{title}:", "placeholders": { "title": { "type": "String" } }`
+- For parameterized strings like `'$title:'` and `'$category:'`, use ARB placeholders: `"fieldLabel": "{title}:", "placeholders": { "title": { "type": "String" } }` — reuse `fieldLabel` for both `custom_create_field.dart`, `custom_update_field.dart`, and `custom_info.dart`
+- Caller files must pass already-localized strings: e.g. `CustomCreateField(title: context.l10n.hourTitle)` where `hourTitle` = "Hour" (EN) / "Hora" (ES)
+- New keys for caller propagation: `hourTitle` = "Hour"/"Hora", `minutesTitle` = "Minutes"/"Minutos" — used by `create_hour_field.dart`, `create_minutes_field.dart`, `update_hour_field.dart`, `update_minutes_field.dart`, `info_time.dart`
+- Currency prefix: `currencyPrefix` = "$/. " — extracted as simple ARB key
 - Remove the unused `counterAppBarTitle` key
-- Estimated total unique ARB keys: ~25-30 (many strings reuse common words)
+- Estimated total unique ARB keys: ~28-33 (many strings reuse common words)
 
 ### File Paths for Presentation Layer
 
@@ -162,10 +172,16 @@ times/presentation/pages/list_times_page.dart
 times/presentation/widgets/create_time_card.dart
 times/presentation/widgets/custom_create_field.dart
 times/presentation/widgets/custom_update_field.dart
+times/presentation/widgets/custom_info.dart
 times/presentation/widgets/create_time_button.dart
 times/presentation/widgets/update_time_button.dart
 times/presentation/widgets/delete_time_button.dart
 times/presentation/widgets/list_times_other_view.dart
+times/presentation/widgets/create_hour_field.dart
+times/presentation/widgets/create_minutes_field.dart
+times/presentation/widgets/update_hour_field.dart
+times/presentation/widgets/update_minutes_field.dart
+times/presentation/widgets/info_time.dart
 wage/presentation/pages/update_wage_page.dart
 wage/presentation/pages/fetch_wage_page.dart
 wage/presentation/widgets/wage_hourly_field.dart
@@ -192,7 +208,7 @@ Import required in each file:
 import 'package:time_money/l10n/l10n.dart';
 ```
 
-For parameterized strings:
+For parameterized strings (`custom_create_field.dart`, `custom_update_field.dart`, `custom_info.dart`):
 ```dart
 // BEFORE:
 Text('$title:')
@@ -201,10 +217,29 @@ Text('$title:')
 Text(context.l10n.fieldLabel(title))
 ```
 
+For string propagation (callers that pass hardcoded strings to parameterized widgets):
+```dart
+// BEFORE (create_hour_field.dart):
+CustomCreateField(title: 'Hour', ...)
+
+// AFTER:
+CustomCreateField(title: context.l10n.hourTitle, ...)
+
+// BEFORE (info_time.dart):
+CustomInfo(category: 'Hour', value: ...)
+
+// AFTER:
+CustomInfo(category: context.l10n.hourTitle, value: ...)
+```
+
+The `fieldLabel` ARB key appends `':'` to the already-localized parameter:
+- EN: `hourTitle` = "Hour" → `fieldLabel("Hour")` = "Hour:"
+- ES: `hourTitle` = "Hora" → `fieldLabel("Hora")` = "Hora:"
+
 ### Testing Considerations
 
 - `pump_app.dart` already wraps with localization delegates — existing tests should pass after migration
-- Widget tests that `find.text('Create')` must change to `find.text(tester.l10n.create)` or use the English fallback
+- No widget tests assert hardcoded presentation strings (`find.text()` is not used in the test suite) — no test updates needed for localization migration
 - No new test files required — this is a presentation-layer refactor
 - All 157 existing tests must pass with zero regressions after changes
 
@@ -216,7 +251,7 @@ Text(context.l10n.fieldLabel(title))
 4. Do NOT localize emoji characters (🕰️) — they are universal
 5. Do NOT modify domain layer, data layer, BLoCs, or DI wiring
 6. Do NOT add new dependencies — `intl` and `flutter_localizations` are already in pubspec.yaml
-7. Do NOT create number formatting localization (currency symbols, decimal separators) — out of scope for this story
+7. Do NOT create number formatting localization (decimal separators, number grouping) — out of scope for this story. Exception: fixed string labels like `'$/. '` are extracted as simple ARB keys (`currencyPrefix`), not as number format patterns
 8. Do NOT use `package:flutter/material.dart` for localization — use `package:time_money/l10n/l10n.dart`
 
 ### Platform Build Commands
@@ -256,7 +291,7 @@ flutter test --coverage --test-randomize-ordering-seed random
 |---|---|---|
 | FR15 | App usable in English | All strings extracted to `app_en.arb`, rendered via `context.l10n` |
 | FR16 | App usable in Spanish | All strings translated in `app_es.arb`, rendered via `context.l10n` |
-| FR17 | Zero hardcoded strings | All 41 hardcoded strings replaced with `context.l10n` calls |
+| FR17 | Zero hardcoded strings | All 48 hardcoded strings replaced with `context.l10n` calls |
 | FR20 | iOS with all FR1-FR17 capabilities | Build verification + localization on iOS |
 | FR21 | Android with all FR1-FR17 capabilities | Build verification + localization on Android |
 | FR22 | Web with all FR1-FR17 capabilities | Build verification + localization on Web |
