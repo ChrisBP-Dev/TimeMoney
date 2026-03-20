@@ -1,6 +1,6 @@
 # Story 4.4: Platform-Aware DI & Multi-Environment Configuration
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -40,27 +40,27 @@ so that native platforms use ObjectBox and web uses drift without manual configu
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Refactor `bootstrap.dart` for platform-aware DI (AC: #1, #2, #3, #4)
-  - [ ] 1.1 Change signature from `Future<void> bootstrap(FutureOr<Widget> Function() builder)` to `Future<void> bootstrap({required String dbName})`
-  - [ ] 1.2 Move `WidgetsFlutterBinding.ensureInitialized()` into bootstrap (first line)
-  - [ ] 1.3 Add `kIsWeb` branching: web → `AppDatabase.named(dbName)` + drift repositories; native → `ObjectBox.create(dbName)` + ObjectBox repositories
-  - [ ] 1.4 Create `AppBloc` internally with the resolved repositories
-  - [ ] 1.5 Pass `AppBloc` to `runApp()` inside existing `runZonedGuarded`
-  - [ ] 1.6 Add all necessary imports for both datasource stacks
-  - [ ] 1.7 Dartdoc on function, kIsWeb branching, and all changes
-- [ ] Task 2: Simplify `main_development.dart` (AC: #3)
-  - [ ] 2.1 Remove all ObjectBox/datasource/repository/model imports
-  - [ ] 2.2 Remove global `late final ObjectBox objectbox;`
-  - [ ] 2.3 Replace body with `Future<void> main() => bootstrap(dbName: 'test-1');`
-  - [ ] 2.4 Update dartdoc
-- [ ] Task 3: Simplify `main_staging.dart` (AC: #3)
-  - [ ] 3.1 Same pattern as Task 2, with `bootstrap(dbName: 'stg-1')`
-- [ ] Task 4: Simplify `main_production.dart` (AC: #3)
-  - [ ] 4.1 Same pattern as Task 2, with `bootstrap(dbName: 'prod-1')`
-- [ ] Task 5: Verification (AC: all)
-  - [ ] 5.1 `flutter analyze` — zero issues on non-generated code
-  - [ ] 5.2 `flutter test` — 157 tests pass, zero regressions
-  - [ ] 5.3 Verify `app_bloc.dart` is UNCHANGED (already interface-based)
+- [x] Task 1: Refactor `bootstrap.dart` for platform-aware DI (AC: #1, #2, #3, #4)
+  - [x] 1.1 Change signature from `Future<void> bootstrap(FutureOr<Widget> Function() builder)` to `Future<void> bootstrap({required String dbName})`
+  - [x] 1.2 Move `WidgetsFlutterBinding.ensureInitialized()` into bootstrap (first line)
+  - [x] 1.3 Add `kIsWeb` branching: web → `AppDatabase.named(dbName)` + drift repositories; native → `ObjectBox.create(dbName)` + ObjectBox repositories
+  - [x] 1.4 Create `AppBloc` internally with the resolved repositories
+  - [x] 1.5 Pass `AppBloc` to `runApp()` inside existing `runZonedGuarded`
+  - [x] 1.6 Add all necessary imports for both datasource stacks
+  - [x] 1.7 Dartdoc on function, kIsWeb branching, and all changes
+- [x] Task 2: Simplify `main_development.dart` (AC: #3)
+  - [x] 2.1 Remove all ObjectBox/datasource/repository/model imports
+  - [x] 2.2 Remove global `late final ObjectBox objectbox;`
+  - [x] 2.3 Replace body with `Future<void> main() => bootstrap(dbName: 'test-1');`
+  - [x] 2.4 Update dartdoc
+- [x] Task 3: Simplify `main_staging.dart` (AC: #3)
+  - [x] 3.1 Same pattern as Task 2, with `bootstrap(dbName: 'stg-1')`
+- [x] Task 4: Simplify `main_production.dart` (AC: #3)
+  - [x] 4.1 Same pattern as Task 2, with `bootstrap(dbName: 'prod-1')`
+- [x] Task 5: Verification (AC: all)
+  - [x] 5.1 `flutter analyze` — zero issues on non-generated code
+  - [x] 5.2 `flutter test` — 157 tests pass, zero regressions
+  - [x] 5.3 Verify `app_bloc.dart` is UNCHANGED (already interface-based)
 
 ## Dev Notes
 
@@ -318,8 +318,28 @@ When building for native (AOT):
 
 ### Agent Model Used
 
+Claude Opus 4.6 (1M context)
+
 ### Debug Log References
+
+- `flutter analyze` — 0 issues (after adding explicit `foundation.dart` import for `kIsWeb`)
+- `flutter test` — 157/157 passed, zero regressions
+- `git diff --name-only` — only 4 files modified (bootstrap.dart, main_development.dart, main_staging.dart, main_production.dart)
 
 ### Completion Notes List
 
+- Refactored `bootstrap.dart`: changed signature to `bootstrap({required String dbName})`, added `kIsWeb` platform branching, moved `WidgetsFlutterBinding.ensureInitialized()` into bootstrap, created `AppBloc` internally with resolved repositories
+- Note: `kIsWeb` required explicit `import 'package:flutter/foundation.dart' show kIsWeb;` — Flutter 3.41's `widgets.dart` only re-exports `show Brightness, UniqueKey` from foundation, not `kIsWeb`. Story spec assumed full re-export but analyzer confirmed otherwise.
+- Simplified all 3 entry points (`main_development.dart`, `main_staging.dart`, `main_production.dart`) to single-line delegations with environment-specific `dbName`
+- Eliminated global `late final ObjectBox objectbox;` from all entry points — ObjectBox instance now lives as local variable inside bootstrap's closure
+- `AppBlocObserver` class unchanged in `bootstrap.dart`
+- `app_bloc.dart` confirmed UNCHANGED — already interface-based
+- All imports sorted alphabetically per `directives_ordering` linter rule
+- All 157 existing tests pass with zero regressions
+
 ### File List
+
+- `lib/bootstrap.dart` (modified)
+- `lib/main_development.dart` (modified)
+- `lib/main_staging.dart` (modified)
+- `lib/main_production.dart` (modified)
