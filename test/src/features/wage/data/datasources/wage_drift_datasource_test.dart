@@ -63,15 +63,27 @@ void main() {
     });
 
     // Update must modify only the targeted row so other entries
-    // in the table are not accidentally changed.
-    test('update modifies the correct row', () async {
+    // in the table are not accidentally changed. Returns the number
+    // of affected rows so the repository can detect non-existent IDs.
+    test('update modifies the correct row and returns affected row count',
+        () async {
       final id = await datasource.insert(value: 25);
 
-      await datasource.update(id, value: 35);
+      final affectedRows = await datasource.update(id, value: 35);
 
+      expect(affectedRows, 1);
       final rows = await db.select(db.wageHourlyTable).get();
       expect(rows, hasLength(1));
       expect(rows.first.value, 35);
+    });
+
+    // Updating a non-existent ID must return 0 affected rows so the
+    // repository layer can surface a failure instead of silently
+    // succeeding.
+    test('update returns 0 when targeting non-existent id', () async {
+      final affectedRows = await datasource.update(999, value: 50);
+
+      expect(affectedRows, 0);
     });
 
     // Empty table must return an empty list through the stream,

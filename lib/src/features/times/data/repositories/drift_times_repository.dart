@@ -19,9 +19,17 @@ class DriftTimesRepository implements TimesRepository {
   @override
   FetchTimesResultStream fetchTimesStream() {
     try {
-      final stream = _datasource.watchAll().map(
+      final stream = _datasource
+          .watchAll()
+          .map(
             (rows) => rows.map((row) => row.toTimeEntry).toList(),
-          );
+          )
+          .handleError((Object error, StackTrace stack) {
+        Error.throwWithStackTrace(
+          GlobalFailure.fromException(error, stack),
+          stack,
+        );
+      });
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
@@ -31,8 +39,9 @@ class DriftTimesRepository implements TimesRepository {
   @override
   CreateTimeResult create(TimeEntry time) async {
     try {
-      await _datasource.insert(hour: time.hour, minutes: time.minutes);
-      return right(time);
+      final id =
+          await _datasource.insert(hour: time.hour, minutes: time.minutes);
+      return right(time.copyWith(id: id));
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
@@ -41,7 +50,12 @@ class DriftTimesRepository implements TimesRepository {
   @override
   DeleteTimeResult delete(TimeEntry time) async {
     try {
-      await _datasource.remove(time.id);
+      final deletedRows = await _datasource.remove(time.id);
+      if (deletedRows == 0) {
+        return left(
+          GlobalFailure.fromException(Exception('Time entry not found')),
+        );
+      }
       return right(unit);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
@@ -51,11 +65,16 @@ class DriftTimesRepository implements TimesRepository {
   @override
   UpdateTimeResult update(TimeEntry time) async {
     try {
-      await _datasource.update(
+      final affectedRows = await _datasource.update(
         time.id,
         hour: time.hour,
         minutes: time.minutes,
       );
+      if (affectedRows == 0) {
+        return left(
+          GlobalFailure.fromException(Exception('Time entry not found')),
+        );
+      }
       return right(time);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));

@@ -14,8 +14,15 @@ import 'package:time_money/src/features/wage/domain/repositories/wage_repository
 ///
 /// The [dbName] parameter isolates databases per environment
 /// (`test-1`, `stg-1`, `prod-1`).
-Future<({TimesRepository timesRepository, WageRepository wageRepository})>
-    createRepositories(String dbName) async {
+///
+/// Returns the two repositories and a `close` callback that shuts down the
+/// underlying Drift `AppDatabase`, releasing WASM/OPFS resources.
+Future<
+    ({
+      TimesRepository timesRepository,
+      WageRepository wageRepository,
+      Future<void> Function() close,
+    })> createRepositories(String dbName) async {
   final db = AppDatabase.named(dbName);
 
   final timesDatasource = TimesDriftDatasource(db);
@@ -24,5 +31,6 @@ Future<({TimesRepository timesRepository, WageRepository wageRepository})>
   return (
     timesRepository: DriftTimesRepository(timesDatasource),
     wageRepository: DriftWageRepository(wageDatasource),
+    close: db.close,
   );
 }

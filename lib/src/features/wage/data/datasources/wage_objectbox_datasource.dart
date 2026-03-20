@@ -19,6 +19,9 @@ class WageObjectboxDatasource {
         );
   }
 
+  /// Returns `true` if a [WageHourlyBox] with the given [id] exists.
+  bool contains(int id) => _box.contains(id);
+
   /// Inserts or updates the given [wageBox] and returns the assigned id.
   int put(WageHourlyBox wageBox) => _box.put(wageBox);
 }

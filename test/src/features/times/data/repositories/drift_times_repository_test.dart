@@ -4,12 +4,15 @@
 /// [TimesDriftDatasource], maps [TimesTableData] rows to [TimeEntry] domain
 /// entities, and wraps results in `Right` on success or `Left` with a
 /// `GlobalFailure` on exception for every CRUD operation and the reactive
-/// stream.
+/// stream. Also validates that DB-assigned IDs are propagated back, that
+/// operations on non-existent entries return `Left`, and that stream errors
+/// are transformed to [GlobalFailure].
 library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/core/services/app_database.dart';
 import 'package:time_money/src/features/times/data/datasources/times_drift_datasource.dart';
 import 'package:time_money/src/features/times/data/repositories/drift_times_repository.dart';
@@ -56,6 +59,25 @@ void main() {
 
       expect(result.isLeft(), true);
     });
+
+    // Stream error: a runtime error emitted mid-stream must be
+    // transformed to GlobalFailure so the BLoC onError catches it.
+    test('stream handleError transforms runtime errors to GlobalFailure',
+        () async {
+      when(() => mockDatasource.watchAll()).thenAnswer(
+        (_) => Stream<List<TimesTableData>>.error(Exception('stream error')),
+      );
+
+      final result = repository.fetchTimesStream();
+
+      expect(result.isRight(), true);
+      final stream = result.getOrElse((_) => throw Exception());
+
+      await expectLater(
+        stream,
+        emitsError(isA<GlobalFailure>()),
+      );
+    });
   });
 
   // Create: persists a new time entry the user just logged.
@@ -63,19 +85,24 @@ void main() {
   group('create', () {
     const testTime = TimeEntry(hour: 1, minutes: 30);
 
-    // Happy path: datasource.insert succeeds, repository echoes
-    // back the same TimeEntry so the caller can trust the data.
-    test('returns Right with time entry on success', () async {
+    // Happy path: datasource.insert returns the DB-assigned ID,
+    // and the returned entity carries that ID instead of 0.
+    test('returns Right with entity containing DB-assigned ID', () async {
       when(
         () => mockDatasource.insert(
           hour: any(named: 'hour'),
           minutes: any(named: 'minutes'),
         ),
-      ).thenAnswer((_) async => 1);
+      ).thenAnswer((_) async => 42);
 
       final result = await repository.create(testTime);
 
-      expect(result, const Right<dynamic, TimeEntry>(testTime));
+      expect(
+        result,
+        const Right<dynamic, TimeEntry>(
+          TimeEntry(id: 42, hour: 1, minutes: 30),
+        ),
+      );
       verify(
         () => mockDatasource.insert(
           hour: any(named: 'hour'),
@@ -105,8 +132,8 @@ void main() {
   group('update', () {
     const testTime = TimeEntry(id: 1, hour: 2, minutes: 45);
 
-    // Happy path: datasource accepts the update and the
-    // repository returns the domain entity unchanged.
+    // Happy path: datasource accepts the update (1 row affected)
+    // and the repository returns the domain entity unchanged.
     test('returns Right with time entry on success', () async {
       when(
         () => mockDatasource.update(
@@ -114,7 +141,7 @@ void main() {
           hour: any(named: 'hour'),
           minutes: any(named: 'minutes'),
         ),
-      ).thenAnswer((_) async {});
+      ).thenAnswer((_) async => 1);
 
       final result = await repository.update(testTime);
 
@@ -143,6 +170,22 @@ void main() {
 
       expect(result.isLeft(), true);
     });
+
+    // Non-existent entry: when update affects 0 rows, the entry
+    // does not exist and the repository must return Left.
+    test('returns Left when no rows affected (non-existent entry)', () async {
+      when(
+        () => mockDatasource.update(
+          any(),
+          hour: any(named: 'hour'),
+          minutes: any(named: 'minutes'),
+        ),
+      ).thenAnswer((_) async => 0);
+
+      final result = await repository.update(testTime);
+
+      expect(result.isLeft(), true);
+    });
   });
 
   // Delete: removes a time entry. Returns Unit (not the entity)
@@ -165,6 +208,16 @@ void main() {
     // must be caught and returned as Left for the UI layer.
     test('returns Left on exception', () async {
       when(() => mockDatasource.remove(any())).thenThrow(Exception('fail'));
+
+      final result = await repository.delete(testTime);
+
+      expect(result.isLeft(), true);
+    });
+
+    // Non-existent entry: when remove deletes 0 rows, the entry
+    // does not exist and the repository must return Left.
+    test('returns Left when no rows deleted (non-existent entry)', () async {
+      when(() => mockDatasource.remove(any())).thenAnswer((_) async => 0);
 
       final result = await repository.delete(testTime);
 

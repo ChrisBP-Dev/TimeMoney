@@ -89,16 +89,30 @@ void main() {
     });
 
     // Update must modify only the targeted row so other entries
-    // in the table are not accidentally changed.
-    test('update modifies the correct row', () async {
+    // in the table are not accidentally changed. Returns the number
+    // of affected rows so the repository can detect non-existent IDs.
+    test('update modifies the correct row and returns affected row count',
+        () async {
       final id = await datasource.insert(hour: 1, minutes: 0);
 
-      await datasource.update(id, hour: 8, minutes: 45);
+      final affectedRows =
+          await datasource.update(id, hour: 8, minutes: 45);
 
+      expect(affectedRows, 1);
       final rows = await db.select(db.timesTable).get();
       expect(rows, hasLength(1));
       expect(rows.first.hour, 8);
       expect(rows.first.minutes, 45);
+    });
+
+    // Updating a non-existent ID must return 0 affected rows so the
+    // repository layer can surface a failure instead of silently
+    // succeeding.
+    test('update returns 0 when targeting non-existent id', () async {
+      final affectedRows =
+          await datasource.update(999, hour: 1, minutes: 0);
+
+      expect(affectedRows, 0);
     });
 
     // Remove must fully delete the row — partial deletes would

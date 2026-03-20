@@ -19,12 +19,20 @@ class DriftWageRepository implements WageRepository {
   @override
   FetchWageResultStream fetchWageHourly() {
     try {
-      final stream = _datasource.watchAll().map(
+      final stream = _datasource
+          .watchAll()
+          .map(
             (rows) {
               final wages = rows.map((row) => row.toWageHourly).toList();
               return wages.isEmpty ? const WageHourly() : wages.last;
             },
-          );
+          )
+          .handleError((Object error, StackTrace stack) {
+        Error.throwWithStackTrace(
+          GlobalFailure.fromException(error, stack),
+          stack,
+        );
+      });
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
@@ -34,8 +42,8 @@ class DriftWageRepository implements WageRepository {
   @override
   SetWageResult setWageHourly(WageHourly wageHourly) async {
     try {
-      await _datasource.insert(value: wageHourly.value);
-      return right(wageHourly);
+      final id = await _datasource.insert(value: wageHourly.value);
+      return right(wageHourly.copyWith(id: id));
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
@@ -52,7 +60,13 @@ class DriftWageRepository implements WageRepository {
         final id = await _datasource.insert(value: wageHourly.value);
         return right(wageHourly.copyWith(id: id));
       }
-      await _datasource.update(wageHourly.id, value: wageHourly.value);
+      final affectedRows =
+          await _datasource.update(wageHourly.id, value: wageHourly.value);
+      if (affectedRows == 0) {
+        return left(
+          GlobalFailure.fromException(Exception('Wage entry not found')),
+        );
+      }
       return right(wageHourly);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));

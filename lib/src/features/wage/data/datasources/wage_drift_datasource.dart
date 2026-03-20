@@ -23,8 +23,9 @@ class WageDriftDatasource {
         );
   }
 
-  /// Updates the wage record identified by [id].
-  Future<void> update(int id, {required double value}) {
+  /// Updates the wage record identified by [id] and returns the number of
+  /// affected rows.
+  Future<int> update(int id, {required double value}) {
     return (_db.update(_db.wageHourlyTable)..where((t) => t.id.equals(id)))
         .write(
       WageHourlyTableCompanion(value: Value(value)),

@@ -22,4 +22,7 @@ class TimesObjectboxDatasource {
 
   /// Removes the row identified by [id]; returns `true` if it existed.
   bool remove(int id) => _box.remove(id);
+
+  /// Returns `true` if a [TimeBox] with the given [id] exists in the store.
+  bool contains(int id) => _box.contains(id);
 }

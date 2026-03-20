@@ -4,12 +4,15 @@
 /// [WageDriftDatasource], maps [WageHourlyTableData] rows to [WageHourly]
 /// domain entities, returns a default [WageHourly] when the stream is empty,
 /// and wraps results in `Right` on success or `Left` with a `GlobalFailure`
-/// on exception for fetch, set, and update operations.
+/// on exception for fetch, set, and update operations. Also validates that
+/// DB-assigned IDs are propagated back, that updates on non-existent entries
+/// return `Left`, and that stream errors are transformed to [GlobalFailure].
 library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/core/services/app_database.dart';
 import 'package:time_money/src/features/wage/data/datasources/wage_drift_datasource.dart';
 import 'package:time_money/src/features/wage/data/repositories/drift_wage_repository.dart';
@@ -77,23 +80,45 @@ void main() {
 
       expect(result.isLeft(), true);
     });
+
+    // Stream error: a runtime error emitted mid-stream must be
+    // transformed to GlobalFailure so the BLoC onError catches it.
+    test('stream handleError transforms runtime errors to GlobalFailure',
+        () async {
+      when(() => mockDatasource.watchAll()).thenAnswer(
+        (_) =>
+            Stream<List<WageHourlyTableData>>.error(Exception('stream error')),
+      );
+
+      final result = repository.fetchWageHourly();
+
+      expect(result.isRight(), true);
+      final stream = result.getOrElse((_) => throw Exception());
+
+      await expectLater(
+        stream,
+        emitsError(isA<GlobalFailure>()),
+      );
+    });
   });
 
   // Set operation: persists the initial wage during
   // first-time setup. Distinct from update because the
   // entity has no pre-existing ID in the store.
   group('setWageHourly', () {
-    // Happy path: datasource.insert succeeds and returns
-    // the assigned ID. Confirms delegation and that the
-    // domain entity is echoed back unchanged.
-    test('returns Right with WageHourly on success', () async {
+    // Happy path: datasource.insert returns the DB-assigned ID,
+    // and the returned entity carries that ID.
+    test('returns Right with entity containing DB-assigned ID', () async {
       when(
         () => mockDatasource.insert(value: any(named: 'value')),
-      ).thenAnswer((_) async => 1);
+      ).thenAnswer((_) async => 42);
 
       final result = await repository.setWageHourly(testWage);
 
-      expect(result, const Right<dynamic, WageHourly>(testWage));
+      expect(
+        result,
+        const Right<dynamic, WageHourly>(WageHourly(id: 42, value: 25)),
+      );
       verify(() => mockDatasource.insert(value: any(named: 'value'))).called(1);
     });
 
@@ -134,12 +159,12 @@ void main() {
       );
     });
 
-    // Happy path: datasource accepts the update and the
-    // repository returns the domain entity unchanged.
+    // Happy path: datasource accepts the update (1 row affected)
+    // and the repository returns the domain entity unchanged.
     test('returns Right with WageHourly on success', () async {
       when(
         () => mockDatasource.update(any(), value: any(named: 'value')),
-      ).thenAnswer((_) async {});
+      ).thenAnswer((_) async => 1);
 
       final result = await repository.update(testWage);
 
@@ -155,6 +180,18 @@ void main() {
       when(
         () => mockDatasource.update(any(), value: any(named: 'value')),
       ).thenThrow(Exception('fail'));
+
+      final result = await repository.update(testWage);
+
+      expect(result.isLeft(), true);
+    });
+
+    // Non-existent entry: when update affects 0 rows, the entry
+    // does not exist and the repository must return Left.
+    test('returns Left when no rows affected (non-existent entry)', () async {
+      when(
+        () => mockDatasource.update(any(), value: any(named: 'value')),
+      ).thenAnswer((_) async => 0);
 
       final result = await repository.update(testWage);
 

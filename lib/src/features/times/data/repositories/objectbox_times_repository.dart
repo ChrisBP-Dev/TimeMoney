@@ -18,9 +18,17 @@ class ObjectboxTimesRepository implements TimesRepository {
   @override
   FetchTimesResultStream fetchTimesStream() {
     try {
-      final stream = _datasource.watchAll().map(
+      final stream = _datasource
+          .watchAll()
+          .map(
             (boxes) => boxes.map((box) => box.toTimeEntry).toList(),
-          );
+          )
+          .handleError((Object error, StackTrace stack) {
+        Error.throwWithStackTrace(
+          GlobalFailure.fromException(error, stack),
+          stack,
+        );
+      });
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
@@ -30,8 +38,8 @@ class ObjectboxTimesRepository implements TimesRepository {
   @override
   CreateTimeResult create(TimeEntry time) async {
     try {
-      _datasource.put(time.toTimeBox);
-      return right(time);
+      final id = _datasource.put(time.toTimeBox);
+      return right(time.copyWith(id: id));
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
@@ -40,7 +48,12 @@ class ObjectboxTimesRepository implements TimesRepository {
   @override
   DeleteTimeResult delete(TimeEntry time) async {
     try {
-      _datasource.remove(time.id);
+      final removed = _datasource.remove(time.id);
+      if (!removed) {
+        return left(
+          GlobalFailure.fromException(Exception('Time entry not found')),
+        );
+      }
       return right(unit);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
@@ -50,6 +63,11 @@ class ObjectboxTimesRepository implements TimesRepository {
   @override
   UpdateTimeResult update(TimeEntry time) async {
     try {
+      if (!_datasource.contains(time.id)) {
+        return left(
+          GlobalFailure.fromException(Exception('Time entry not found')),
+        );
+      }
       _datasource.put(time.toTimeBox);
       return right(time);
     } on Object catch (e) {

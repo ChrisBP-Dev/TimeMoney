@@ -17,12 +17,20 @@ class ObjectboxWageRepository implements WageRepository {
   @override
   FetchWageResultStream fetchWageHourly() {
     try {
-      final stream = _datasource.watchAll().map(
+      final stream = _datasource
+          .watchAll()
+          .map(
             (boxes) {
               final wages = boxes.map((box) => box.toWageHourly).toList();
               return wages.isEmpty ? const WageHourly() : wages.last;
             },
-          );
+          )
+          .handleError((Object error, StackTrace stack) {
+        Error.throwWithStackTrace(
+          GlobalFailure.fromException(error, stack),
+          stack,
+        );
+      });
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
@@ -32,8 +40,8 @@ class ObjectboxWageRepository implements WageRepository {
   @override
   SetWageResult setWageHourly(WageHourly wageHourly) async {
     try {
-      _datasource.put(wageHourly.toWageHourlyBox);
-      return right(wageHourly);
+      final id = _datasource.put(wageHourly.toWageHourlyBox);
+      return right(wageHourly.copyWith(id: id));
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }
@@ -42,8 +50,13 @@ class ObjectboxWageRepository implements WageRepository {
   @override
   UpdateWageResult update(WageHourly wageHourly) async {
     try {
-      _datasource.put(wageHourly.toWageHourlyBox);
-      return right(wageHourly);
+      if (!_datasource.contains(wageHourly.id)) {
+        return left(
+          GlobalFailure.fromException(Exception('Wage entry not found')),
+        );
+      }
+      final id = _datasource.put(wageHourly.toWageHourlyBox);
+      return right(wageHourly.copyWith(id: id));
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
     }

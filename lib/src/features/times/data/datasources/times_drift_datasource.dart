@@ -23,8 +23,9 @@ class TimesDriftDatasource {
         );
   }
 
-  /// Updates the time entry identified by [id].
-  Future<void> update(int id, {required int hour, required int minutes}) {
+  /// Updates the time entry identified by [id] and returns the number of
+  /// affected rows.
+  Future<int> update(int id, {required int hour, required int minutes}) {
     return (_db.update(_db.timesTable)..where((t) => t.id.equals(id))).write(
           TimesTableCompanion(hour: Value(hour), minutes: Value(minutes)),
         );
