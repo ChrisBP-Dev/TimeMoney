@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-17
-last_updated: 2026-03-20 # story 4.5 review
+last_updated: 2026-03-20 # story 4.5 done
 project: TimeMoney
 project_key: NOKEY
 tracking_system: file-system
@@ -75,7 +75,7 @@ development_status:
   4-2-times-feature-drift-datasource-repository-implementation: done
   4-3-wage-feature-drift-datasource-repository-implementation: done
   4-4-platform-aware-di-multi-environment-configuration: done
-  4-5-multi-platform-verification-localization-validation: review
+  4-5-multi-platform-verification-localization-validation: done
   epic-4-retrospective: optional
 
   # Epic 5: Quality — Widget Tests, Golden Tests & Coverage Validation

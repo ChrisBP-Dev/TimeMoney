@@ -75,6 +75,8 @@ class _LocaleToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const supportedLocales = AppLocalizations.supportedLocales;
+
     return BlocBuilder<LocaleCubit, LocaleState>(
       builder: (context, state) {
         final currentCode = switch (state) {
@@ -82,7 +84,14 @@ class _LocaleToggle extends StatelessWidget {
             Localizations.localeOf(context).languageCode,
           LocaleSelected(:final locale) => locale.languageCode,
         };
-        final isSpanish = currentCode == 'es';
+
+        // Cycle through supported locales; defaults to the first if
+        // the current code is not found (e.g. unsupported system locale).
+        final currentIndex = supportedLocales.indexWhere(
+          (l) => l.languageCode == currentCode,
+        );
+        final nextIndex = (currentIndex + 1) % supportedLocales.length;
+        final nextLocale = supportedLocales[nextIndex];
 
         return Padding(
           padding: const EdgeInsets.only(right: 8),
@@ -92,13 +101,10 @@ class _LocaleToggle extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               minimumSize: const Size(0, 32),
             ),
-            onPressed: () => context.read<LocaleCubit>().setLocale(
-                  isSpanish
-                      ? const Locale('en')
-                      : const Locale('es'),
-                ),
+            onPressed: () =>
+                context.read<LocaleCubit>().setLocale(nextLocale),
             child: Text(
-              isSpanish ? 'EN' : 'ES',
+              nextLocale.languageCode.toUpperCase(),
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

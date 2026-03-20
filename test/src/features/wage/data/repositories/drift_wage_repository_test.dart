@@ -113,6 +113,27 @@ void main() {
   // Update operation: modifies an existing wage record.
   // Uses update(id, value:) unlike ObjectBox's single put() call.
   group('update', () {
+    // id=0 fallback: when the entity has no database-assigned ID,
+    // the repository inserts a new row instead of updating, mirroring
+    // ObjectBox's put() behaviour where id=0 triggers an INSERT.
+    test('inserts and returns entity with assigned id when id is 0', () async {
+      const wageWithZeroId = WageHourly(value: 30);
+      when(
+        () => mockDatasource.insert(value: any(named: 'value')),
+      ).thenAnswer((_) async => 42);
+
+      final result = await repository.update(wageWithZeroId);
+
+      expect(
+        result,
+        const Right<dynamic, WageHourly>(WageHourly(id: 42, value: 30)),
+      );
+      verify(() => mockDatasource.insert(value: 30)).called(1);
+      verifyNever(
+        () => mockDatasource.update(any(), value: any(named: 'value')),
+      );
+    });
+
     // Happy path: datasource accepts the update and the
     // repository returns the domain entity unchanged.
     test('returns Right with WageHourly on success', () async {
