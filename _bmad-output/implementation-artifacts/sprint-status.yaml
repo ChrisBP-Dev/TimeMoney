@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-17
-last_updated: 2026-03-20 # story 5-2 ready-for-dev
+last_updated: 2026-03-20 # story 5-2 review
 project: TimeMoney
 project_key: NOKEY
 tracking_system: file-system
@@ -81,7 +81,7 @@ development_status:
   # Epic 5: Quality — Widget Tests, Golden Tests & Coverage Validation
   epic-5: in-progress
   5-1-times-wage-feature-widget-tests: done
-  5-2-home-payment-shared-widget-tests: ready-for-dev
+  5-2-home-payment-shared-widget-tests: review
   5-3-golden-tests-coverage-validation: backlog
   epic-5-retrospective: optional
 

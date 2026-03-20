@@ -1,6 +1,6 @@
 # Story 5.2: Home, Payment & Shared Widget Tests
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -23,31 +23,31 @@ So that the cross-feature composition layer and reusable components are verified
 
 ### Task 1: Shared Widget Tests — Pure Presentation (AC: 5, 6)
 
-- [ ] 1.1 `test/src/shared/widgets/icon_text_test.dart` — renders text content inside FittedBox; default fontSize creates 60x60 SizedBox; custom fontSize creates matching SizedBox; uses TextScaler.noScaling
-- [ ] 1.2 `test/src/shared/widgets/info_section_test.dart` — renders infoMessage text centered; renders infoImage when provided (with bottom 32px padding); hides image area when null; renders actionWidget when provided (inside 60-height SizedBox); hides action area when null; renders 2 Spacers when actionWidget is null, 3 Spacers when actionWidget is provided (third Spacer below action)
-- [ ] 1.3 `test/src/shared/widgets/catch_error_builder_test.dart` — snapshot.hasError → custom error widget or default "Something went wrong" text; snapshot.waiting → custom loading widget or default CircularProgressIndicator.adaptive; snapshot.hasData → calls builder(data); no data/not waiting/no error → custom loading widget or fallback "error" text
+- [x] 1.1 `test/src/shared/widgets/icon_text_test.dart` — renders text content inside FittedBox; default fontSize creates 60x60 SizedBox; custom fontSize creates matching SizedBox; uses TextScaler.noScaling
+- [x] 1.2 `test/src/shared/widgets/info_section_test.dart` — renders infoMessage text centered; renders infoImage when provided (with bottom 32px padding); hides image area when null; renders actionWidget when provided (inside 60-height SizedBox); hides action area when null; renders 2 Spacers when actionWidget is null, 3 Spacers when actionWidget is provided (third Spacer below action)
+- [x] 1.3 `test/src/shared/widgets/catch_error_builder_test.dart` — snapshot.hasError → custom error widget or default "Something went wrong" text; snapshot.waiting → custom loading widget or default CircularProgressIndicator.adaptive; snapshot.hasData → calls builder(data); no data/not waiting/no error → custom loading widget or fallback "error" text
 
 ### Task 2: Shared Widget Tests — ErrorView (AC: 4)
 
-- [ ] 2.1 `test/src/shared/widgets/error_view_test.dart` — InternalError renders IconText('⚠️') + ShowInfoSection with message containing error string; TimeOutExceeded renders IconText('⏳') + timeout message; ServerError renders IconText('🚨') + server error message; NotConnection renders IconText('📡') + connection message; actionWidget renders when non-null; actionWidget absent when null. Note: error messages are hardcoded Spanish text (NOT localized) — verify via `tester.widget<ShowInfoSection>()` field inspection
+- [x] 2.1 `test/src/shared/widgets/error_view_test.dart` — InternalError renders IconText('⚠️') + ShowInfoSection with message containing error string; TimeOutExceeded renders IconText('⏳') + timeout message; ServerError renders IconText('🚨') + server error message; NotConnection renders IconText('📡') + connection message; actionWidget renders when non-null; actionWidget absent when null. Note: error messages are hardcoded Spanish text (NOT localized) — verify via `tester.widget<ShowInfoSection>()` field inspection
 
 ### Task 3: Payment Feature — PaymentResultPage (AC: 3)
 
-- [ ] 3.1 `test/src/features/payment/presentation/pages/payment_result_page_test.dart` — renders AlertDialog with localized title (`resultInfoTitle`); renders 4 ListTile entries (totalHours, totalMinutes, wageHourly with dollarsLabel, workedDays); totalPayment rendered as bold 28px Text inside Card (NOT a ListTile), formatted as `${currencyPrefix}${totalPayment.toStringAsFixed(2)}`; Divider separates ListTiles from totalPayment Card; close IconButton (Icons.cancel) pops dialog; save FilledButton pops dialog. Pure presentation — no BLoC mocks needed, receives `PaymentResult` via constructor
+- [x] 3.1 `test/src/features/payment/presentation/pages/payment_result_page_test.dart` — renders AlertDialog with localized title (`resultInfoTitle`); renders 4 ListTile entries (totalHours, totalMinutes, wageHourly with dollarsLabel, workedDays); totalPayment rendered as bold 28px Text inside Card (NOT a ListTile), formatted as `${currencyPrefix}${totalPayment.toStringAsFixed(2)}`; Divider separates ListTiles from totalPayment Card; close IconButton (Icons.cancel) pops dialog; save FilledButton pops dialog. Pure presentation — no BLoC mocks needed, receives `PaymentResult` via constructor
 
 ### Task 4: Home Feature — CalculatePaymentButton (AC: 2)
 
-- [ ] 4.1 `test/src/features/home/presentation/widgets/calculate_payment_button_test.dart` — renders FloatingActionButton.extended with localized `calculatePayment` label; onPressed is null when PaymentInitial (disabled); onPressed is non-null when PaymentReady (enabled); tap calls `mockPaymentCubit.calculate()`; on Right(PaymentResult) → showDialog opens PaymentResultPage (verify find.byType(PaymentResultPage) after pumpAndSettle); on Left(GlobalFailure) → no dialog opens. Needs MockPaymentCubit with stubbed `state` and `calculate()`
+- [x] 4.1 `test/src/features/home/presentation/widgets/calculate_payment_button_test.dart` — renders FloatingActionButton.extended with localized `calculatePayment` label; onPressed is null when PaymentInitial (disabled); onPressed is non-null when PaymentReady (enabled); tap calls `mockPaymentCubit.calculate()`; on Right(PaymentResult) → showDialog opens PaymentResultPage (verify find.byType(PaymentResultPage) after pumpAndSettle); on Left(GlobalFailure) → no dialog opens. Needs MockPaymentCubit with stubbed `state` and `calculate()`
 
 ### Task 5: Home Feature — HomePage Composition (AC: 1)
 
-- [ ] 5.1 `test/src/features/home/presentation/pages/home_page_test.dart` — renders Scaffold with AppBar showing localized homeTitle; renders FetchWagePage (find.byType); renders ListTimesPage (find.byType); renders addTime FAB (verify renders, do NOT tap — triggers CreateTimeCard dialog needing CreateTimeBloc not in scope); hides CalculatePaymentButton when PaymentInitial; shows CalculatePaymentButton when PaymentReady (use whenListen to transition); locale toggle OutlinedButton renders in AppBar actions showing next locale code; locale toggle tap cycles locale (verify button text changes from "ES" to "EN" after tap). Needs MultiBlocProvider with MockPaymentCubit, MockListTimesBloc, MockFetchWageBloc (all in initial/loading states to avoid deep widget tree dependencies)
+- [x] 5.1 `test/src/features/home/presentation/pages/home_page_test.dart` — renders Scaffold with AppBar showing localized homeTitle; renders FetchWagePage (find.byType); renders ListTimesPage (find.byType); renders addTime FAB (verify renders, do NOT tap — triggers CreateTimeCard dialog needing CreateTimeBloc not in scope); hides CalculatePaymentButton when PaymentInitial; shows CalculatePaymentButton when PaymentReady (use whenListen to transition); locale toggle OutlinedButton renders in AppBar actions showing next locale code; locale toggle tap cycles locale (verify button text changes from "ES" to "EN" after tap). Needs MultiBlocProvider with MockPaymentCubit, MockListTimesBloc, MockFetchWageBloc (all in initial/loading states to avoid deep widget tree dependencies)
 
 ### Task 6: Final Validation (AC: 7, 8)
 
-- [ ] 6.1 Run `flutter test --test-randomize-ordering-seed random` — all tests pass (existing 278 + new)
-- [ ] 6.2 Run `flutter analyze` — zero warnings on all files
-- [ ] 6.3 Verify dartdoc comments on all new test files (`///` file-level docs, `library;` directive, group/test comments)
+- [x] 6.1 Run `flutter test --test-randomize-ordering-seed random` — all tests pass (existing 278 + new)
+- [x] 6.2 Run `flutter analyze` — zero warnings on all files
+- [x] 6.3 Verify dartdoc comments on all new test files (`///` file-level docs, `library;` directive, group/test comments)
 
 ## Dev Notes
 
@@ -388,10 +388,33 @@ The codebase has 278 passing tests, zero linter warnings, and a mature widget te
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- PaymentResultPage required increased test surface (800x1200) to avoid AlertDialog column overflow in default 600px height
+- Story spec had incorrect relative import depths (stated 4 levels for shared widgets, actual is 3)
+
 ### Completion Notes List
 
+- Task 1 (AC 5, 6): Implemented 3 shared widget test files — IconText (4 tests), ShowInfoSection (6 tests), CatchErrorBuilder (7 tests)
+- Task 2 (AC 4): ErrorView test file with all 4 GlobalFailure subtypes verified (6 tests) — used field inspection on ShowInfoSection/IconText
+- Task 3 (AC 3): PaymentResultPage pure presentation tests (6 tests) — dialog wrapper pattern for pop verification, enlarged test surface
+- Task 4 (AC 2): CalculatePaymentButton tests (6 tests) — MockPaymentCubit with calculate() stub, Right/Left fold paths verified
+- Task 5 (AC 1): HomePage composition tests (8 tests) — MultiBlocProvider with 3 mocks, whenListen for PaymentReady transition, locale toggle cycling
+- Task 6 (AC 7, 8): Full suite 321 tests (278 existing + 43 new), zero linter warnings, all dartdoc/library directives present
+- Total new tests: 43 across 7 test files
+
+### Change Log
+
+- 2026-03-20: Implemented story 5.2 — 7 new test files, 43 widget tests for home, payment, and shared widgets
+
 ### File List
+
+- test/src/shared/widgets/icon_text_test.dart (new)
+- test/src/shared/widgets/info_section_test.dart (new)
+- test/src/shared/widgets/catch_error_builder_test.dart (new)
+- test/src/shared/widgets/error_view_test.dart (new)
+- test/src/features/payment/presentation/pages/payment_result_page_test.dart (new)
+- test/src/features/home/presentation/widgets/calculate_payment_button_test.dart (new)
+- test/src/features/home/presentation/pages/home_page_test.dart (new)
