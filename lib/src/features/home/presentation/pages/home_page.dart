@@ -84,18 +84,26 @@ class _LocaleToggle extends StatelessWidget {
         };
         final isSpanish = currentCode == 'es';
 
-        return IconButton(
-          tooltip: isSpanish ? 'English' : 'Español',
-          onPressed: () => context.read<LocaleCubit>().setLocale(
-                isSpanish
-                    ? const Locale('en')
-                    : const Locale('es'),
+        return Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.white70),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              minimumSize: const Size(0, 32),
+            ),
+            onPressed: () => context.read<LocaleCubit>().setLocale(
+                  isSpanish
+                      ? const Locale('en')
+                      : const Locale('es'),
+                ),
+            child: Text(
+              isSpanish ? 'EN' : 'ES',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
-          icon: Text(
-            isSpanish ? 'EN' : 'ES',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
             ),
           ),
         );
