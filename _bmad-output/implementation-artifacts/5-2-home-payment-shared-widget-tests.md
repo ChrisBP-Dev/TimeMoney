@@ -102,7 +102,17 @@ await tester.pumpApp(
 - Both show shimmer/loading views when in Initial state — no deep widget tree dependencies
 - `context.getHeight * .13` in HomePage depends on `MediaQuery.of(context).size.height` — test environment defaults to 600px, action bar will be 78px height. No layout overflow expected
 
-**PaymentReady conditional rendering:** To test CalculatePaymentButton appearing, use `whenListen` to transition from PaymentInitial to PaymentReady, then `pump()`.
+**PaymentReady conditional rendering:** To test CalculatePaymentButton appearing, use `whenListen` (from `bloc_test`) to transition from PaymentInitial to PaymentReady, then `pump()`:
+```dart
+whenListen(
+  mockPaymentCubit,
+  Stream.value(PaymentReady(times: testTimes, wageHourly: 15.0)),
+  initialState: const PaymentInitial(),
+);
+await tester.pumpApp(buildSubject());
+await tester.pump(); // process stream → PaymentReady
+expect(find.byType(CalculatePaymentButton), findsOneWidget);
+```
 
 **Listener side-effects in loaded states:** When MockListTimesBloc or MockFetchWageBloc emit loaded states (via `whenListen`), the BlocConsumer listeners in `ListTimesPage` and `FetchWagePage` will call `mockPaymentCubit.setTimes()` and `mockPaymentCubit.setWage()`. These are void methods on MockCubit and are handled silently — no stubbing needed, but be aware if using `verifyNever` assertions.
 
@@ -211,17 +221,17 @@ const nothingSnapshot = AsyncSnapshot<String>.nothing();
 
 Test both with custom widgets provided and with defaults (null parameters).
 
-**Behavioral asymmetry:** In the waiting branch, if `loading` is provided it's returned directly (no wrapper). In the fallback branch (no data/not waiting/no error), the `loading` widget is wrapped in `Center(child: loading)`. The default `_Loading` widget has its own `Center` wrapper internally. Be aware of this when asserting widget ancestors.
+**Behavioral asymmetry:** In the waiting branch, if `loading` is provided it's returned directly (no wrapper). In the fallback branch (no data/not waiting/no error), the `loading` widget is wrapped in `Center(child: loading)`. The default `_Loading` widget has its own `Center` wrapper internally. To assert this difference, use `find.ancestor(of: find.byType(CustomWidget), matching: find.byType(Center))` — it will find a Center ancestor in the fallback branch but NOT in the waiting branch when a custom loading is provided.
 
 ### Locale Toggle Testing (Inside HomePage)
 
-`_LocaleToggle` is private — tested via HomePage integration. Real `LocaleCubit` from pumpApp works:
+`_LocaleToggle` is private — tested via HomePage integration. Real `LocaleCubit` from pumpApp works.
 
-1. Initial state: `LocaleSystem()` → resolves to test default locale ('en')
-2. Button shows next locale code ("ES")
-3. Tap → `setLocale(Locale('es'))` → `LocaleSelected(Locale('es'))`
-4. Rebuild → button shows "EN"
-5. Verify text change via `tester.widget<Text>()` or `find.text('ES')` / `find.text('EN')`
+**`AppLocalizations.supportedLocales` order:** `[Locale('en'), Locale('es')]` — English first, Spanish second. This order drives the cycling logic below.
+
+1. Initial state: `LocaleSystem()` → `Localizations.localeOf(context)` returns 'en' (test default) → currentIndex=0, nextIndex=1 → button shows "ES"
+2. Tap → `setLocale(Locale('es'))` → state becomes `LocaleSelected(Locale('es'))` → currentIndex=1, nextIndex=0 → button shows "EN"
+3. Verify text change via `find.text('ES')` before tap, `find.text('EN')` after tap
 
 **Note:** pumpApp's MaterialApp does NOT listen to LocaleCubit for locale switching (no `locale:` parameter). The toggle's `BlocBuilder` rebuilds correctly based on cubit state, but `context.l10n` locale doesn't change. Test verifies the toggle cycling logic, not full app locale switch.
 
@@ -229,7 +239,9 @@ Test both with custom widgets provided and with defaults (null parameters).
 
 Unlike Story 5.1, the dialogs in this story (PaymentResultPage) are **pure presentation** with no BLoC dependencies. They only need `context.l10n` (inherited from MaterialApp localization). The Navigator overlay dialog context CAN access localization delegates. No provider scope workaround needed.
 
-For the addTime button in HomePage (opens CreateTimeCard dialog): **do NOT tap the addTime button in HomePage tests** — tapping triggers `showDialog(builder: (_) => CreateTimeCard())` which requires `CreateTimeBloc` from context. Since no `MockCreateTimeBloc` is provided in the MultiBlocProvider setup (and the dialog context in the Navigator overlay can't find it anyway), tapping will throw `ProviderNotFoundException`. Only verify the addTime FAB renders via `find.byType(FloatingActionButton)`. CreateTimeCard dialogs are already tested in Story 5.1.
+For the addTime button in HomePage (opens CreateTimeCard dialog): **do NOT tap the addTime button in HomePage tests** — tapping triggers `showDialog(builder: (_) => CreateTimeCard())` which requires `CreateTimeBloc` from context. Since no `MockCreateTimeBloc` is provided in the MultiBlocProvider setup (and the dialog context in the Navigator overlay can't find it anyway), tapping will throw `ProviderNotFoundException`. CreateTimeCard dialogs are already tested in Story 5.1.
+
+**Disambiguating addTime FAB from CalculatePaymentButton:** When `PaymentReady`, the action bar contains **two** `FloatingActionButton.extended` widgets. Do NOT use `find.byType(FloatingActionButton)` alone — it matches both. Instead use `find.widgetWithText(FloatingActionButton, addTimeLabel)` or locate by localized text: `find.text(l10n.addTime)`. For the initial-state test (only addTime visible), `find.byType(FloatingActionButton)` is safe (only one FAB present).
 
 ### registerFallbackValue for Widget Tests
 
@@ -262,6 +274,12 @@ const testTimes = [
 ];
 
 const testFailure = InternalError('test error');
+
+// PaymentReady state for mock stubbing (requires times + wageHourly)
+final testPaymentReady = PaymentReady(
+  times: testTimes,
+  wageHourly: 15.0,
+);
 ```
 
 ### Test File Count
@@ -306,8 +324,14 @@ import 'package:time_money/src/features/wage/presentation/bloc/fetch_wage_bloc.d
 // Testing
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fpdart/fpdart.dart';
+
+// Test helpers (relative — adjust depth per test file location)
+// Shared widgets (4 levels): import '../../../../helpers/helpers.dart';
+// Home/Payment pages (6 levels): import '../../../../../../helpers/helpers.dart';
+// Home widgets (6 levels): import '../../../../../../helpers/helpers.dart';
 ```
 
 ### Recommended Execution Order
@@ -345,13 +369,9 @@ Execute tasks by complexity to reduce debugging time:
 
 ### Previous Story Intelligence (Story 5.1)
 
-- **278 tests pass** — must not regress
-- **MockBloc/MockCubit infrastructure** complete — all 7 mock classes in mocks.dart cover this story's needs
-- **pumpApp** provides LocaleCubit + MaterialApp + l10n — sufficient for all widget tests
-- **BlocConsumer widgets cannot use pumpAndSettle()** — but this story's dialogs (PaymentResultPage) are pure, so pumpAndSettle IS safe here
-- **Dialog provider scope** — only affects BLoC-dependent dialogs. PaymentResultPage is pure, no scope issue. CreateTimeCard dialog in HomePage NOT tested (already covered in 5.1)
-- **Error messages in ErrorView are hardcoded Spanish** — safe to assert specific strings, unlike localized text
+Key learnings not covered elsewhere in this story:
 - **Story 5.1 code review learnings**: verify event payloads with captureAny, test pop-on-success via dialog wrapper pattern, always stub state BEFORE pumping
+- **pumpAndSettle IS safe** in this story — PaymentResultPage dialogs are pure (no BlocConsumer streams), unlike Story 5.1 BLoC-dependent dialogs
 
 ### Git Intelligence
 
