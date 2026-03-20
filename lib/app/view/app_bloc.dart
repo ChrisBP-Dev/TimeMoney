@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/app/app.dart';
+import 'package:time_money/src/core/locale/locale.dart';
 import 'package:time_money/src/features/times/domain/repositories/times_repository.dart';
 import 'package:time_money/src/features/wage/domain/repositories/wage_repository.dart';
 import 'package:time_money/src/shared/injections/bloc_injections.dart';
@@ -8,8 +9,11 @@ import 'package:time_money/src/shared/injections/use_cases_injection.dart';
 
 /// Top-level widget that wires repositories, use cases, and BLoCs.
 ///
-/// Wraps the [App] in [MultiRepositoryProvider] and [MultiBlocProvider],
-/// providing all feature-level dependencies to the widget tree.
+/// Wraps the [App] in a provider hierarchy:
+/// 1. [LocaleCubit] — outermost, no dependencies, controls
+///    `MaterialApp.locale` in [App].
+/// 2. [MultiRepositoryProvider] — repositories and use cases.
+/// 3. [MultiBlocProvider] — feature-level BLoCs and cubits.
 class AppBloc extends StatelessWidget {
   /// Creates an [AppBloc] with the required repository implementations.
   const AppBloc({
@@ -26,15 +30,20 @@ class AppBloc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<TimesRepository>.value(value: timesRepository),
-        RepositoryProvider<WageRepository>.value(value: wageHourlyRepository),
-        ...UseCasesInjection.list(),
-      ],
-      child: MultiBlocProvider(
-        providers: BlocInjections.list(),
-        child: const App(),
+    return BlocProvider(
+      create: (_) => LocaleCubit(),
+      child: MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider<TimesRepository>.value(value: timesRepository),
+          RepositoryProvider<WageRepository>.value(
+            value: wageHourlyRepository,
+          ),
+          ...UseCasesInjection.list(),
+        ],
+        child: MultiBlocProvider(
+          providers: BlocInjections.list(),
+          child: const App(),
+        ),
       ),
     );
   }
