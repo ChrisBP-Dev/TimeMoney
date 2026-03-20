@@ -112,6 +112,35 @@ void main() {
 
     // -- PaymentCubit listener sync tests (P2) --
 
+    testWidgets('renders WageHourlyCard on Loaded state with zero wage',
+        (tester) async {
+      when(() => mockFetchBloc.state).thenReturn(
+        const FetchWageLoaded(WageHourly(id: 1, value: 0)),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      expect(find.byType(WageHourlyCard), findsOneWidget);
+    });
+
+    testWidgets(
+        'listener calls setWage(0) on Loaded with zero wage',
+        (tester) async {
+      whenListen(
+        mockFetchBloc,
+        Stream.value(
+          const FetchWageLoaded(WageHourly(id: 1, value: 0)),
+        ),
+        initialState: const FetchWageInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verify(() => mockPaymentCubit.setWage(0)).called(1);
+    });
+
     testWidgets('listener calls setWage on Loaded state', (tester) async {
       const testWage = WageHourly(id: 1, value: 15.5);
       whenListen(

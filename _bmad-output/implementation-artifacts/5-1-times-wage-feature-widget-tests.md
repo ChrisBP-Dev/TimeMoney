@@ -388,10 +388,11 @@ Claude Opus 4.6 (1M context)
 - **BS1**: Added null-time pre-population edge case tests for UpdateHourField and UpdateMinutesField
 - **BS2**: Added negative-path listenWhen tests for CreateHourField and CreateMinutesField
 
-**Deferred (1):**
-- **D1**: FetchWagePage wage value 0.0 boundary — not spec-required, noted for future coverage
+**Deferred (0):** None — all findings resolved.
 
-**Post-review validation:** 276 tests pass (261 prior + 15 new from CR), zero flutter analyze warnings.
+**D1 originally deferred, then resolved:** FetchWagePage wage value 0.0 boundary — added rendering test and listener sync test with `WageHourly(value: 0.0)`. Originally deferred with weak justification ("not spec-required"), corrected after applying learned criteria: never default to accepting issues without irrefutable justification.
+
+**Post-review validation:** 278 tests pass (261 prior + 17 new from CR), zero flutter analyze warnings.
 
 ### File List
 
