@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-17
-last_updated: 2026-03-20 # story 4.5 done
+last_updated: 2026-03-20 # epic 4 retrospective done
 project: TimeMoney
 project_key: NOKEY
 tracking_system: file-system
@@ -70,13 +70,13 @@ development_status:
   epic-3-retrospective: done
 
   # Epic 4: Platform — Multi-Datasource, Multi-Platform & Localization
-  epic-4: in-progress
+  epic-4: done
   4-1-drift-database-setup-core-infrastructure: done
   4-2-times-feature-drift-datasource-repository-implementation: done
   4-3-wage-feature-drift-datasource-repository-implementation: done
   4-4-platform-aware-di-multi-environment-configuration: done
   4-5-multi-platform-verification-localization-validation: done
-  epic-4-retrospective: optional
+  epic-4-retrospective: done
 
   # Epic 5: Quality — Widget Tests, Golden Tests & Coverage Validation
   epic-5: backlog
