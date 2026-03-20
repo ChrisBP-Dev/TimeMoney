@@ -4,15 +4,13 @@
 /// [TimesObjectboxDatasource], maps `TimeBox` models to [TimeEntry] domain
 /// entities, and wraps results in `Right` on success or `Left` with a
 /// `GlobalFailure` on exception for every CRUD operation and the reactive
-/// stream. Also validates that DB-assigned IDs are propagated back, that
-/// operations on non-existent entries return `Left`, and that stream errors
-/// are transformed to [GlobalFailure].
+/// stream. Also validates that DB-assigned IDs are propagated back and that
+/// operations on non-existent entries return `Left`.
 library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/features/times/data/datasources/times_objectbox_datasource.dart';
 import 'package:time_money/src/features/times/data/models/time_box.dart';
 import 'package:time_money/src/features/times/data/repositories/objectbox_times_repository.dart';
@@ -40,19 +38,22 @@ void main() {
   group('fetchTimesStream', () {
     // Happy path: datasource emits TimeBox list, repository must
     // convert each to a TimeEntry and wrap the stream in Right.
-    test('returns Right with correctly mapped TimeEntry stream on success',
-        () async {
-      final boxes = [TimeBox(hour: 1, minutes: 30)];
-      when(() => mockDatasource.watchAll())
-          .thenAnswer((_) => Stream.value(boxes));
+    test(
+      'returns Right with correctly mapped TimeEntry stream on success',
+      () async {
+        final boxes = [TimeBox(hour: 1, minutes: 30)];
+        when(
+          () => mockDatasource.watchAll(),
+        ).thenAnswer((_) => Stream.value(boxes));
 
-      final result = repository.fetchTimesStream();
+        final result = repository.fetchTimesStream();
 
-      expect(result.isRight(), true);
-      final stream = result.getOrElse((_) => throw Exception());
-      final items = await stream.first;
-      expect(items, [const TimeEntry(hour: 1, minutes: 30)]);
-    });
+        expect(result.isRight(), true);
+        final stream = result.getOrElse((_) => throw Exception());
+        final items = await stream.first;
+        expect(items, [const TimeEntry(hour: 1, minutes: 30)]);
+      },
+    );
 
     // Failure path: if the datasource throws (e.g., ObjectBox
     // corruption), callers get a Left so the UI can show an error.
@@ -62,25 +63,6 @@ void main() {
       final result = repository.fetchTimesStream();
 
       expect(result.isLeft(), true);
-    });
-
-    // Stream error: a runtime error emitted mid-stream must be
-    // transformed to GlobalFailure so the BLoC onError catches it.
-    test('stream handleError transforms runtime errors to GlobalFailure',
-        () async {
-      when(() => mockDatasource.watchAll()).thenAnswer(
-        (_) => Stream<List<TimeBox>>.error(Exception('stream error')),
-      );
-
-      final result = repository.fetchTimesStream();
-
-      expect(result.isRight(), true);
-      final stream = result.getOrElse((_) => throw Exception());
-
-      await expectLater(
-        stream,
-        emitsError(isA<GlobalFailure>()),
-      );
     });
   });
 

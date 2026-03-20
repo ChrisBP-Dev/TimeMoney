@@ -247,6 +247,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// Error message shown when database initialization fails at startup
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to initialize database:\n{error}'**
+  String bootstrapError(String error);
 }
 
 class _AppLocalizationsDelegate

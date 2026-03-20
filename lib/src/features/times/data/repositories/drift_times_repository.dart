@@ -19,17 +19,9 @@ class DriftTimesRepository implements TimesRepository {
   @override
   FetchTimesResultStream fetchTimesStream() {
     try {
-      final stream = _datasource
-          .watchAll()
-          .map(
+      final stream = _datasource.watchAll().map(
             (rows) => rows.map((row) => row.toTimeEntry).toList(),
-          )
-          .handleError((Object error, StackTrace stack) {
-        Error.throwWithStackTrace(
-          GlobalFailure.fromException(error, stack),
-          stack,
-        );
-      });
+          );
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));

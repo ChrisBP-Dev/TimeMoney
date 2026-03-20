@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:time_money/app/app.dart';
 import 'package:time_money/bootstrap_repositories_web.dart'
     if (dart.library.io) 'package:time_money/bootstrap_repositories_native.dart';
+import 'package:time_money/l10n/l10n.dart';
 
 /// BLoC observer that logs state changes and errors for debugging.
 class AppBlocObserver extends BlocObserver {
@@ -67,8 +68,10 @@ class _AppLifecycleObserver extends WidgetsBindingObserver {
 /// from native builds.
 ///
 /// Database creation happens inside [runZonedGuarded] so that init failures
-/// are caught and logged. An [_AppLifecycleObserver] is registered to close
-/// the database when the app lifecycle reaches [AppLifecycleState.detached].
+/// are caught, logged, and presented to the user via [_BootstrapErrorApp]
+/// instead of a blank screen. An [_AppLifecycleObserver] is registered to
+/// close the database when the app lifecycle reaches
+/// [AppLifecycleState.detached].
 ///
 /// The [dbName] parameter isolates databases per environment
 /// (`test-1`, `stg-1`, `prod-1`).
@@ -83,18 +86,55 @@ Future<void> bootstrap({required String dbName}) async {
 
   await runZonedGuarded(
     () async {
-      final (:timesRepository, :wageRepository, :close) =
-          await createRepositories(dbName);
+      try {
+        final (:timesRepository, :wageRepository, :close) =
+            await createRepositories(dbName);
 
-      WidgetsBinding.instance.addObserver(_AppLifecycleObserver(close));
+        WidgetsBinding.instance.addObserver(_AppLifecycleObserver(close));
 
-      runApp(
-        AppBloc(
-          timesRepository: timesRepository,
-          wageHourlyRepository: wageRepository,
-        ),
-      );
+        runApp(
+          AppBloc(
+            timesRepository: timesRepository,
+            wageHourlyRepository: wageRepository,
+          ),
+        );
+      } on Object catch (error, stackTrace) {
+        log('Bootstrap failed: $error', stackTrace: stackTrace);
+        runApp(_BootstrapErrorApp(error: error));
+      }
     },
     (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
   );
+}
+
+/// Minimal fallback app displayed when database initialization fails.
+///
+/// Shows a localized error message so the user sees feedback instead of a
+/// blank screen. Uses a [Builder] to obtain a [BuildContext] with access
+/// to the localization delegates configured in the [MaterialApp].
+class _BootstrapErrorApp extends StatelessWidget {
+  const _BootstrapErrorApp({required this.error});
+
+  final Object error;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Builder(
+              builder: (context) => Text(
+                context.l10n.bootstrapError(error.toString()),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

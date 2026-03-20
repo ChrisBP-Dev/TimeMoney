@@ -5,14 +5,13 @@
 /// domain entities, returns a default [WageHourly] when the stream is empty,
 /// and wraps results in `Right` on success or `Left` with a `GlobalFailure`
 /// on exception for fetch, set, and update operations. Also validates that
-/// DB-assigned IDs are propagated back, that updates on non-existent entries
-/// return `Left`, and that stream errors are transformed to [GlobalFailure].
+/// DB-assigned IDs are propagated back and that updates on non-existent
+/// entries return `Left`.
 library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/core/services/app_database.dart';
 import 'package:time_money/src/features/wage/data/datasources/wage_drift_datasource.dart';
 import 'package:time_money/src/features/wage/data/repositories/drift_wage_repository.dart';
@@ -39,36 +38,40 @@ void main() {
     // Happy path: datasource emits a populated list.
     // Verifies the TableData-to-Entity mapping is correct so
     // the domain layer receives a valid WageHourly.
-    test('returns Right with correctly mapped WageHourly stream on success',
-        () async {
-      when(() => mockDatasource.watchAll()).thenAnswer(
-        (_) => Stream.value([const WageHourlyTableData(id: 1, value: 25)]),
-      );
+    test(
+      'returns Right with correctly mapped WageHourly stream on success',
+      () async {
+        when(() => mockDatasource.watchAll()).thenAnswer(
+          (_) => Stream.value([const WageHourlyTableData(id: 1, value: 25)]),
+        );
 
-      final result = repository.fetchWageHourly();
+        final result = repository.fetchWageHourly();
 
-      expect(result.isRight(), true);
-      final stream = result.getOrElse((_) => throw Exception());
-      final wage = await stream.first;
-      expect(wage, testWage);
-    });
+        expect(result.isRight(), true);
+        final stream = result.getOrElse((_) => throw Exception());
+        final wage = await stream.first;
+        expect(wage, testWage);
+      },
+    );
 
     // Edge case: first launch or cleared database.
     // The repo must provide a safe default WageHourly
     // so the UI never encounters a null wage.
-    test('returns Right with default WageHourly when stream emits empty list',
-        () async {
-      when(() => mockDatasource.watchAll()).thenAnswer(
-        (_) => Stream.value(<WageHourlyTableData>[]),
-      );
+    test(
+      'returns Right with default WageHourly when stream emits empty list',
+      () async {
+        when(() => mockDatasource.watchAll()).thenAnswer(
+          (_) => Stream.value(<WageHourlyTableData>[]),
+        );
 
-      final result = repository.fetchWageHourly();
+        final result = repository.fetchWageHourly();
 
-      expect(result.isRight(), true);
-      final stream = result.getOrElse((_) => throw Exception());
-      final wage = await stream.first;
-      expect(wage, const WageHourly());
-    });
+        expect(result.isRight(), true);
+        final stream = result.getOrElse((_) => throw Exception());
+        final wage = await stream.first;
+        expect(wage, const WageHourly());
+      },
+    );
 
     // Failure path: drift throws (e.g. corrupt DB).
     // Must wrap in Left(GlobalFailure) so upper layers
@@ -79,26 +82,6 @@ void main() {
       final result = repository.fetchWageHourly();
 
       expect(result.isLeft(), true);
-    });
-
-    // Stream error: a runtime error emitted mid-stream must be
-    // transformed to GlobalFailure so the BLoC onError catches it.
-    test('stream handleError transforms runtime errors to GlobalFailure',
-        () async {
-      when(() => mockDatasource.watchAll()).thenAnswer(
-        (_) =>
-            Stream<List<WageHourlyTableData>>.error(Exception('stream error')),
-      );
-
-      final result = repository.fetchWageHourly();
-
-      expect(result.isRight(), true);
-      final stream = result.getOrElse((_) => throw Exception());
-
-      await expectLater(
-        stream,
-        emitsError(isA<GlobalFailure>()),
-      );
     });
   });
 

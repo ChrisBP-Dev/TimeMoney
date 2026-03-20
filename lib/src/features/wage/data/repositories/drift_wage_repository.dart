@@ -19,20 +19,12 @@ class DriftWageRepository implements WageRepository {
   @override
   FetchWageResultStream fetchWageHourly() {
     try {
-      final stream = _datasource
-          .watchAll()
-          .map(
-            (rows) {
-              final wages = rows.map((row) => row.toWageHourly).toList();
-              return wages.isEmpty ? const WageHourly() : wages.last;
-            },
-          )
-          .handleError((Object error, StackTrace stack) {
-        Error.throwWithStackTrace(
-          GlobalFailure.fromException(error, stack),
-          stack,
-        );
-      });
+      final stream = _datasource.watchAll().map(
+        (rows) {
+          final wages = rows.map((row) => row.toWageHourly).toList();
+          return wages.isEmpty ? const WageHourly() : wages.last;
+        },
+      );
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));

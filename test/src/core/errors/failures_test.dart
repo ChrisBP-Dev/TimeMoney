@@ -113,13 +113,14 @@ void main() {
     // fromException is the single conversion point from
     // raw platform exceptions to typed domain failures.
     group('fromException', () {
-      // SocketException indicates no network — mapping it to
-      // NotConnection lets the UI show an offline banner.
-      test('SocketException maps to NotConnection', () {
+      // SocketException is a dart:io type — in the domain layer it maps
+      // to InternalError (the catch-all) rather than NotConnection,
+      // keeping the core free of platform imports.
+      test('SocketException maps to InternalError', () {
         final failure = GlobalFailure.fromException(
           const SocketException('no network'),
         );
-        expect(failure, isA<NotConnection>());
+        expect(failure, isA<InternalError>());
       });
 
       // TimeoutException must map to its own variant so
@@ -186,11 +187,10 @@ void main() {
       expect(ServerError(code), const ServerError('500'));
     });
 
-    // Factory-created and const instances must be equal so
-    // bloc dedup works after fromException conversion.
+    // Const singletons must be equal so bloc dedup works.
     test('NotConnection instances are equal', () {
-      // fromException returns a runtime NotConnection — tests == override
-      final a = GlobalFailure.fromException(const SocketException(''));
+      // Two const NotConnection instances must be identical
+      const a = NotConnection();
       expect(a, const NotConnection());
     });
 

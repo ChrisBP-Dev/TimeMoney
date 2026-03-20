@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
@@ -86,11 +85,13 @@ sealed class GlobalFailure {
 
   /// Maps a raw [err] (and optional [st]) to a typed [GlobalFailure].
   ///
-  /// - [SocketException] -> [NotConnection]
   /// - [TimeoutException] -> [TimeOutExceeded]
   /// - Everything else -> [InternalError] (logged in debug mode)
+  ///
+  /// Platform-specific exception mapping (e.g. `SocketException` ->
+  /// [NotConnection]) belongs in the data layer, not here. The domain
+  /// factory only handles platform-agnostic types.
   factory GlobalFailure.fromException(Object err, [StackTrace? st]) {
-    if (err is SocketException) return const NotConnection();
     if (err is TimeoutException) return const TimeOutExceeded();
     if (kDebugMode) {
       developer.log('Exception Failure', error: err, stackTrace: st);
@@ -119,8 +120,10 @@ final class ServerError extends GlobalFailure {
 
 /// Indicates the device has no network connectivity.
 ///
-/// Produced when a [SocketException] is caught by
-/// [GlobalFailure.fromException].
+/// Available for use by data-layer code that catches platform-specific
+/// network exceptions (e.g. `SocketException`). Not produced directly
+/// by [GlobalFailure.fromException] — platform mapping belongs in the
+/// data layer per Dependency Inversion.
 @immutable
 final class NotConnection extends GlobalFailure {
   /// Creates a [NotConnection] instance.

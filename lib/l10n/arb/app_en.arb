@@ -104,5 +104,14 @@
     "retry": "Retry",
     "@retry": {
         "description": "Button label for retry action on error states"
+    },
+    "bootstrapError": "Failed to initialize database:\n{error}",
+    "@bootstrapError": {
+        "description": "Error message shown when database initialization fails at startup",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     }
 }

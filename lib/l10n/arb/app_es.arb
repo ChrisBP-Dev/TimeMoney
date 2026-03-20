@@ -24,5 +24,6 @@
     "workedDaysLabel": "Días trabajados:",
     "currencyPrefix": "$/. ",
     "save": "Guardar",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "bootstrapError": "Error al inicializar la base de datos:\n{error}"
 }

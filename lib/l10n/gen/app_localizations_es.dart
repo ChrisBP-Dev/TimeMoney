@@ -85,4 +85,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retry => 'Reintentar';
+
+  @override
+  String bootstrapError(String error) {
+    return 'Error al inicializar la base de datos:\n$error';
+  }
 }

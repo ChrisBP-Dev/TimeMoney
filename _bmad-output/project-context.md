@@ -119,7 +119,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 **Edge Cases:**
 - ObjectBox `put()` returns an `int` ID — domain models use `@Default(0) int id` for new entities
-- `GlobalFailure.fromException()` handles `SocketException` → `NotConnection()` and `TimeoutException` → `TimeOutExceeded()` — add new exception mappings there, not in repositories
+- `GlobalFailure.fromException()` handles `TimeoutException` → `TimeOutExceeded()` and everything else → `InternalError`. Platform-specific mappings (e.g. `SocketException` → `NotConnection`) belong in the data layer per Dependency Inversion, NOT in the domain factory
 - `TimeBox` and `WageHourlyBox` are ObjectBox-specific entities separate from domain models — always map between them using `.toTimeBox` / `.toTimeEntry` extensions
 - Sealed class subtypes must carry parent state fields (e.g., `hour`, `minutes` carried in all `CreateTimeState` subtypes)
 
