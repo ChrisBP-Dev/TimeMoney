@@ -108,6 +108,59 @@ import 'package:time_money/src/features/wage/data/repositories/drift_wage_reposi
 // Domain interfaces
 import 'package:time_money/src/features/times/domain/repositories/times_repository.dart';
 import 'package:time_money/src/features/wage/domain/repositories/wage_repository.dart';
+
+
+/// Bootstraps the app with platform-aware DI and environment-specific database.
+///
+/// Uses [kIsWeb] compile-time constant for platform detection:
+/// - Web → drift ([AppDatabase]) with SQLite via WASM + OPFS
+/// - Native → ObjectBox ([ObjectBox]) with native binary store
+///
+/// The [dbName] parameter isolates databases per environment
+/// (`test-1`, `stg-1`, `prod-1`).
+Future<void> bootstrap({required String dbName}) async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = (details) {
+    log(details.exceptionAsString(), stackTrace: details.stack);
+  };
+
+  Bloc.observer = const AppBlocObserver();
+
+  // Platform-aware datasource and repository resolution.
+  final TimesRepository timesRepository;
+  final WageRepository wageRepository;
+
+  if (kIsWeb) {
+    // drift stack — synchronous creation.
+    final db = AppDatabase.named(dbName);
+    final timesDatasource = TimesDriftDatasource(db);
+    final wageDatasource = WageDriftDatasource(db);
+    timesRepository = DriftTimesRepository(timesDatasource);
+    wageRepository = DriftWageRepository(wageDatasource);
+  } else {
+    // ObjectBox stack — asynchronous creation.
+    final objectbox = await ObjectBox.create(dbName);
+    final timesDatasource = TimesObjectboxDatasource(
+      objectbox.store.box<TimeBox>(),
+    );
+    final wageDatasource = WageObjectboxDatasource(
+      objectbox.store.box<WageHourlyBox>(),
+    );
+    timesRepository = ObjectboxTimesRepository(timesDatasource);
+    wageRepository = ObjectboxWageRepository(wageDatasource);
+  }
+
+  await runZonedGuarded(
+    () async => runApp(
+      AppBloc(
+        timesRepository: timesRepository,
+        wageHourlyRepository: wageRepository,
+      ),
+    ),
+    (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
+  );
+}
 ```
 
 **Key architectural decisions:**
@@ -182,7 +235,7 @@ When building for native (AOT):
 ### Required Imports in Refactored bootstrap.dart
 
 **Keep existing:**
-- `dart:async` (for `FutureOr` — check if still needed after signature change; remove if unused)
+- `dart:async` — still needed for `runZonedGuarded` (`FutureOr` no longer needed after signature change)
 - `dart:developer` (for `log`)
 - `package:bloc/bloc.dart` (for `Bloc.observer`, `BlocObserver`)
 - `package:flutter/widgets.dart` (for `WidgetsFlutterBinding`, `runApp`, `FlutterError`, `Widget` + gives `kIsWeb`)
@@ -210,8 +263,8 @@ When building for native (AOT):
 - `package:time_money/src/features/times/domain/repositories/times_repository.dart`
 - `package:time_money/src/features/wage/domain/repositories/wage_repository.dart`
 
-**Remove if unused after refactoring:**
-- `dart:async` — check if `FutureOr` is still referenced (the old signature used it; new signature does not)
+**Note on `dart:async`:**
+- `FutureOr` is no longer referenced after signature change, but `dart:async` is still required for `runZonedGuarded` — do NOT remove
 
 ### Previous Story Intelligence
 
