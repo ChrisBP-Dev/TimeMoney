@@ -33,23 +33,21 @@ class ListTimesPage extends StatelessWidget {
       builder: (context, state) => switch (state) {
         ListTimesInitial() => const ShimmerListTimesView(),
         ListTimesLoading() => const ShimmerListTimesView(),
-        ListTimesEmpty() =>
-          const EmptyListTimesView(actionWidget: _ActionWidget()),
+        ListTimesEmpty() => const EmptyListTimesView(),
         ListTimesError(:final failure) => ErrorListTimesView(
             failure,
-            actionWidget: const _ActionWidget(),
+            actionWidget: Builder(
+              builder: (context) => FilledButton.icon(
+                onPressed: () => context
+                    .read<ListTimesBloc>()
+                    .add(const ListTimesRequested()),
+                icon: const Icon(Icons.refresh),
+                label: Text(context.l10n.retry),
+              ),
+            ),
           ),
         ListTimesLoaded(:final times) => ListTimesDataView(times: times),
       },
     );
-  }
-}
-
-class _ActionWidget extends StatelessWidget {
-  const _ActionWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(onPressed: () {}, child: Text(context.l10n.error));
   }
 }

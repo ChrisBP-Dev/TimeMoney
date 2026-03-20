@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/l10n/l10n.dart';
+import 'package:time_money/src/core/constants/break_points.dart';
 import 'package:time_money/src/core/extensions/screen_size.dart';
 import 'package:time_money/src/core/locale/locale.dart';
 import 'package:time_money/src/features/home/presentation/widgets/widgets.dart';
+import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:time_money/src/features/times/presentation/pages/list_times_page.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/wage/presentation/pages/fetch_wage_page.dart';
@@ -32,39 +34,48 @@ class HomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: const [_LocaleToggle()],
       ),
-      body: Column(
-        children: [
-          const FetchWagePage(),
-          const Expanded(child: ListTimesPage()),
-          SafeArea(
-            child: Container(
-              color: Theme.of(context)
-                  .colorScheme
-                  .surface
-                  .withValues(alpha: .2),
-              height: context.getHeight * .13,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  const CalculatePaymentButton(),
-                  FloatingActionButton.extended(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    onPressed: () {
-                      unawaited(showDialog<void>(
-                        context: context,
-                        builder: (context) => const CreateTimeCard(),
-                      ));
-                    },
-                    label: Text(
-                      context.l10n.addTime,
-                      style: const TextStyle(color: Colors.white),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: BreakPoints.maxMobile),
+          child: Column(
+            children: [
+              const FetchWagePage(),
+              const Expanded(child: ListTimesPage()),
+              SafeArea(
+                child: Container(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withValues(alpha: .2),
+                  height: context.getHeight * .13,
+                  child: BlocBuilder<PaymentCubit, PaymentState>(
+                    builder: (context, paymentState) => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (paymentState is PaymentReady)
+                          const CalculatePaymentButton(),
+                        FloatingActionButton.extended(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          onPressed: () {
+                            unawaited(showDialog<void>(
+                              context: context,
+                              builder: (context) => const CreateTimeCard(),
+                            ));
+                          },
+                          label: Text(
+                            context.l10n.addTime,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
-                  )
-                ],
+                  ),
+                ),
               ),
-            ),
-          )
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }

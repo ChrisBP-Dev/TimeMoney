@@ -23,5 +23,6 @@
     "dollarsLabel": "Dólares",
     "workedDaysLabel": "Días trabajados:",
     "currencyPrefix": "$/. ",
-    "save": "Guardar"
+    "save": "Guardar",
+    "retry": "Reintentar"
 }

@@ -32,18 +32,17 @@ class FetchWagePage extends StatelessWidget {
         FetchWageLoaded(:final wage) => WageHourlyCard(wageHourly: wage),
         FetchWageError(:final failure) => ErrorFetchWageHourlyView(
             failure,
-            actionWidget: const _ActionWidget(),
+            actionWidget: Builder(
+              builder: (context) => FilledButton.icon(
+                onPressed: () => context
+                    .read<FetchWageBloc>()
+                    .add(const FetchWageRequested()),
+                icon: const Icon(Icons.refresh),
+                label: Text(context.l10n.retry),
+              ),
+            ),
           ),
       },
     );
-  }
-}
-
-class _ActionWidget extends StatelessWidget {
-  const _ActionWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(onPressed: () {}, child: Text(context.l10n.error));
   }
 }

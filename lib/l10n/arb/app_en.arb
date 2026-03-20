@@ -100,5 +100,9 @@
     "save": "Save",
     "@save": {
         "description": "Button label for save action"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Button label for retry action on error states"
     }
 }

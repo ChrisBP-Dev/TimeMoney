@@ -82,4 +82,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get save => 'Guardar';
+
+  @override
+  String get retry => 'Reintentar';
 }
