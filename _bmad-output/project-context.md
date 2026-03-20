@@ -1,11 +1,11 @@
 ---
 project_name: 'TimeMoney'
 user_name: 'Christopher'
-date: '2026-03-19'
+date: '2026-03-20'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
-rule_count: 75
+rule_count: 101
 optimized_for_llm: true
 ---
 
@@ -21,12 +21,14 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **State Management**: bloc ^9.2.0, flutter_bloc ^9.1.1
 - **Domain Data Classes**: freezed ^3.2.5, freezed_annotation ^3.1.0 (domain entities only — NOT for BLoC states/events)
 - **Error Handling**: fpdart ^1.2.0 (Either monad — replaced dartz)
-- **Persistence**: objectbox ^5.2.0 (local NoSQL, native platforms), drift planned for web
-- **Code Generation**: build_runner ^2.4.14, json_serializable ^6.6.1, objectbox_generator ^5.2.0
+- **Persistence (native)**: objectbox ^5.2.0 (iOS, Android, Windows — local NoSQL via FFI)
+- **Persistence (web)**: drift ^2.32.0 + drift_flutter (SQLite via WASM + OPFS)
+- **Code Generation**: build_runner ^2.4.14, json_serializable ^6.6.1, objectbox_generator ^5.2.0, drift_dev
 - **Linting**: very_good_analysis ^10.2.0 (strict, public_member_api_docs enabled)
 - **Testing**: bloc_test ^10.0.0, mocktail ^1.0.0
 - **i18n**: intl ^0.20.0 (en, es via ARB files)
 - **Environments**: 3 flavors — development, staging, production
+- **Platforms**: iOS, Android, Web, Windows (multi-platform with platform-aware DI)
 
 ## Critical Implementation Rules
 
@@ -39,25 +41,33 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Type aliases for return types**: Define `typedef` for complex return types (e.g., `typedef CreateTimeResult = Future<Either<GlobalFailure, TimeEntry>>`)
 - **Private constructor pattern**: Freezed classes with custom getters/methods need `const ClassName._();` private constructor
 - **Extension methods for business logic**: Complex computations on collections use extensions (e.g., `extension CalculatePay on List<TimeEntry>`)
+- **Extension methods for data mapping**: Use extensions on generated DB types for domain conversion (e.g., `extension ConvertTimesTableData on TimesTableData { TimeEntry get toTimeEntry => ... }`)
 - **Manual equality on sealed classes**: `final class` subtypes of sealed classes must implement `operator ==` and `hashCode` manually (Freezed does NOT generate these for non-Freezed classes)
 - **Generated files excluded from analysis**: `*.g.dart`, `*.freezed.dart` are excluded in `analysis_options.yaml` — never edit these manually
-- **Run `build_runner` after model changes**: `dart run build_runner build --delete-conflicting-outputs` after modifying any Freezed or ObjectBox entity
+- **Run `build_runner` after model changes**: `dart run build_runner build --delete-conflicting-outputs` after modifying any Freezed, ObjectBox, or Drift entity
 - **Dartdoc comments mandatory**: All public classes, methods, and fields must have `///` dartdoc comments — `public_member_api_docs` linter rule is enabled
+- **Conditional imports for platform code**: Use `import 'web.dart' if (dart.library.io) 'native.dart'` pattern for compile-time platform selection — never use runtime `kIsWeb` checks in bootstrap/DI code
 
 ### Flutter & BLoC Framework Rules
 
 - **BLoC for complex flows, Cubit for simple state**: Event-driven `Bloc` for CRUD operations with multiple states; `Cubit` for derived/computed state (e.g., `PaymentCubit`)
 - **Sealed classes for BLoC states and events**: Every Bloc defines states and events as native Dart 3 `sealed class` hierarchies — NOT Freezed (e.g., `sealed class CreateTimeState`, `final class CreateTimeInitial extends CreateTimeState`)
 - **4-state BLoC pattern**: All BLoCs follow: `Initial`, `Loading`, `Error(GlobalFailure)`, `Success(data)` — state fields (hour, minutes) carried across all subtypes
+- **ActionState<T> for embedded CRUD tracking**: Generic sealed class (`ActionInitial`, `ActionLoading`, `ActionSuccess(data)`, `ActionError(failure)`) used inside BLoC states for individual action feedback — provides boolean convenience getters (`isInitial`, `isLoading`, `isSuccess`, `isError`)
 - **AppDurations.actionFeedback between transitions**: Insert `await Future<void>.delayed(AppDurations.actionFeedback)` (400ms) between loading→result and result→initial emissions for UI feedback
 - **3-tier dependency injection**: Repositories → Use Cases → BLoCs, wired in `app_bloc.dart` via `MultiRepositoryProvider` → `UseCasesInjection` → `MultiBlocProvider`
+- **Platform-aware DI via conditional imports**: `bootstrap_repositories_native.dart` (ObjectBox) and `bootstrap_repositories_web.dart` (Drift) selected at compile time — `createRepositories(dbName)` returns `({TimesRepository, WageRepository, Future<void> Function() close})` record
+- **Database lifecycle management**: Close callback from `createRepositories()` must be registered with `WidgetsBindingObserver` to close DB on `AppLifecycleState.detached`
 - **Feature-grouped BLoC registration**: Each feature exports a static `list()` method for its BLoCs (e.g., `TimesBlocs.list()`, `WageBlocs.list()`)
 - **Clean Architecture layers**: `domain/` (entities + repository interfaces + use_cases) → `data/` (datasources + models + repository implementations) → `presentation/` (bloc + pages + widgets)
-- **emit.forEach for reactive streams**: Use `emit.forEach` in BLoC event handlers for ObjectBox `watch()` stream consumption
-- **ObjectBox reactive streams**: Use `watch()` streams for real-time UI updates on list queries
+- **Dual datasource per feature**: Each feature has ObjectBox datasource (native) + Drift datasource (web) implementing the same repository interface — no code duplication at domain/presentation layers
+- **Datasource contract**: Datasources are low-level persistence wrappers — `watchAll()` returns reactive streams, `insert()`/`update()`/`remove()` return metadata (ID or affected row count), never domain entities
+- **emit.forEach for reactive streams**: Use `emit.forEach` in BLoC event handlers for stream consumption (both ObjectBox `watch()` and Drift `watchAll()`)
 - **Localization via context.l10n**: All user-facing strings must use `context.l10n.stringKey` — never hardcode strings
 - **Material 3**: App uses `useMaterial3: true` in theme configuration
 - **Cross-feature composition**: Features can depend on other features' domain layer only (e.g., PaymentCubit depends on times + wage use cases)
+- **Single Drift database**: One `AppDatabase` aggregates all feature tables via `@DriftDatabase(tables: [...])` — no per-feature databases
+- **Drift web setup**: Uses `driftDatabase()` with WASM (`sqlite3.wasm`) + OPFS storage; native uses file-system driver via `drift_flutter`
 
 ### Testing Rules
 
@@ -74,34 +84,45 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Const test fixtures**: Define test data as top-level `const` values (e.g., `const testTime = TimeEntry(hour: 1, minutes: 30)`)
 - **Verify calls**: Always `verify(() => mock.method(args)).called(1)` after assertions to confirm repository interaction
 - **Tests ship with implementation**: Every story delivers tests alongside production code — never deferred
+- **Drift tests use in-memory database**: Use `NativeDatabase.memory()` for Drift integration tests — fast, isolated, no filesystem cleanup needed
+- **Datasource tests validate stream reactivity**: Drift datasource tests must verify `watchAll()` emits updated data after mutations (insert, update, remove)
+- **Repository tests mock datasources**: Drift repository tests mock the datasource layer (not the database) and verify `Either<GlobalFailure, T>` wrapping and exception-to-failure mapping
+- **Affected-row semantics in tests**: Test that update/remove operations handle 0-row results (non-existent ID) as failure cases
+- **Test documentation standard**: Test files require `library;` dartdoc comment, `group()` comments explaining purpose, and `test()` names as complete descriptive sentences
 
 ### Code Quality & Style Rules
 
 - **Linting**: `very_good_analysis` ^10.2.0 — strict rules enforced; zero warnings policy, `flutter analyze` must pass clean
 - **Dartdoc**: `public_member_api_docs` enabled — all public classes, methods, fields, and top-level declarations require `///` comments
 - **File naming**: snake_case for all files with type suffixes: `_bloc.dart`, `_event.dart`, `_state.dart`, `_cubit.dart`, `_use_case.dart`, `_repository.dart`, `_datasource.dart`, `_page.dart`
-- **Class naming**: PascalCase — repository implementations prefixed with datasource name (e.g., `ObjectboxTimesRepository`), DB entities suffixed with `Box` (e.g., `TimeBox`, `WageHourlyBox`)
+- **Class naming**: PascalCase — repository implementations prefixed with datasource name (e.g., `ObjectboxTimesRepository`, `DriftTimesRepository`), DB entities suffixed by storage type (`TimeBox` for ObjectBox, `TimesTable` for Drift)
+- **Drift naming conventions**: Tables as `{Feature}Table` (e.g., `TimesTable`, `WageHourlyTable`), datasources as `{Feature}DriftDatasource`, repositories as `Drift{Feature}Repository`, generated data classes as `{Table}Data` (e.g., `TimesTableData`)
 - **BLoC naming**: `{Action}{Feature}Bloc` → `CreateTimeBloc`, `ListTimesBloc`, `UpdateTimeBloc`, `DeleteTimeBloc`
 - **Use Case naming**: `{Action}{Feature}UseCase` → `CreateTimeUseCase`, `ListTimesUseCase`
 - **Feature folder structure**: Each feature has up to 3 layers: `domain/` (entities, repositories, use_cases), `data/` (datasources, models, repositories), `presentation/` (bloc, pages, widgets)
-- **Barrel exports**: Each folder with 2+ public files gets a barrel file — named after the folder content (e.g., `entities.dart`, `use_cases.dart`)
+- **Dual datasource files per feature**: Each feature's `data/datasources/` contains both `{feature}_objectbox_datasource.dart` and `{feature}_drift_datasource.dart`; `data/models/` contains both `{feature}_box.dart` and `{feature}_table.dart`
+- **Barrel exports**: Each folder with 2+ public files gets a barrel file — named after the folder content (e.g., `entities.dart`, `use_cases.dart`); barrel files start with `library;` directive
 - **Presentation organized by CRUD**: BLoC files grouped as `create_time_bloc.dart`, `list_times_bloc.dart`, etc. within a single `bloc/` directory
-- **Shared code in core/**: Cross-cutting concerns in `lib/src/core/` — errors (failures), services (ObjectBox), extensions, UI (ActionState)
+- **Shared code in core/**: Cross-cutting concerns in `lib/src/core/` — errors (failures), services (ObjectBox, AppDatabase), extensions, UI (ActionState), constants, locale
 - **Reusable widgets in shared/**: Cross-feature UI components in `lib/src/shared/widgets/` (e.g., `error_view.dart`, `info_section.dart`, `icon_text.dart`)
 - **Import order**: `dart:` → `package:` (external) → `package:time_money/` (project) — enforced by linter
+- **Bootstrap files at lib/ root**: `bootstrap.dart` (platform-agnostic), `bootstrap_repositories_native.dart`, `bootstrap_repositories_web.dart` — not inside `src/`
 
 ### Development Workflow Rules
 
-- **Entry points per flavor**: `main_development.dart`, `main_staging.dart`, `main_production.dart` — each initializes ObjectBox with a different DB name
-- **Bootstrap pattern**: All flavors call `bootstrap()` from `bootstrap.dart` which sets up `BlocObserver` and runs the app in a guarded zone
-- **ObjectBox initialization**: `ObjectboxService.create()` is async and must complete before app starts — called in each `main_*.dart`
-- **Code generation workflow**: After modifying Freezed/ObjectBox entities: `dart run build_runner build --delete-conflicting-outputs`
+- **Entry points per flavor**: `main_development.dart`, `main_staging.dart`, `main_production.dart` — each calls `bootstrap(dbName: 'test-1'|'stg-1'|'prod-1')` for environment-isolated databases
+- **Bootstrap pattern**: All flavors call `bootstrap()` from `bootstrap.dart` which sets up `BlocObserver`, registers lifecycle observer for DB cleanup, and runs the app in a guarded zone with `_BootstrapErrorApp` fallback UI
+- **Platform-aware initialization**: `bootstrap()` calls `createRepositories(dbName)` — resolved at compile time to ObjectBox (native) or Drift (web) via conditional imports
+- **ObjectBox initialization**: `ObjectboxService.create()` is async and must complete before app starts — called in `bootstrap_repositories_native.dart`
+- **Drift initialization**: `AppDatabase.named(dbName)` creates database with platform-aware connection — WASM+OPFS on web, file system on native — called in `bootstrap_repositories_web.dart`
+- **Code generation workflow**: After modifying Freezed/ObjectBox/Drift entities: `dart run build_runner build --delete-conflicting-outputs`
 - **Localization workflow**: After modifying `.arb` files, run `flutter gen-l10n` to regenerate localization code
 - **Git commit prefixes**: `feat:` (new features), `refactor:` (code improvements), `fix:` (bug fixes), `chore:` (admin/reviews), `docs:` (documentation)
 - **Story-driven development**: Each story delivers implementation + tests together, status set to `review` (never `done`) — only code review decides done
 - **CI/CD**: GitHub Actions with semantic PR validation, flutter_package build/test, spell-check on markdown
-- **Multi-platform support**: iOS, Android, Web (future with drift), Windows — test changes across platforms when touching platform-specific code
+- **Multi-platform testing**: When touching persistence or DI code, verify changes across native (ObjectBox) and web (Drift) paths — both datasources must maintain behavioral parity
 - **BMad workflow**: Sprint planning → story creation → story validation → dev story → code review → retrospective
+- **Project context updates**: `project-context.md` must be reviewed and updated at each epic retrospective closure
 
 ### Critical Don't-Miss Rules
 
@@ -116,17 +137,25 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - NEVER leave linter warnings — zero tolerance policy, `flutter analyze` must be clean
 - NEVER mark a story as `done` — set to `review` only; code review decides done
 - NEVER defer tests — every story ships tests with implementation
+- NEVER use runtime `kIsWeb` checks for platform DI — use conditional imports (`if (dart.library.io)`) for compile-time selection
+- NEVER import ObjectBox packages in web bootstrap or Drift web packages in native bootstrap — conditional imports enforce separation at compile time
+- NEVER create per-feature Drift databases — all tables aggregate in single `AppDatabase`
+- NEVER accept "pre-existing" as justification for ignoring tech debt — must resolve or have explicit plan
 
 **Edge Cases:**
 - ObjectBox `put()` returns an `int` ID — domain models use `@Default(0) int id` for new entities
+- Drift `insert()` also returns an `int` auto-increment ID — same `@Default(0) int id` convention applies
+- Drift `update()`/`remove()` return affected row count — 0 rows means record not found, must be handled as failure in repository
+- Drift wage repository: when `id == 0`, performs insert instead of update — mirrors ObjectBox `put()` behavior where id=0 means new entity
 - `GlobalFailure.fromException()` handles `TimeoutException` → `TimeOutExceeded()` and everything else → `InternalError`. Platform-specific mappings (e.g. `SocketException` → `NotConnection`) belong in the data layer per Dependency Inversion, NOT in the domain factory
-- `TimeBox` and `WageHourlyBox` are ObjectBox-specific entities separate from domain models — always map between them using `.toTimeBox` / `.toTimeEntry` extensions
+- `TimeBox` and `WageHourlyBox` are ObjectBox-specific entities; `TimesTable` and `WageHourlyTable` are Drift-specific — always map between them and domain models using conversion extensions (`.toTimeEntry`, `.toWageHourly`)
 - Sealed class subtypes must carry parent state fields (e.g., `hour`, `minutes` carried in all `CreateTimeState` subtypes)
 
 **Performance:**
-- Use ObjectBox `watch()` streams with `emit.forEach` instead of polling for list updates
+- Use reactive streams (`watch()` for ObjectBox, `watchAll()` for Drift) with `emit.forEach` instead of polling for list updates
 - BLoC `emit()` after async operations — never emit synchronously in constructors
 - Use `const` constructors wherever possible for sealed class instances
+- Drift `NativeDatabase.memory()` for tests only — never in production; production uses `driftDatabase()` with platform-aware executor
 
 ---
 
@@ -146,4 +175,4 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Review at each epic retrospective for outdated rules
 - Remove rules that become obvious over time
 
-Last Updated: 2026-03-19
+Last Updated: 2026-03-20
