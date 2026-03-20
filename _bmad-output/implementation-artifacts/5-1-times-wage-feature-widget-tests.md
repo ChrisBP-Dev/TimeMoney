@@ -1,6 +1,6 @@
 # Story 5.1: Times & Wage Feature Widget Tests
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -21,7 +21,7 @@ So that UI rendering, user interactions, and state-driven display are verified f
 
 ### Task 1: Test Infrastructure — BLoC Mocks for Widget Tests (AC: 1-4)
 
-- [ ] 1.1 Add MockBloc classes to `test/helpers/mocks.dart` for all BLoCs needed by widget tests:
+- [x] 1.1 Add MockBloc classes to `test/helpers/mocks.dart` for all BLoCs needed by widget tests:
   - `MockCreateTimeBloc extends MockBloc<CreateTimeEvent, CreateTimeState> implements CreateTimeBloc {}`
   - `MockListTimesBloc extends MockBloc<ListTimesEvent, ListTimesState> implements ListTimesBloc {}`
   - `MockUpdateTimeBloc extends MockBloc<UpdateTimeEvent, UpdateTimeState> implements UpdateTimeBloc {}`
@@ -29,62 +29,62 @@ So that UI rendering, user interactions, and state-driven display are verified f
   - `MockFetchWageBloc extends MockBloc<FetchWageEvent, FetchWageState> implements FetchWageBloc {}`
   - `MockUpdateWageBloc extends MockBloc<UpdateWageEvent, UpdateWageState> implements UpdateWageBloc {}`
   - `MockPaymentCubit extends MockCubit<PaymentState> implements PaymentCubit {}`
-- [ ] 1.2 Import `bloc_test` in mocks.dart for `MockBloc`/`MockCubit` base classes
-- [ ] 1.3 Verify `pump_app.dart` helper is sufficient for widget tests (already provides LocaleCubit + MaterialApp + l10n delegates)
+- [x] 1.2 Import `bloc_test` in mocks.dart for `MockBloc`/`MockCubit` base classes
+- [x] 1.3 Verify `pump_app.dart` helper is sufficient for widget tests (already provides LocaleCubit + MaterialApp + l10n delegates)
 
 ### Task 2: Times Feature — Simple/Display Widget Tests (AC: 1)
 
-- [ ] 2.1 `test/src/features/times/presentation/widgets/custom_info_test.dart` — renders category label and value text
-- [ ] 2.2 `test/src/features/times/presentation/widgets/info_time_test.dart` — renders hour and minutes via CustomInfo using localized labels
-- [ ] 2.3 `test/src/features/times/presentation/widgets/time_card_test.dart` — renders InfoTime + EditButton with correct TimeEntry data
-- [ ] 2.4 `test/src/features/times/presentation/widgets/custom_create_field_test.dart` — renders title, text field responds to input, onChanged callback fires
-- [ ] 2.5 `test/src/features/times/presentation/widgets/custom_update_field_test.dart` — renders title, text field responds to input, onChanged callback fires
-- [ ] 2.6 `test/src/features/times/presentation/widgets/list_times_data_view_test.dart` — renders ListView with correct count of TimeCard widgets
-- [ ] 2.7 `test/src/features/times/presentation/widgets/list_times_other_view_test.dart` — ShimmerListTimesView shows progress indicator; EmptyListTimesView shows icon and localized empty message
-- [ ] 2.8 `test/src/features/times/presentation/widgets/error_list_times_view_test.dart` — renders ErrorView with GlobalFailure, optional actionWidget displayed
+- [x] 2.1 `test/src/features/times/presentation/widgets/custom_info_test.dart` — renders category label and value text
+- [x] 2.2 `test/src/features/times/presentation/widgets/info_time_test.dart` — renders hour and minutes via CustomInfo using localized labels
+- [x] 2.3 `test/src/features/times/presentation/widgets/time_card_test.dart` — renders InfoTime + EditButton with correct TimeEntry data
+- [x] 2.4 `test/src/features/times/presentation/widgets/custom_create_field_test.dart` — renders title, text field responds to input, onChanged callback fires
+- [x] 2.5 `test/src/features/times/presentation/widgets/custom_update_field_test.dart` — renders title, text field responds to input, onChanged callback fires
+- [x] 2.6 `test/src/features/times/presentation/widgets/list_times_data_view_test.dart` — renders ListView with correct count of TimeCard widgets
+- [x] 2.7 `test/src/features/times/presentation/widgets/list_times_other_view_test.dart` — ShimmerListTimesView shows progress indicator; EmptyListTimesView shows icon and localized empty message
+- [x] 2.8 `test/src/features/times/presentation/widgets/error_list_times_view_test.dart` — renders ErrorView with GlobalFailure, optional actionWidget displayed
 
 ### Task 3: Times Feature — BLoC-Dependent Widget Tests (AC: 1)
 
-- [ ] 3.1 `test/src/features/times/presentation/widgets/create_time_card_test.dart` — renders Row with CreateHourField, CreateMinutesField, CreateTimeButton (needs MockCreateTimeBloc provided)
-- [ ] 3.2 `test/src/features/times/presentation/widgets/create_hour_field_test.dart` — dispatches CreateTimeHourChanged on input; auto-clears when BLoC emits CreateTimeInitial with hour=0 & minutes=0
-- [ ] 3.3 `test/src/features/times/presentation/widgets/create_minutes_field_test.dart` — dispatches CreateTimeMinutesChanged on input; auto-clears on reset
-- [ ] 3.4 `test/src/features/times/presentation/widgets/create_time_button_test.dart` — shows localized create label on Initial, CircularProgressIndicator on Loading, success label on Success, error label on Error; button is ALWAYS enabled (no disabled states — differs from Update/Delete buttons); pops dialog on Success via BlocConsumer listener
-- [ ] 3.5 `test/src/features/times/presentation/widgets/edit_button_test.dart` — dispatches `UpdateTimeInit(time: testTime)` on tap; verify event dispatch only — do NOT test dialog content here (showDialog opens in Navigator overlay which cannot access BlocProviders placed below MaterialApp by pumpApp; dialog internals are tested in update_time_page_test.dart). Needs MockUpdateTimeBloc provided
-- [ ] 3.6 `test/src/features/times/presentation/widgets/update_time_card_test.dart` — renders Row with UpdateHourField, UpdateMinutesField (needs MockUpdateTimeBloc)
-- [ ] 3.7 `test/src/features/times/presentation/widgets/update_hour_field_test.dart` — pre-populates from BLoC state; dispatches UpdateTimeHourChanged on input
-- [ ] 3.8 `test/src/features/times/presentation/widgets/update_minutes_field_test.dart` — pre-populates from BLoC state; dispatches UpdateTimeMinutesChanged on input
-- [ ] 3.9 `test/src/features/times/presentation/widgets/update_time_button_test.dart` — shows localized update label on Initial (enabled), spinner on Loading (disabled), success label on Success (disabled + pops via `canPop()` guard), error label on Error (disabled); only enabled when `state is UpdateTimeInitial`; dispatches `UpdateTimeSubmitted()` on tap
-- [ ] 3.10 `test/src/features/times/presentation/widgets/delete_time_button_test.dart` — shows localized delete label on Initial (enabled), spinner on Loading (disabled), success label on Success (disabled + pops via `canPop()` guard), error label on Error (disabled); only enabled when `state is DeleteTimeInitial`; dispatches `DeleteTimeRequested(time: testTime)` on tap. Note: uses `Navigator.of(context).canPop()` before pop — differs from other buttons that pop directly
+- [x] 3.1 `test/src/features/times/presentation/widgets/create_time_card_test.dart` — renders Row with CreateHourField, CreateMinutesField, CreateTimeButton (needs MockCreateTimeBloc provided)
+- [x] 3.2 `test/src/features/times/presentation/widgets/create_hour_field_test.dart` — dispatches CreateTimeHourChanged on input; auto-clears when BLoC emits CreateTimeInitial with hour=0 & minutes=0
+- [x] 3.3 `test/src/features/times/presentation/widgets/create_minutes_field_test.dart` — dispatches CreateTimeMinutesChanged on input; auto-clears on reset
+- [x] 3.4 `test/src/features/times/presentation/widgets/create_time_button_test.dart` — shows localized create label on Initial, CircularProgressIndicator on Loading, success label on Success, error label on Error; button is ALWAYS enabled (no disabled states — differs from Update/Delete buttons); pops dialog on Success via BlocConsumer listener
+- [x] 3.5 `test/src/features/times/presentation/widgets/edit_button_test.dart` — dispatches `UpdateTimeInit(time: testTime)` on tap; verify event dispatch only — do NOT test dialog content here (showDialog opens in Navigator overlay which cannot access BlocProviders placed below MaterialApp by pumpApp; dialog internals are tested in update_time_page_test.dart). Needs MockUpdateTimeBloc provided
+- [x] 3.6 `test/src/features/times/presentation/widgets/update_time_card_test.dart` — renders Row with UpdateHourField, UpdateMinutesField (needs MockUpdateTimeBloc)
+- [x] 3.7 `test/src/features/times/presentation/widgets/update_hour_field_test.dart` — pre-populates from BLoC state; dispatches UpdateTimeHourChanged on input
+- [x] 3.8 `test/src/features/times/presentation/widgets/update_minutes_field_test.dart` — pre-populates from BLoC state; dispatches UpdateTimeMinutesChanged on input
+- [x] 3.9 `test/src/features/times/presentation/widgets/update_time_button_test.dart` — shows localized update label on Initial (enabled), spinner on Loading (disabled), success label on Success (disabled + pops via `canPop()` guard), error label on Error (disabled); only enabled when `state is UpdateTimeInitial`; dispatches `UpdateTimeSubmitted()` on tap
+- [x] 3.10 `test/src/features/times/presentation/widgets/delete_time_button_test.dart` — shows localized delete label on Initial (enabled), spinner on Loading (disabled), success label on Success (disabled + pops via `canPop()` guard), error label on Error (disabled); only enabled when `state is DeleteTimeInitial`; dispatches `DeleteTimeRequested(time: testTime)` on tap. Note: uses `Navigator.of(context).canPop()` before pop — differs from other buttons that pop directly
 
 ### Task 4: Times Feature — Page Tests (AC: 2)
 
-- [ ] 4.1 `test/src/features/times/presentation/pages/create_time_page_test.dart` — renders AlertDialog with close button and CreateTimeCard; close button pops dialog
-- [ ] 4.2 `test/src/features/times/presentation/pages/update_time_page_test.dart` — `UpdateTimePage({required this.time})` takes a TimeEntry parameter; renders AlertDialog with UpdateTimeCard, `DeleteTimeButton(time: time)`, UpdateTimeButton; close button pops. Needs MockUpdateTimeBloc + MockDeleteTimeBloc
-- [ ] 4.3 `test/src/features/times/presentation/pages/list_times_page_test.dart` — auto-dispatches `ListTimesRequested` on build via `bloc:` parameter (verify event is added immediately after pump). State-driven rendering: Initial→ShimmerView, Loading→ShimmerView, Empty→EmptyView, Error→ErrorView+retry, Loaded→DataView. Listener PaymentCubit sync: Loaded→`setTimes(times)`, Empty/Error→`setTimes([])`, Initial/Loading→no PaymentCubit call. Retry button dispatches `ListTimesRequested`. Needs MockListTimesBloc + MockPaymentCubit
+- [x] 4.1 `test/src/features/times/presentation/pages/create_time_page_test.dart` — renders AlertDialog with close button and CreateTimeCard; close button pops dialog
+- [x] 4.2 `test/src/features/times/presentation/pages/update_time_page_test.dart` — `UpdateTimePage({required this.time})` takes a TimeEntry parameter; renders AlertDialog with UpdateTimeCard, `DeleteTimeButton(time: time)`, UpdateTimeButton; close button pops. Needs MockUpdateTimeBloc + MockDeleteTimeBloc
+- [x] 4.3 `test/src/features/times/presentation/pages/list_times_page_test.dart` — auto-dispatches `ListTimesRequested` on build via `bloc:` parameter (verify event is added immediately after pump). State-driven rendering: Initial→ShimmerView, Loading→ShimmerView, Empty→EmptyView, Error→ErrorView+retry, Loaded→DataView. Listener PaymentCubit sync: Loaded→`setTimes(times)`, Empty/Error→`setTimes([])`, Initial/Loading→no PaymentCubit call. Retry button dispatches `ListTimesRequested`. Needs MockListTimesBloc + MockPaymentCubit
 
 ### Task 5: Wage Feature — Simple/Display Widget Tests (AC: 3)
 
-- [ ] 5.1 `test/src/features/wage/presentation/widgets/wage_hourly_info_test.dart` — renders localized hourly label and wage value
-- [ ] 5.2 `test/src/features/wage/presentation/widgets/wage_hourly_card_test.dart` — renders WageHourlyInfo + UpdateWageButton inside Card with primary color
-- [ ] 5.3 `test/src/features/wage/presentation/widgets/error_fetch_wage_hourly_view_test.dart` — renders ErrorView with GlobalFailure; optional actionWidget displayed
-- [ ] 5.4 `test/src/features/wage/presentation/widgets/wage_hourly_other_view_test.dart` — ShimmerWageHourlyView shows progress indicator
-- [ ] 5.5 `test/src/features/wage/presentation/widgets/update_wage_button_test.dart` — button tap calls `showDialog` with UpdateWagePage; verify button renders and is tappable. Do NOT test dialog content here (same dialog provider scope limitation as EditButton — test dialog internals in update_wage_page_test.dart)
+- [x] 5.1 `test/src/features/wage/presentation/widgets/wage_hourly_info_test.dart` — renders localized hourly label and wage value
+- [x] 5.2 `test/src/features/wage/presentation/widgets/wage_hourly_card_test.dart` — renders WageHourlyInfo + UpdateWageButton inside Card with primary color
+- [x] 5.3 `test/src/features/wage/presentation/widgets/error_fetch_wage_hourly_view_test.dart` — renders ErrorView with GlobalFailure; optional actionWidget displayed
+- [x] 5.4 `test/src/features/wage/presentation/widgets/wage_hourly_other_view_test.dart` — ShimmerWageHourlyView shows progress indicator
+- [x] 5.5 `test/src/features/wage/presentation/widgets/update_wage_button_test.dart` — button tap calls `showDialog` with UpdateWagePage; verify button renders and is tappable. Do NOT test dialog content here (same dialog provider scope limitation as EditButton — test dialog internals in update_wage_page_test.dart)
 
 ### Task 6: Wage Feature — BLoC-Dependent Widget Tests (AC: 3)
 
-- [ ] 6.1 `test/src/features/wage/presentation/widgets/wage_hourly_field_test.dart` — dispatches UpdateWageHourlyChanged on input; BlocBuilder rebuilds correctly
-- [ ] 6.2 `test/src/features/wage/presentation/widgets/set_wage_button_test.dart` — shows localized update label on Initial (enabled), spinner on Loading (disabled), success label on Success (enabled + pops), error label on Error (enabled). DIFFERS from Update/Delete time buttons: disabled ONLY when `state is UpdateWageLoading` (enabled on Initial, Success, Error). Dispatches `UpdateWageSubmitted()` on tap
+- [x] 6.1 `test/src/features/wage/presentation/widgets/wage_hourly_field_test.dart` — dispatches UpdateWageHourlyChanged on input; BlocBuilder rebuilds correctly
+- [x] 6.2 `test/src/features/wage/presentation/widgets/set_wage_button_test.dart` — shows localized update label on Initial (enabled), spinner on Loading (disabled), success label on Success (enabled + pops), error label on Error (enabled). DIFFERS from Update/Delete time buttons: disabled ONLY when `state is UpdateWageLoading` (enabled on Initial, Success, Error). Dispatches `UpdateWageSubmitted()` on tap
 
 ### Task 7: Wage Feature — Page Tests (AC: 4)
 
-- [ ] 7.1 `test/src/features/wage/presentation/pages/update_wage_page_test.dart` — renders AlertDialog with WageHourlyField + SetWageButton; close button pops
-- [ ] 7.2 `test/src/features/wage/presentation/pages/fetch_wage_page_test.dart` — auto-dispatches `FetchWageRequested` on build via `bloc:` parameter (verify event is added immediately after pump). State-driven: Initial→ShimmerView, Loading→ShimmerView, Loaded→`WageHourlyCard(wageHourly: wage)`, Error→ErrorView+retry. Listener: `listenWhen` only fires on `FetchWageLoaded` — calls `PaymentCubit.setWage(state.wage.value)`; Initial/Loading/Error do NOT trigger listener. Retry dispatches `FetchWageRequested`. Needs MockFetchWageBloc + MockPaymentCubit
+- [x] 7.1 `test/src/features/wage/presentation/pages/update_wage_page_test.dart` — renders AlertDialog with WageHourlyField + SetWageButton; close button pops
+- [x] 7.2 `test/src/features/wage/presentation/pages/fetch_wage_page_test.dart` — auto-dispatches `FetchWageRequested` on build via `bloc:` parameter (verify event is added immediately after pump). State-driven: Initial→ShimmerView, Loading→ShimmerView, Loaded→`WageHourlyCard(wageHourly: wage)`, Error→ErrorView+retry. Listener: `listenWhen` only fires on `FetchWageLoaded` — calls `PaymentCubit.setWage(state.wage.value)`; Initial/Loading/Error do NOT trigger listener. Retry dispatches `FetchWageRequested`. Needs MockFetchWageBloc + MockPaymentCubit
 
 ### Task 8: Final Validation (AC: 5-6)
 
-- [ ] 8.1 Run `flutter test --test-randomize-ordering-seed random` — all tests pass (existing + new)
-- [ ] 8.2 Run `flutter analyze` — zero warnings on all files
-- [ ] 8.3 Verify dartdoc comments on all new test files (`///` file-level docs, `library;` directive, group/test comments)
+- [x] 8.1 Run `flutter test --test-randomize-ordering-seed random` — all tests pass (existing + new)
+- [x] 8.2 Run `flutter analyze` — zero warnings on all files
+- [x] 8.3 Verify dartdoc comments on all new test files (`///` file-level docs, `library;` directive, group/test comments)
 
 ## Dev Notes
 
@@ -341,8 +341,56 @@ The codebase is clean and stable — Epic 5 starts on solid foundations with zer
 
 ### Agent Model Used
 
+Claude Opus 4.6 (1M context)
+
 ### Debug Log References
+
+- Widget tests requiring `TextField` need `Scaffold` wrapper for `Material` ancestor
+- `BlocConsumer`-based widgets cannot use `pumpAndSettle()` — must use `pump()` to avoid timeout on never-closing stream subscriptions
+- Events without `==` override require `any(that: isA<EventType>())` or `captureAny()` for verify assertions instead of `const` equality matching
+- Dialog provider scope: `showDialog` creates routes in Navigator overlay — BlocProviders placed below MaterialApp are invisible to dialogs; dialog content tested separately in page tests
 
 ### Completion Notes List
 
+- **Task 1**: Added 7 MockBloc/MockCubit classes to `test/helpers/mocks.dart` — MockCreateTimeBloc, MockListTimesBloc, MockUpdateTimeBloc, MockDeleteTimeBloc, MockFetchWageBloc, MockUpdateWageBloc, MockPaymentCubit. Imported `bloc_test` for base classes. Verified `pump_app.dart` sufficient (no changes needed).
+- **Task 2**: Created 8 times display widget tests — CustomInfo, InfoTime, TimeCard, CustomCreateField, CustomUpdateField, ListTimesDataView, ShimmerListTimesView/EmptyListTimesView, ErrorListTimesView.
+- **Task 3**: Created 10 times BLoC-dependent widget tests — CreateTimeCard, CreateHourField, CreateMinutesField, CreateTimeButton, EditButton, UpdateTimeCard, UpdateHourField, UpdateMinutesField, UpdateTimeButton, DeleteTimeButton. Verified 4-state button rendering and enabled/disabled logic per specification.
+- **Task 4**: Created 3 times page tests — CreateTimePage, UpdateTimePage, ListTimesPage. ListTimesPage verifies auto-dispatch, all 5 state renderings, retry, and PaymentCubit sync.
+- **Task 5**: Created 5 wage display widget tests — WageHourlyInfo, WageHourlyCard, ErrorFetchWageHourlyView, ShimmerWageHourlyView, UpdateWageButton.
+- **Task 6**: Created 2 wage BLoC-dependent widget tests — WageHourlyField, SetWageButton. Verified SetWageButton-specific enabled logic (disabled only on Loading).
+- **Task 7**: Created 2 wage page tests — UpdateWagePage, FetchWagePage. FetchWagePage verifies auto-dispatch, all 4 state renderings, listenWhen filter, retry.
+- **Task 8**: Final validation — 261 tests pass (165 existing + 96 new), zero `flutter analyze` warnings, all test files have `///` dartdoc, `library;` directive, and `group`/`test` comments.
+
 ### File List
+
+- test/helpers/mocks.dart (modified — added 7 MockBloc/MockCubit classes)
+- test/src/features/times/presentation/widgets/custom_info_test.dart (new)
+- test/src/features/times/presentation/widgets/info_time_test.dart (new)
+- test/src/features/times/presentation/widgets/time_card_test.dart (new)
+- test/src/features/times/presentation/widgets/custom_create_field_test.dart (new)
+- test/src/features/times/presentation/widgets/custom_update_field_test.dart (new)
+- test/src/features/times/presentation/widgets/list_times_data_view_test.dart (new)
+- test/src/features/times/presentation/widgets/list_times_other_view_test.dart (new)
+- test/src/features/times/presentation/widgets/error_list_times_view_test.dart (new)
+- test/src/features/times/presentation/widgets/create_time_card_test.dart (new)
+- test/src/features/times/presentation/widgets/create_hour_field_test.dart (new)
+- test/src/features/times/presentation/widgets/create_minutes_field_test.dart (new)
+- test/src/features/times/presentation/widgets/create_time_button_test.dart (new)
+- test/src/features/times/presentation/widgets/edit_button_test.dart (new)
+- test/src/features/times/presentation/widgets/update_time_card_test.dart (new)
+- test/src/features/times/presentation/widgets/update_hour_field_test.dart (new)
+- test/src/features/times/presentation/widgets/update_minutes_field_test.dart (new)
+- test/src/features/times/presentation/widgets/update_time_button_test.dart (new)
+- test/src/features/times/presentation/widgets/delete_time_button_test.dart (new)
+- test/src/features/times/presentation/pages/create_time_page_test.dart (new)
+- test/src/features/times/presentation/pages/update_time_page_test.dart (new)
+- test/src/features/times/presentation/pages/list_times_page_test.dart (new)
+- test/src/features/wage/presentation/widgets/wage_hourly_info_test.dart (new)
+- test/src/features/wage/presentation/widgets/wage_hourly_card_test.dart (new)
+- test/src/features/wage/presentation/widgets/error_fetch_wage_hourly_view_test.dart (new)
+- test/src/features/wage/presentation/widgets/wage_hourly_other_view_test.dart (new)
+- test/src/features/wage/presentation/widgets/update_wage_button_test.dart (new)
+- test/src/features/wage/presentation/widgets/wage_hourly_field_test.dart (new)
+- test/src/features/wage/presentation/widgets/set_wage_button_test.dart (new)
+- test/src/features/wage/presentation/pages/update_wage_page_test.dart (new)
+- test/src/features/wage/presentation/pages/fetch_wage_page_test.dart (new)
