@@ -26,7 +26,7 @@ so that wage management is fully functional on the web (FR22, FR29, FR31).
 
 7. **Repository tests complete** — `test/src/features/wage/data/repositories/drift_wage_repository_test.dart` tests repository implementation with entity mapping, default wage handling, and Either returns using mocked datasource (100% coverage)
 
-8. **Zero warnings and all tests pass** — `flutter analyze` produces zero issues; `flutter test` passes all 145 existing tests plus new drift datasource and repository tests; no regressions
+8. **Zero warnings and all tests pass** — `flutter analyze` produces zero issues; `flutter test` passes all 145 existing tests plus 12 new tests (5 datasource + 7 repository = 157 total); no regressions
 
 ## Tasks / Subtasks
 
@@ -49,7 +49,7 @@ so that wage management is fully functional on the web (FR22, FR29, FR31).
 
 - [ ] Task 3: Create DriftWageRepository (AC: #2, #4)
   - [ ] 3.1 Create `lib/src/features/wage/data/repositories/drift_wage_repository.dart`
-  - [ ] 3.2 Import fpdart, GlobalFailure, WageDriftDatasource, WageHourly, WageRepository, and the conversion extension from wage_hourly_table.dart
+  - [ ] 3.2 Import fpdart, GlobalFailure, AppDatabase (`app_database.dart` — for `WageHourlyTableData` type resolution, matches `DriftTimesRepository` pattern), WageDriftDatasource, WageHourly, WageRepository, and the conversion extension from wage_hourly_table.dart
   - [ ] 3.3 Class receives `WageDriftDatasource` via `const` constructor (mirrors `ObjectboxWageRepository`)
   - [ ] 3.4 Implement `FetchWageResultStream fetchWageHourly()` — map `_datasource.watchAll()` stream converting `List<WageHourlyTableData>` to single `WageHourly`: map each row via `.toWageHourly`, if list is empty return `const WageHourly()` (default $15.00 — FR8), otherwise return `wages.last`; wrap stream in `right()`; catch with `on Object catch (e)` returning `left(GlobalFailure.fromException(e))`; this method is SYNCHRONOUS (returns Either directly, not Future)
   - [ ] 3.5 Implement `SetWageResult setWageHourly(WageHourly wageHourly)` — call `await _datasource.insert(value: wageHourly.value)`; return `right(wageHourly)`; wrap in try/catch
@@ -91,7 +91,7 @@ so that wage management is fully functional on the web (FR22, FR29, FR31).
 
 - [ ] Task 7: Verification (AC: #8)
   - [ ] 7.1 Run `flutter analyze` — zero issues
-  - [ ] 7.2 Run `flutter test` — all 145 existing tests pass + new tests pass, zero regressions
+  - [ ] 7.2 Run `flutter test` — all 145 existing tests pass + 12 new tests (5 datasource + 7 repository = 157 total), zero regressions
   - [ ] 7.3 Verify barrel exports are correct (datasources.dart, repositories.dart)
 
 ## Dev Notes
@@ -171,6 +171,7 @@ class WageDriftDatasource {
 ```dart
 import 'package:fpdart/fpdart.dart';
 import 'package:time_money/src/core/errors/failures.dart';
+import 'package:time_money/src/core/services/app_database.dart';
 import 'package:time_money/src/features/wage/data/datasources/wage_drift_datasource.dart';
 import 'package:time_money/src/features/wage/data/models/wage_hourly_table.dart';
 import 'package:time_money/src/features/wage/domain/entities/wage_hourly.dart';
