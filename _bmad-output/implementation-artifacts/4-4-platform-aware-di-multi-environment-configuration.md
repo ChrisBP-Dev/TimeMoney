@@ -1,6 +1,6 @@
 # Story 4.4: Platform-Aware DI & Multi-Environment Configuration
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -230,7 +230,7 @@ When building for native (AOT):
 5. **Do NOT use `dart:io` conditional imports** — the architecture specifies `kIsWeb` directly. Conditional imports are unnecessary at this project scale
 6. **Do NOT remove `AppBlocObserver`** from bootstrap.dart — it stays
 7. **Do NOT use `import 'package:flutter/material.dart'`** in bootstrap.dart — use `package:flutter/widgets.dart` (current import, sufficient for `WidgetsFlutterBinding`)
-8. **Do NOT add `import 'package:flutter/foundation.dart'`** — `kIsWeb` is available via the existing `package:flutter/widgets.dart` import
+8. ~~**Do NOT add `import 'package:flutter/foundation.dart'`** — `kIsWeb` is available via the existing `package:flutter/widgets.dart` import~~ **[AMENDED by CR]** Flutter 3.41's `widgets.dart` only re-exports `show Brightness, UniqueKey` from `foundation.dart` — `kIsWeb` requires explicit `import 'package:flutter/foundation.dart' show kIsWeb;`
 
 ### Required Imports in Refactored bootstrap.dart
 
@@ -238,7 +238,10 @@ When building for native (AOT):
 - `dart:async` — still needed for `runZonedGuarded` (`FutureOr` no longer needed after signature change)
 - `dart:developer` (for `log`)
 - `package:bloc/bloc.dart` (for `Bloc.observer`, `BlocObserver`)
-- `package:flutter/widgets.dart` (for `WidgetsFlutterBinding`, `runApp`, `FlutterError`, `Widget` + gives `kIsWeb`)
+- `package:flutter/widgets.dart` (for `WidgetsFlutterBinding`, `runApp`, `FlutterError`, `Widget`)
+
+**Add — Platform detection:**
+- `package:flutter/foundation.dart` show `kIsWeb` (not re-exported by `widgets.dart` in Flutter 3.41)
 
 **Add — App layer:**
 - `package:time_money/app/app.dart` (for `AppBloc`)
@@ -337,9 +340,43 @@ Claude Opus 4.6 (1M context)
 - All imports sorted alphabetically per `directives_ordering` linter rule
 - All 157 existing tests pass with zero regressions
 
+### Change Log
+
+- 2026-03-20: Story 4.4 implementation complete — platform-aware DI via kIsWeb, environment-specific dbName, entry points simplified to single-line delegations.
+- 2026-03-20: Code review completed — 3/3 layers, 0 patch findings, 1 bad_spec amended, 3 deferred (pre-existing), 4 rejected as noise. Story → done.
+
 ### File List
 
 - `lib/bootstrap.dart` (modified)
 - `lib/main_development.dart` (modified)
 - `lib/main_staging.dart` (modified)
 - `lib/main_production.dart` (modified)
+
+## Code Review Record
+
+- **Review date:** 2026-03-20
+- **Reviewer model:** Claude Opus 4.6 (1M context)
+- **Review layers:** 3/3 (Blind Hunter, Edge Case Hunter, Acceptance Auditor)
+- **Acceptance criteria:** 4/4 PASS
+- **Required tests:** 157/157 PASS (zero regressions)
+- **Findings:** 8 total
+  - 0 intent_gap
+  - 1 bad_spec (amended)
+  - 0 patch
+  - 3 defer
+  - 4 reject
+- **Bad spec amendments applied:** 1
+  - Anti-Pattern #8 corrected: Flutter 3.41's `widgets.dart` only re-exports `show Brightness, UniqueKey` from `foundation.dart` — `kIsWeb` requires explicit `import 'package:flutter/foundation.dart' show kIsWeb;`. Spec assumption was incorrect; dev agent already documented the deviation in Completion Notes.
+- **Deferred items (pre-existing, not caused by this change):**
+  - ObjectBox Store never closed — `close()` never invoked on local `ObjectBox` instance (pre-existing: old global `late final ObjectBox` was also never closed)
+  - Drift database never closed — `close()` never invoked on local `AppDatabase` instance (pre-existing: consistent with prior behavior)
+  - Database initialization outside guarded zone — `ObjectBox.create()` and `AppDatabase.named()` execute before `runZonedGuarded`, so init failures are unhandled (pre-existing: old code also initialized DB in `main()` before `bootstrap()`)
+- **Key reject reasons:**
+  - Gap between `ensureInitialized()` and `FlutterError.onError` — no async operations in between, negligible window
+  - `kIsWeb` platform distinction — project targets web + native (iOS/Android/macOS), ObjectBox supports all. By design per spec.
+  - `test-1` naming collision with tests — tests use in-memory databases (`NativeDatabase.memory()`), no collision possible
+  - `runZonedGuarded` return value discarded — standard Flutter pattern, pre-existing
+- **Lessons learned:**
+  - Spec assumptions about Flutter re-exports should be verified against the actual Flutter version — `kIsWeb` availability changed between Flutter versions
+  - Clean DI wiring refactors that follow established patterns yield zero actionable code findings — architecture investment pays off
+- **Verdict:** PASS — story marked done
