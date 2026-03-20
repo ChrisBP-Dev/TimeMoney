@@ -1,6 +1,6 @@
 # Story 4.1: drift Database Setup & Core Infrastructure
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -424,9 +424,25 @@ Claude Opus 4.6 (1M context)
 - `flutter analyze`: zero issues
 - `flutter test`: 131 tests passing (116 existing + 15 new), zero regressions
 
+### Code Review Record
+
+- **Review date:** 2026-03-19
+- **Reviewer model:** Claude Opus 4.6 (1M context)
+- **Review layers:** 3/3 (Blind Hunter, Edge Case Hunter, Acceptance Auditor)
+- **Acceptance criteria:** 7/7 PASS
+- **Required tests:** 10/10 PASS
+- **Findings:** 0 intent_gap, 0 bad_spec, 0 patch, 3 defer, 12 reject
+- **Patches applied:** 0 (clean review)
+- **Deferred items:**
+  - No migration strategy (irrelevant at schemaVersion 1, needed when bumped to 2)
+  - No DB-level CHECK constraints on TimesTable (consistent with ObjectBox design)
+  - No DB-level CHECK constraints on WageHourlyTable (consistent with ObjectBox design)
+- **Verdict:** PASS — story marked done
+
 ### Change Log
 
 - 2026-03-19: Story 4.1 implemented — drift database setup & core infrastructure complete
+- 2026-03-19: Code review passed — 0 patches, 3 deferred items, story done
 
 ### File List
 
