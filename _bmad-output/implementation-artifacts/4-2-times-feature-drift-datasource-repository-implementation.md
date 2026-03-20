@@ -1,6 +1,6 @@
 # Story 4.2: Times Feature — drift Datasource & Repository Implementation
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -12,7 +12,7 @@ so that the web app is fully functional for time tracking (FR22, FR29, FR31).
 
 ## Acceptance Criteria
 
-1. **TimesDriftDatasource implemented** — `lib/src/features/times/data/datasources/times_drift_datasource.dart` provides CRUD operations (insert, selectAll, update, delete) on `TimesTable` and a reactive `watchAll()` stream equivalent to ObjectBox's `watch()` (FR29); works with drift table row types only (`TimesTableData`, `TimesTableCompanion`), not domain entities
+1. **TimesDriftDatasource implemented** — `lib/src/features/times/data/datasources/times_drift_datasource.dart` provides CRUD operations (insert, watchAll, update, delete) on `TimesTable` with a reactive `watchAll()` stream equivalent to ObjectBox's `watch()` (FR29); works with drift table row types only (`TimesTableData`, `TimesTableCompanion`), not domain entities
 
 2. **DriftTimesRepository implemented** — `lib/src/features/times/data/repositories/drift_times_repository.dart` implements the abstract `TimesRepository` interface (FR32); maps between drift table rows (`TimesTableData`) and `TimeEntry` domain entities; all methods return `Either<GlobalFailure, T>` — never throw (NFR19); `fetchTimesStream()` returns `Either<GlobalFailure, Stream<List<TimeEntry>>>`
 
@@ -455,9 +455,34 @@ None — clean implementation, no blockers encountered.
 - Task 7: `flutter analyze` = 0 issues, `flutter test` = 145 tests passing (131 existing + 14 new), zero regressions.
 - One lint fix applied: `const` constructor on `TimesTableData` in repository test stub.
 
+### Code Review Record
+
+- **Review date:** 2026-03-19
+- **Reviewer model:** Claude Opus 4.6 (1M context)
+- **Review layers:** 3/3 (Blind Hunter, Edge Case Hunter, Acceptance Auditor)
+- **Acceptance criteria:** 8/8 PASS
+- **Required tests:** 145/145 PASS (131 existing + 14 new)
+- **Findings:** 9 total
+  - 0 intent_gap
+  - 1 bad_spec (AC1 text said "selectAll" instead of "watchAll" — amended)
+  - 0 patch
+  - 4 defer
+  - 4 reject
+- **Bad spec amendment applied:** 1
+  - AC1: Changed "(insert, selectAll, update, delete)" to "(insert, watchAll, update, delete)" — the architecture uses reactive streams for reads, no one-shot selectAll exists in either ObjectBox or drift datasource
+- **Deferred items:**
+  - `create()` discards DB-assigned ID and returns original TimeEntry with `id: 0` — pre-existing pattern symmetric with ObjectBox; BLoC consumes data via reactive stream, not create return value
+  - `update()`/`remove()` succeed silently on non-existent IDs — pre-existing behavior in both implementations; interface does not specify behavior for invalid IDs
+  - `fetchTimesStream()` try/catch only guards synchronous stream construction, not async stream errors — identical to ObjectBox implementation; consider `.handleError()` in future hardening epic
+- **Lessons learned:**
+  - AC text must precisely name the methods implemented — "CRUD" shorthand caused ambiguity between `selectAll` (one-shot) and `watchAll` (reactive)
+  - Pre-existing patterns (id discarding, silent no-ops) propagate symmetrically — future hardening should address both implementations together
+- **Verdict:** PASS — story marked done
+
 ### Change Log
 
 - 2026-03-19: Story 4.2 implemented — drift datasource, repository, conversion extension, barrel exports, 14 new tests.
+- 2026-03-19: Code review completed — 3/3 layers, 1 bad_spec amended (AC1 selectAll→watchAll), 4 deferred, 0 patches. Story → done.
 
 ### File List
 
