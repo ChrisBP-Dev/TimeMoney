@@ -1,6 +1,6 @@
 # Story 4.3: Wage Feature — drift Datasource & Repository Implementation
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -30,69 +30,69 @@ so that wage management is fully functional on the web (FR22, FR29, FR31).
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add conversion extension to wage_hourly_table.dart (AC: #3)
-  - [ ] 1.1 Add two imports to `wage_hourly_table.dart`: `import 'package:time_money/src/core/services/app_database.dart';` (required — `WageHourlyTableData` is generated in `app_database.g.dart` which is `part of` `app_database.dart`) and `import 'package:time_money/src/features/wage/domain/entities/wage_hourly.dart';`
-  - [ ] 1.2 Add `ConvertWageHourlyTableData` extension on `WageHourlyTableData` with `WageHourly get toWageHourly` getter — maps `id`, `value` fields
-  - [ ] 1.3 Add dartdoc comments on extension and getter
-  - [ ] 1.4 Do NOT add a reverse extension (WageHourly → WageHourlyTableData) — the datasource API uses primitive parameters, not data classes (mirrors times pattern)
+- [x] Task 1: Add conversion extension to wage_hourly_table.dart (AC: #3)
+  - [x] 1.1 Add two imports to `wage_hourly_table.dart`: `import 'package:time_money/src/core/services/app_database.dart';` (required — `WageHourlyTableData` is generated in `app_database.g.dart` which is `part of` `app_database.dart`) and `import 'package:time_money/src/features/wage/domain/entities/wage_hourly.dart';`
+  - [x] 1.2 Add `ConvertWageHourlyTableData` extension on `WageHourlyTableData` with `WageHourly get toWageHourly` getter — maps `id`, `value` fields
+  - [x] 1.3 Add dartdoc comments on extension and getter
+  - [x] 1.4 Do NOT add a reverse extension (WageHourly → WageHourlyTableData) — the datasource API uses primitive parameters, not data classes (mirrors times pattern)
 
-- [ ] Task 2: Create WageDriftDatasource (AC: #1)
-  - [ ] 2.1 Create `lib/src/features/wage/data/datasources/wage_drift_datasource.dart`
-  - [ ] 2.2 Import `package:drift/drift.dart` and `package:time_money/src/core/services/app_database.dart`
-  - [ ] 2.3 Class receives `AppDatabase` via `const` constructor (matches TimesDriftDatasource pattern)
-  - [ ] 2.4 Implement `Stream<List<WageHourlyTableData>> watchAll()` — uses `_db.select(_db.wageHourlyTable).watch()` — drift streams emit immediately on subscribe (matches ObjectBox `triggerImmediately: true`)
-  - [ ] 2.5 Implement `Future<int> insert({required double value})` — uses `_db.into(_db.wageHourlyTable).insert(WageHourlyTableCompanion.insert(value: value))` — returns auto-generated id
-  - [ ] 2.6 Implement `Future<void> update(int id, {required double value})` — uses `(_db.update(_db.wageHourlyTable)..where((t) => t.id.equals(id))).write(WageHourlyTableCompanion(value: Value(value)))` — uses default Companion constructor with `Value` wrapper for partial update
-  - [ ] 2.7 Add dartdoc comments on class, constructor, and all methods
-  - [ ] 2.8 Do NOT add try/catch — let exceptions propagate to repository layer (architecture pattern: datasources may throw)
-  - [ ] 2.9 Do NOT add a `remove` method — wage feature has no delete operation (ObjectBox datasource also has no remove)
+- [x] Task 2: Create WageDriftDatasource (AC: #1)
+  - [x] 2.1 Create `lib/src/features/wage/data/datasources/wage_drift_datasource.dart`
+  - [x] 2.2 Import `package:drift/drift.dart` and `package:time_money/src/core/services/app_database.dart`
+  - [x] 2.3 Class receives `AppDatabase` via `const` constructor (matches TimesDriftDatasource pattern)
+  - [x] 2.4 Implement `Stream<List<WageHourlyTableData>> watchAll()` — uses `_db.select(_db.wageHourlyTable).watch()` — drift streams emit immediately on subscribe (matches ObjectBox `triggerImmediately: true`)
+  - [x] 2.5 Implement `Future<int> insert({required double value})` — uses `_db.into(_db.wageHourlyTable).insert(WageHourlyTableCompanion.insert(value: value))` — returns auto-generated id
+  - [x] 2.6 Implement `Future<void> update(int id, {required double value})` — uses `(_db.update(_db.wageHourlyTable)..where((t) => t.id.equals(id))).write(WageHourlyTableCompanion(value: Value(value)))` — uses default Companion constructor with `Value` wrapper for partial update
+  - [x] 2.7 Add dartdoc comments on class, constructor, and all methods
+  - [x] 2.8 Do NOT add try/catch — let exceptions propagate to repository layer (architecture pattern: datasources may throw)
+  - [x] 2.9 Do NOT add a `remove` method — wage feature has no delete operation (ObjectBox datasource also has no remove)
 
-- [ ] Task 3: Create DriftWageRepository (AC: #2, #4)
-  - [ ] 3.1 Create `lib/src/features/wage/data/repositories/drift_wage_repository.dart`
-  - [ ] 3.2 Import fpdart, GlobalFailure, AppDatabase (`app_database.dart` — for `WageHourlyTableData` type resolution, matches `DriftTimesRepository` pattern), WageDriftDatasource, WageHourly, WageRepository, and the conversion extension from wage_hourly_table.dart
-  - [ ] 3.3 Class receives `WageDriftDatasource` via `const` constructor (mirrors `ObjectboxWageRepository`)
-  - [ ] 3.4 Implement `FetchWageResultStream fetchWageHourly()` — map `_datasource.watchAll()` stream converting `List<WageHourlyTableData>` to single `WageHourly`: map each row via `.toWageHourly`, if list is empty return `const WageHourly()` (default $15.00 — FR8), otherwise return `wages.last`; wrap stream in `right()`; catch with `on Object catch (e)` returning `left(GlobalFailure.fromException(e))`; this method is SYNCHRONOUS (returns Either directly, not Future)
-  - [ ] 3.5 Implement `SetWageResult setWageHourly(WageHourly wageHourly)` — call `await _datasource.insert(value: wageHourly.value)`; return `right(wageHourly)`; wrap in try/catch
-  - [ ] 3.6 Implement `UpdateWageResult update(WageHourly wageHourly)` — call `await _datasource.update(wageHourly.id, value: wageHourly.value)`; return `right(wageHourly)`; wrap in try/catch
-  - [ ] 3.7 Add dartdoc comments on class, constructor, and all overridden methods
-  - [ ] 3.8 Verify exact same public API shape as `ObjectboxWageRepository` — same method signatures, same return type aliases
+- [x] Task 3: Create DriftWageRepository (AC: #2, #4)
+  - [x] 3.1 Create `lib/src/features/wage/data/repositories/drift_wage_repository.dart`
+  - [x] 3.2 Import fpdart, GlobalFailure, AppDatabase (`app_database.dart` — for `WageHourlyTableData` type resolution, matches `DriftTimesRepository` pattern), WageDriftDatasource, WageHourly, WageRepository, and the conversion extension from wage_hourly_table.dart
+  - [x] 3.3 Class receives `WageDriftDatasource` via `const` constructor (mirrors `ObjectboxWageRepository`)
+  - [x] 3.4 Implement `FetchWageResultStream fetchWageHourly()` — map `_datasource.watchAll()` stream converting `List<WageHourlyTableData>` to single `WageHourly`: map each row via `.toWageHourly`, if list is empty return `const WageHourly()` (default $15.00 — FR8), otherwise return `wages.last`; wrap stream in `right()`; catch with `on Object catch (e)` returning `left(GlobalFailure.fromException(e))`; this method is SYNCHRONOUS (returns Either directly, not Future)
+  - [x] 3.5 Implement `SetWageResult setWageHourly(WageHourly wageHourly)` — call `await _datasource.insert(value: wageHourly.value)`; return `right(wageHourly)`; wrap in try/catch
+  - [x] 3.6 Implement `UpdateWageResult update(WageHourly wageHourly)` — call `await _datasource.update(wageHourly.id, value: wageHourly.value)`; return `right(wageHourly)`; wrap in try/catch
+  - [x] 3.7 Add dartdoc comments on class, constructor, and all overridden methods
+  - [x] 3.8 Verify exact same public API shape as `ObjectboxWageRepository` — same method signatures, same return type aliases
 
-- [ ] Task 4: Update barrel files (AC: #5)
-  - [ ] 4.1 Add `export 'wage_drift_datasource.dart';` to `lib/src/features/wage/data/datasources/datasources.dart`
-  - [ ] 4.2 Add `export 'drift_wage_repository.dart';` to `lib/src/features/wage/data/repositories/repositories.dart`
+- [x] Task 4: Update barrel files (AC: #5)
+  - [x] 4.1 Add `export 'wage_drift_datasource.dart';` to `lib/src/features/wage/data/datasources/datasources.dart`
+  - [x] 4.2 Add `export 'drift_wage_repository.dart';` to `lib/src/features/wage/data/repositories/repositories.dart`
 
-- [ ] Task 5: Write datasource tests (AC: #6)
-  - [ ] 5.1 Create `test/src/features/wage/data/datasources/wage_drift_datasource_test.dart`
-  - [ ] 5.2 Add file-level dartdoc, `library;` directive (project standard from 4.1 code review)
-  - [ ] 5.3 Use REAL in-memory database (`AppDatabase(NativeDatabase.memory())`) — NOT mocks — to test drift operations end-to-end
-  - [ ] 5.4 setUp creates fresh `AppDatabase` + `WageDriftDatasource`; tearDown closes database
-  - [ ] 5.5 Test `insert` returns auto-generated id and row is persisted — verify with `db.select(db.wageHourlyTable).get()` (the datasource has no select method; use the raw `db` reference directly for verification)
-  - [ ] 5.6 Test `watchAll` emits initial empty list, then updated list after insert (use `pumpEventQueue()` pattern from times_drift_datasource_test.dart)
-  - [ ] 5.7 Test `update` modifies the correct row (insert → update → verify with `db.select(db.wageHourlyTable).get()` → assert changed value; datasource has no select method, use raw `db`)
-  - [ ] 5.8 Test `watchAll` on empty table returns empty list (edge case)
-  - [ ] 5.9 Test multiple inserts produce sequential auto-increment IDs
-  - [ ] 5.10 Add why-comments on every group and test (project standard)
-  - [ ] 5.11 Use `int` literals where the value is a whole number (e.g., `value: 25` not `value: 25.0`) — `prefer_int_literals` lint auto-promotes int to double for RealColumn (known from 4.1 debug log)
+- [x] Task 5: Write datasource tests (AC: #6)
+  - [x] 5.1 Create `test/src/features/wage/data/datasources/wage_drift_datasource_test.dart`
+  - [x] 5.2 Add file-level dartdoc, `library;` directive (project standard from 4.1 code review)
+  - [x] 5.3 Use REAL in-memory database (`AppDatabase(NativeDatabase.memory())`) — NOT mocks — to test drift operations end-to-end
+  - [x] 5.4 setUp creates fresh `AppDatabase` + `WageDriftDatasource`; tearDown closes database
+  - [x] 5.5 Test `insert` returns auto-generated id and row is persisted — verify with `db.select(db.wageHourlyTable).get()` (the datasource has no select method; use the raw `db` reference directly for verification)
+  - [x] 5.6 Test `watchAll` emits initial empty list, then updated list after insert (use `pumpEventQueue()` pattern from times_drift_datasource_test.dart)
+  - [x] 5.7 Test `update` modifies the correct row (insert → update → verify with `db.select(db.wageHourlyTable).get()` → assert changed value; datasource has no select method, use raw `db`)
+  - [x] 5.8 Test `watchAll` on empty table returns empty list (edge case)
+  - [x] 5.9 Test multiple inserts produce sequential auto-increment IDs
+  - [x] 5.10 Add why-comments on every group and test (project standard)
+  - [x] 5.11 Use `int` literals where the value is a whole number (e.g., `value: 25` not `value: 25.0`) — `prefer_int_literals` lint auto-promotes int to double for RealColumn (known from 4.1 debug log)
 
-- [ ] Task 6: Write repository tests (AC: #7)
-  - [ ] 6.1 Create `test/src/features/wage/data/repositories/drift_wage_repository_test.dart`
-  - [ ] 6.2 Add file-level dartdoc, `library;` directive (project standard); imports MUST include `package:time_money/src/core/services/app_database.dart` (for `WageHourlyTableData` used in stubs)
-  - [ ] 6.3 Use mocktail to create `MockWageDriftDatasource extends Mock implements WageDriftDatasource`
-  - [ ] 6.4 setUp creates mock datasource + `DriftWageRepository`; no `setUpAll` needed (no ObjectBox fallback values to register — drift datasource methods use `double` primitives, not model classes)
-  - [ ] 6.5 Test `fetchWageHourly` returns Right with correctly mapped WageHourly stream on success — stub `watchAll()` to return `Stream.value([WageHourlyTableData(id: 1, value: 25)])` and verify the stream emits `WageHourly(id: 1, value: 25)`
-  - [ ] 6.6 Test `fetchWageHourly` returns Right with default WageHourly when stream emits empty list — stub `watchAll()` to return `Stream.value(<WageHourlyTableData>[])` and verify stream emits `const WageHourly()` (id: 0, value: 15.0)
-  - [ ] 6.7 Test `fetchWageHourly` returns Left with GlobalFailure on exception
-  - [ ] 6.8 Test `setWageHourly` returns Right with WageHourly on success — stub `insert()` to return `1` and verify call with named parameter matcher
-  - [ ] 6.9 Test `setWageHourly` returns Left on exception
-  - [ ] 6.10 Test `update` returns Right with WageHourly on success — stub `update()` to complete and verify call with named parameter matcher
-  - [ ] 6.11 Test `update` returns Left on exception
-  - [ ] 6.12 Add why-comments on every group and test (project standard)
-  - [ ] 6.13 Use `verify(() => mockDatasource.insert(value: any(named: 'value'))).called(1)` for set verification; use `verify(() => mockDatasource.update(any(), value: any(named: 'value'))).called(1)` for update verification
+- [x] Task 6: Write repository tests (AC: #7)
+  - [x] 6.1 Create `test/src/features/wage/data/repositories/drift_wage_repository_test.dart`
+  - [x] 6.2 Add file-level dartdoc, `library;` directive (project standard); imports MUST include `package:time_money/src/core/services/app_database.dart` (for `WageHourlyTableData` used in stubs)
+  - [x] 6.3 Use mocktail to create `MockWageDriftDatasource extends Mock implements WageDriftDatasource`
+  - [x] 6.4 setUp creates mock datasource + `DriftWageRepository`; no `setUpAll` needed (no ObjectBox fallback values to register — drift datasource methods use `double` primitives, not model classes)
+  - [x] 6.5 Test `fetchWageHourly` returns Right with correctly mapped WageHourly stream on success — stub `watchAll()` to return `Stream.value([WageHourlyTableData(id: 1, value: 25)])` and verify the stream emits `WageHourly(id: 1, value: 25)`
+  - [x] 6.6 Test `fetchWageHourly` returns Right with default WageHourly when stream emits empty list — stub `watchAll()` to return `Stream.value(<WageHourlyTableData>[])` and verify stream emits `const WageHourly()` (id: 0, value: 15.0)
+  - [x] 6.7 Test `fetchWageHourly` returns Left with GlobalFailure on exception
+  - [x] 6.8 Test `setWageHourly` returns Right with WageHourly on success — stub `insert()` to return `1` and verify call with named parameter matcher
+  - [x] 6.9 Test `setWageHourly` returns Left on exception
+  - [x] 6.10 Test `update` returns Right with WageHourly on success — stub `update()` to complete and verify call with named parameter matcher
+  - [x] 6.11 Test `update` returns Left on exception
+  - [x] 6.12 Add why-comments on every group and test (project standard)
+  - [x] 6.13 Use `verify(() => mockDatasource.insert(value: any(named: 'value'))).called(1)` for set verification; use `verify(() => mockDatasource.update(any(), value: any(named: 'value'))).called(1)` for update verification
 
-- [ ] Task 7: Verification (AC: #8)
-  - [ ] 7.1 Run `flutter analyze` — zero issues
-  - [ ] 7.2 Run `flutter test` — all 145 existing tests pass + 12 new tests (5 datasource + 7 repository = 157 total), zero regressions
-  - [ ] 7.3 Verify barrel exports are correct (datasources.dart, repositories.dart)
+- [x] Task 7: Verification (AC: #8)
+  - [x] 7.1 Run `flutter analyze` — zero issues
+  - [x] 7.2 Run `flutter test` — all 145 existing tests pass + 12 new tests (5 datasource + 7 repository = 157 total), zero regressions
+  - [x] 7.3 Verify barrel exports are correct (datasources.dart, repositories.dart)
 
 ## Dev Notes
 
@@ -478,10 +478,35 @@ void main() {
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+No issues encountered — clean implementation following established patterns from stories 4.1/4.2.
+
 ### Completion Notes List
 
+- Task 1: Added `ConvertWageHourlyTableData` extension to `wage_hourly_table.dart` with imports for `app_database.dart` and `wage_hourly.dart`. Mirrors `ConvertTimesTableData` pattern in `times_table.dart`. No reverse extension added (datasource uses primitives).
+- Task 2: Created `WageDriftDatasource` with `watchAll()`, `insert(value:)`, and `update(id, value:)` methods. Mirrors `TimesDriftDatasource` pattern adapted for wage's simpler domain (no remove method). No try/catch — exceptions propagate to repository layer.
+- Task 3: Created `DriftWageRepository` implementing `WageRepository` interface. Maps `WageHourlyTableData` → `WageHourly` via conversion extension. `fetchWageHourly()` returns default `const WageHourly()` (id: 0, value: 15.0) when empty — identical to `ObjectboxWageRepository` behavior. All methods wrap in `Either` with `on Object catch (e)`.
+- Task 4: Updated barrel files — `datasources.dart` exports `wage_drift_datasource.dart`, `repositories.dart` exports `drift_wage_repository.dart`.
+- Task 5: Created 5 datasource tests using real in-memory drift database (insert persistence, watchAll reactive stream, update row, empty table edge case, sequential auto-increment IDs). All pass.
+- Task 6: Created 7 repository tests using mocked datasource (fetch success/default/failure, set success/failure, update success/failure). Named parameter matchers used for verify calls. All pass.
+- Task 7: `flutter analyze` — zero issues. `flutter test` — 157 tests passed (145 existing + 5 datasource + 7 repository), zero regressions.
+
+### Change Log
+
+- 2026-03-20: Story 4.3 implementation complete — wage drift datasource, repository, conversion extension, barrel exports, and full test coverage.
+
 ### File List
+
+**Created:**
+- `lib/src/features/wage/data/datasources/wage_drift_datasource.dart`
+- `lib/src/features/wage/data/repositories/drift_wage_repository.dart`
+- `test/src/features/wage/data/datasources/wage_drift_datasource_test.dart`
+- `test/src/features/wage/data/repositories/drift_wage_repository_test.dart`
+
+**Modified:**
+- `lib/src/features/wage/data/models/wage_hourly_table.dart` (added ConvertWageHourlyTableData extension + imports)
+- `lib/src/features/wage/data/datasources/datasources.dart` (added wage_drift_datasource export)
+- `lib/src/features/wage/data/repositories/repositories.dart` (added drift_wage_repository export)

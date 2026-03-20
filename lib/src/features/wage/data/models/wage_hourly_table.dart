@@ -1,4 +1,6 @@
 import 'package:drift/drift.dart';
+import 'package:time_money/src/core/services/app_database.dart';
+import 'package:time_money/src/features/wage/domain/entities/wage_hourly.dart';
 
 /// Drift table definition for hourly wage records.
 ///
@@ -10,4 +12,13 @@ class WageHourlyTable extends Table {
 
   /// Hourly wage amount stored as a real (double) value.
   RealColumn get value => real()();
+}
+
+/// Maps a [WageHourlyTableData] drift row to a [WageHourly] domain entity.
+extension ConvertWageHourlyTableData on WageHourlyTableData {
+  /// Converts this drift row into a [WageHourly].
+  WageHourly get toWageHourly => WageHourly(
+        id: id,
+        value: value,
+      );
 }
