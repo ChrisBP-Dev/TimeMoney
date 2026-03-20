@@ -44,6 +44,14 @@ class DriftWageRepository implements WageRepository {
   @override
   UpdateWageResult update(WageHourly wageHourly) async {
     try {
+      // When id is 0 (no existing record), insert a new row.
+      // This mirrors ObjectBox's `put()` behaviour where id=0 triggers
+      // an INSERT. Without this, Drift's UPDATE with id=0 matches no
+      // rows because auto-incremented IDs start at 1.
+      if (wageHourly.id == 0) {
+        final id = await _datasource.insert(value: wageHourly.value);
+        return right(wageHourly.copyWith(id: id));
+      }
       await _datasource.update(wageHourly.id, value: wageHourly.value);
       return right(wageHourly);
     } on Object catch (e) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 
 /// Submit button for creating a new time entry.
@@ -20,14 +21,14 @@ class CreateTimeButton extends StatelessWidget {
         onPressed: () =>
             context.read<CreateTimeBloc>().add(const CreateTimeSubmitted()),
         child: switch (state) {
-          CreateTimeInitial() => const Text('Create'),
+          CreateTimeInitial() => Text(context.l10n.create),
           CreateTimeLoading() => const SizedBox(
               height: 20,
               width: 20,
               child: CircularProgressIndicator(color: Colors.white),
             ),
-          CreateTimeSuccess() => const Text('Success'),
-          CreateTimeError() => const Text('Error'),
+          CreateTimeSuccess() => Text(context.l10n.success),
+          CreateTimeError() => Text(context.l10n.error),
         },
       ),
     );

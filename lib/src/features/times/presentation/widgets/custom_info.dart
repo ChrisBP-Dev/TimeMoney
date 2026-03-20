@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 
 /// Reusable label-value pair widget for displaying time entry data.
 ///
@@ -23,7 +24,7 @@ class CustomInfo extends StatelessWidget {
     return Row(
       children: [
         Text(
-          '$category:',
+          context.l10n.fieldLabel(category),
           style: const TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 16,

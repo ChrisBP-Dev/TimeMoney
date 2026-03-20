@@ -98,11 +98,149 @@ abstract class AppLocalizations {
     Locale('es'),
   ];
 
-  /// Text shown in the AppBar of the Counter Page
+  /// App bar title on the home page
   ///
   /// In en, this message translates to:
-  /// **'Counter'**
-  String get counterAppBarTitle;
+  /// **'Work Payment Controller'**
+  String get homeTitle;
+
+  /// Button label to add a new time entry
+  ///
+  /// In en, this message translates to:
+  /// **'Add Time'**
+  String get addTime;
+
+  /// Button label to calculate payment
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate Payment'**
+  String get calculatePayment;
+
+  /// Title for the create time dialog and card
+  ///
+  /// In en, this message translates to:
+  /// **'Create Time:'**
+  String get createTimeTitle;
+
+  /// Title for the update/delete time dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Update or Delete:'**
+  String get updateOrDeleteTitle;
+
+  /// Generic error label for buttons and states
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// Label with colon suffix for form fields and info displays
+  ///
+  /// In en, this message translates to:
+  /// **'{label}:'**
+  String fieldLabel(String label);
+
+  /// Label for the hour field
+  ///
+  /// In en, this message translates to:
+  /// **'Hour'**
+  String get hourTitle;
+
+  /// Label for the minutes field
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get minutesTitle;
+
+  /// Button label for create action
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// Generic success label for button states
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get success;
+
+  /// Button label for update action
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// Button label for delete action
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Message shown when the time entries list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Empty List...\nThere are no times to calculate'**
+  String get emptyTimesMessage;
+
+  /// Title for the update wage dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Update Hourly Pay:'**
+  String get updateHourlyPayTitle;
+
+  /// Label for hourly wage display
+  ///
+  /// In en, this message translates to:
+  /// **'Hourly:'**
+  String get hourlyLabel;
+
+  /// Button label to open wage update dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// Title for the payment result dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Result Info:'**
+  String get resultInfoTitle;
+
+  /// Label for total hours in payment result
+  ///
+  /// In en, this message translates to:
+  /// **'Hours:'**
+  String get hoursLabel;
+
+  /// Label for total minutes in payment result
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes:'**
+  String get minutesLabel;
+
+  /// Currency name label
+  ///
+  /// In en, this message translates to:
+  /// **'Dollars'**
+  String get dollarsLabel;
+
+  /// Label for worked days in payment result
+  ///
+  /// In en, this message translates to:
+  /// **'Worked days:'**
+  String get workedDaysLabel;
+
+  /// Currency prefix displayed before payment amount
+  ///
+  /// In en, this message translates to:
+  /// **'\$/. '**
+  String get currencyPrefix;
+
+  /// Button label for save action
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
 }
 
 class _AppLocalizationsDelegate

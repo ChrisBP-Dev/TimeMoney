@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:time_money/src/features/wage/presentation/bloc/fetch_wage_bloc.dart';
 import 'package:time_money/src/features/wage/presentation/widgets/widgets.dart';
@@ -43,6 +44,6 @@ class _ActionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(onPressed: () {}, child: const Text('error'));
+    return ElevatedButton(onPressed: () {}, child: Text(context.l10n.error));
   }
 }

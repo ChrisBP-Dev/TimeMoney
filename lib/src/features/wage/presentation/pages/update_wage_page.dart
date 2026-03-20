@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/wage/presentation/widgets/widgets.dart';
 
 /// Dialog page that allows the user to update their hourly wage.
@@ -14,7 +15,7 @@ class UpdateWagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Update Horly pay:'),
+      title: Text(context.l10n.updateHourlyPayTitle),
       iconPadding: const EdgeInsets.all(7),
       icon: Align(
         alignment: Alignment.topRight,

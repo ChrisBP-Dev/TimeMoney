@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/custom_update_field.dart';
 
@@ -38,7 +39,7 @@ class _UpdateMinutesFieldState extends State<UpdateMinutesField> {
     return BlocBuilder<UpdateTimeBloc, UpdateTimeState>(
       builder: (context, state) {
         return CustomUpdateField(
-          title: 'Minutes',
+          title: context.l10n.minutesTitle,
           controller: _controller,
           onChanged: (value) => context.read<UpdateTimeBloc>().add(
                 UpdateTimeMinutesChanged(value: value),

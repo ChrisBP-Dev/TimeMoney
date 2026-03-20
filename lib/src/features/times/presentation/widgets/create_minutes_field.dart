@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
@@ -41,7 +42,7 @@ class _CreateMinutesFieldState extends State<CreateMinutesField> {
           previous is! CreateTimeInitial,
       listener: (context, state) => _controller.clear(),
       child: CustomCreateField(
-        title: 'Minutes',
+        title: context.l10n.minutesTitle,
         controller: _controller,
         onChanged: (value) => context.read<CreateTimeBloc>().add(
               CreateTimeMinutesChanged(value: value),

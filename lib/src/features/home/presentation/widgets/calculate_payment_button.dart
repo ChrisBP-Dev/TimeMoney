@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:time_money/src/features/payment/presentation/pages/pages.dart';
 
@@ -32,7 +33,7 @@ class CalculatePaymentButton extends StatelessWidget {
                     ),
                   );
                 },
-          label: const Text('Calculate Payment'),
+          label: Text(context.l10n.calculatePayment),
         );
       },
     );

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/core/extensions/screen_size.dart';
 import 'package:time_money/src/features/home/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/times/presentation/pages/list_times_page.dart';
@@ -20,9 +21,9 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text(
-          'Work Payment Controller',
-          style: TextStyle(
+        title: Text(
+          context.l10n.homeTitle,
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),
@@ -51,9 +52,9 @@ class HomePage extends StatelessWidget {
                         builder: (context) => const CreateTimeCard(),
                       ));
                     },
-                    label: const Text(
-                      'Add Time',
-                      style: TextStyle(color: Colors.white),
+                    label: Text(
+                      context.l10n.addTime,
+                      style: const TextStyle(color: Colors.white),
                     ),
                   )
                 ],

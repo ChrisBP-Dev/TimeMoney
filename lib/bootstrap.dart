@@ -2,23 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:time_money/app/app.dart';
-import 'package:time_money/src/core/services/app_database.dart';
-import 'package:time_money/src/core/services/objectbox_service.dart';
-import 'package:time_money/src/features/times/data/datasources/times_drift_datasource.dart';
-import 'package:time_money/src/features/times/data/datasources/times_objectbox_datasource.dart';
-import 'package:time_money/src/features/times/data/models/time_box.dart';
-import 'package:time_money/src/features/times/data/repositories/drift_times_repository.dart';
-import 'package:time_money/src/features/times/data/repositories/objectbox_times_repository.dart';
-import 'package:time_money/src/features/times/domain/repositories/times_repository.dart';
-import 'package:time_money/src/features/wage/data/datasources/wage_drift_datasource.dart';
-import 'package:time_money/src/features/wage/data/datasources/wage_objectbox_datasource.dart';
-import 'package:time_money/src/features/wage/data/models/wage_hourly_box.dart';
-import 'package:time_money/src/features/wage/data/repositories/drift_wage_repository.dart';
-import 'package:time_money/src/features/wage/data/repositories/objectbox_wage_repository.dart';
-import 'package:time_money/src/features/wage/domain/repositories/wage_repository.dart';
+import 'package:time_money/bootstrap_repositories_web.dart'
+    if (dart.library.io) 'package:time_money/bootstrap_repositories_native.dart';
 
 /// BLoC observer that logs state changes and errors for debugging.
 class AppBlocObserver extends BlocObserver {
@@ -40,9 +27,18 @@ class AppBlocObserver extends BlocObserver {
 
 /// Bootstraps the app with platform-aware DI and environment-specific database.
 ///
-/// Uses [kIsWeb] compile-time constant for platform detection:
-/// - Web → drift ([AppDatabase]) with SQLite via WASM + OPFS
-/// - Native → ObjectBox ([ObjectBox]) with native binary store
+/// Repository creation is resolved at **compile time** via
+/// conditional imports:
+/// - **Web** → [createRepositories] from
+///   `bootstrap_repositories_web.dart` uses Drift with SQLite
+///   via WASM + OPFS.
+/// - **Native** → [createRepositories] from
+///   `bootstrap_repositories_native.dart` uses ObjectBox with a
+///   native binary store.
+///
+/// This compile-time isolation ensures `dart:ffi` (required by ObjectBox) is
+/// never seen by the web compiler, while the web-only Drift stack is excluded
+/// from native builds.
 ///
 /// The [dbName] parameter isolates databases per environment
 /// (`test-1`, `stg-1`, `prod-1`).
@@ -55,30 +51,8 @@ Future<void> bootstrap({required String dbName}) async {
 
   Bloc.observer = const AppBlocObserver();
 
-  // Platform-aware datasource and repository resolution.
-  // kIsWeb is a compile-time constant — dead branches are tree-shaken.
-  final TimesRepository timesRepository;
-  final WageRepository wageRepository;
-
-  if (kIsWeb) {
-    // drift stack — synchronous creation.
-    final db = AppDatabase.named(dbName);
-    final timesDatasource = TimesDriftDatasource(db);
-    final wageDatasource = WageDriftDatasource(db);
-    timesRepository = DriftTimesRepository(timesDatasource);
-    wageRepository = DriftWageRepository(wageDatasource);
-  } else {
-    // ObjectBox stack — asynchronous creation.
-    final objectbox = await ObjectBox.create(dbName);
-    final timesDatasource = TimesObjectboxDatasource(
-      objectbox.store.box<TimeBox>(),
-    );
-    final wageDatasource = WageObjectboxDatasource(
-      objectbox.store.box<WageHourlyBox>(),
-    );
-    timesRepository = ObjectboxTimesRepository(timesDatasource);
-    wageRepository = ObjectboxWageRepository(wageDatasource);
-  }
+  final (:timesRepository, :wageRepository) =
+      await createRepositories(dbName);
 
   await runZonedGuarded(
     () async => runApp(

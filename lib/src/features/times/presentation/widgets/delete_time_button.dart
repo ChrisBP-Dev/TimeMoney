@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 import 'package:time_money/src/features/times/presentation/bloc/delete_time_bloc.dart';
 
@@ -39,14 +40,14 @@ class DeleteTimeButton extends StatelessWidget {
                 }
               : null,
           child: switch (state) {
-            DeleteTimeInitial() => const Text('Delete'),
+            DeleteTimeInitial() => Text(context.l10n.delete),
             DeleteTimeLoading() => const SizedBox(
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(color: Colors.white),
               ),
-            DeleteTimeSuccess() => const Text('Success'),
-            DeleteTimeError() => const Text('Error'),
+            DeleteTimeSuccess() => Text(context.l10n.success),
+            DeleteTimeError() => Text(context.l10n.error),
           },
         );
       },

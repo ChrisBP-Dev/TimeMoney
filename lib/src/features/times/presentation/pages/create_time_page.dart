@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
 /// Dialog page for creating a new time entry.
@@ -13,7 +14,7 @@ class CreateTimePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Create Time:'),
+      title: Text(context.l10n.createTimeTitle),
       iconPadding: const EdgeInsets.all(7),
       icon: Align(
         alignment: Alignment.topRight,

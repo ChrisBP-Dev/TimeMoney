@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
 /// Card containing the form fields for creating a new time entry.
@@ -12,23 +13,23 @@ class CreateTimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const FractionallySizedBox(
+    return FractionallySizedBox(
       heightFactor: .24,
       child: Card(
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         child: Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               Text(
-                'Create Time:',
-                style: TextStyle(
+                context.l10n.createTimeTitle,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 10),
-              Row(
+              const SizedBox(height: 10),
+              const Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(flex: 3, child: CreateHourField()),

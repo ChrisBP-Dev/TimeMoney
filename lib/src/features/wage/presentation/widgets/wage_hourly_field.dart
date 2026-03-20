@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/wage/presentation/bloc/update_wage_bloc.dart';
 
 /// Text input field for entering a new hourly wage value.
@@ -33,7 +34,7 @@ class _WageHourlyFieldState extends State<WageHourlyField> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text('hourly:'),
+        Text(context.l10n.hourlyLabel),
         const SizedBox(width: 25),
         BlocBuilder<UpdateWageBloc, UpdateWageState>(
           builder: (context, state) {

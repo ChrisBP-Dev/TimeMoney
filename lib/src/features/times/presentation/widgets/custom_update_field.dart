@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 
 /// Reusable numeric text field for the update-time form.
 ///
@@ -28,7 +29,7 @@ class CustomUpdateField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('$title:'),
+        Text(context.l10n.fieldLabel(title)),
         const SizedBox(height: 8),
         TextField(
           controller: controller,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/shared/widgets/widgets.dart';
 
 /// Loading placeholder view shown while time entries are being fetched.
@@ -35,7 +36,7 @@ class EmptyListTimesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ShowInfoSection(
-      infoMessage: 'Empty List...\nThere is no times to calculate',
+      infoMessage: context.l10n.emptyTimesMessage,
       infoImage: const IconText('🕰️'),
       actionWidget: actionWidget,
     );

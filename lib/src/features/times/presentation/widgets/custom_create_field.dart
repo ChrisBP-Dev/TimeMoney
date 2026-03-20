@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 
 /// Reusable numeric text field for the create-time form.
 ///
@@ -29,7 +30,7 @@ class CustomCreateField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('$title:'),
+        Text(context.l10n.fieldLabel(title)),
         const SizedBox(height: 8),
         TextField(
           controller: controller,

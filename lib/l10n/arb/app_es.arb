@@ -1,7 +1,27 @@
 {
     "@@locale": "es",
-    "counterAppBarTitle": "Contador",
-    "@counterAppBarTitle": {
-        "description": "Texto mostrado en la AppBar de la página del contador"
-    }
+    "homeTitle": "Controlador de Pago Laboral",
+    "addTime": "Agregar Tiempo",
+    "calculatePayment": "Calcular Pago",
+    "createTimeTitle": "Crear Tiempo:",
+    "updateOrDeleteTitle": "Actualizar o Eliminar:",
+    "error": "Error",
+    "fieldLabel": "{label}:",
+    "hourTitle": "Hora",
+    "minutesTitle": "Minutos",
+    "create": "Crear",
+    "success": "Éxito",
+    "update": "Actualizar",
+    "delete": "Eliminar",
+    "emptyTimesMessage": "Lista vacía...\nNo hay tiempos para calcular",
+    "updateHourlyPayTitle": "Actualizar Pago por Hora:",
+    "hourlyLabel": "Por hora:",
+    "change": "Cambiar",
+    "resultInfoTitle": "Información del Resultado:",
+    "hoursLabel": "Horas:",
+    "minutesLabel": "Minutos:",
+    "dollarsLabel": "Dólares",
+    "workedDaysLabel": "Días trabajados:",
+    "currencyPrefix": "$/. ",
+    "save": "Guardar"
 }

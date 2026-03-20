@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc.dart';
 
 /// Submit button for updating an existing time entry.
@@ -32,14 +33,14 @@ class UpdateTimeButton extends StatelessWidget {
                 }
               : null,
           child: switch (state) {
-            UpdateTimeInitial() => const Text('Update'),
+            UpdateTimeInitial() => Text(context.l10n.update),
             UpdateTimeLoading() => const SizedBox(
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(color: Colors.white),
               ),
-            UpdateTimeSuccess() => const Text('Success'),
-            UpdateTimeError() => const Text('Error'),
+            UpdateTimeSuccess() => Text(context.l10n.success),
+            UpdateTimeError() => Text(context.l10n.error),
           },
         );
       },

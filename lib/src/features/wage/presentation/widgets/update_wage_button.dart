@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/wage/presentation/pages/update_wage_page.dart';
 
 /// Button that opens the [UpdateWagePage] dialog for editing the wage.
@@ -15,7 +16,7 @@ class UpdateWageButton extends StatelessWidget {
           builder: (context) => const UpdateWagePage(),
         );
       },
-      child: const Text('change'),
+      child: Text(context.l10n.change),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/wage/domain/entities/wage_hourly.dart';
 
 /// Displays the hourly wage label and numeric value in a column.
@@ -17,9 +18,9 @@ class WageHourlyInfo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          'hourly:',
-          style: TextStyle(
+        Text(
+          context.l10n.hourlyLabel,
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),

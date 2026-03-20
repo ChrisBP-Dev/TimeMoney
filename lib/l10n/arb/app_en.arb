@@ -1,7 +1,104 @@
 {
     "@@locale": "en",
-    "counterAppBarTitle": "Counter",
-    "@counterAppBarTitle": {
-        "description": "Text shown in the AppBar of the Counter Page"
+    "homeTitle": "Work Payment Controller",
+    "@homeTitle": {
+        "description": "App bar title on the home page"
+    },
+    "addTime": "Add Time",
+    "@addTime": {
+        "description": "Button label to add a new time entry"
+    },
+    "calculatePayment": "Calculate Payment",
+    "@calculatePayment": {
+        "description": "Button label to calculate payment"
+    },
+    "createTimeTitle": "Create Time:",
+    "@createTimeTitle": {
+        "description": "Title for the create time dialog and card"
+    },
+    "updateOrDeleteTitle": "Update or Delete:",
+    "@updateOrDeleteTitle": {
+        "description": "Title for the update/delete time dialog"
+    },
+    "error": "Error",
+    "@error": {
+        "description": "Generic error label for buttons and states"
+    },
+    "fieldLabel": "{label}:",
+    "@fieldLabel": {
+        "description": "Label with colon suffix for form fields and info displays",
+        "placeholders": {
+            "label": {
+                "type": "String"
+            }
+        }
+    },
+    "hourTitle": "Hour",
+    "@hourTitle": {
+        "description": "Label for the hour field"
+    },
+    "minutesTitle": "Minutes",
+    "@minutesTitle": {
+        "description": "Label for the minutes field"
+    },
+    "create": "Create",
+    "@create": {
+        "description": "Button label for create action"
+    },
+    "success": "Success",
+    "@success": {
+        "description": "Generic success label for button states"
+    },
+    "update": "Update",
+    "@update": {
+        "description": "Button label for update action"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "Button label for delete action"
+    },
+    "emptyTimesMessage": "Empty List...\nThere are no times to calculate",
+    "@emptyTimesMessage": {
+        "description": "Message shown when the time entries list is empty"
+    },
+    "updateHourlyPayTitle": "Update Hourly Pay:",
+    "@updateHourlyPayTitle": {
+        "description": "Title for the update wage dialog"
+    },
+    "hourlyLabel": "Hourly:",
+    "@hourlyLabel": {
+        "description": "Label for hourly wage display"
+    },
+    "change": "Change",
+    "@change": {
+        "description": "Button label to open wage update dialog"
+    },
+    "resultInfoTitle": "Result Info:",
+    "@resultInfoTitle": {
+        "description": "Title for the payment result dialog"
+    },
+    "hoursLabel": "Hours:",
+    "@hoursLabel": {
+        "description": "Label for total hours in payment result"
+    },
+    "minutesLabel": "Minutes:",
+    "@minutesLabel": {
+        "description": "Label for total minutes in payment result"
+    },
+    "dollarsLabel": "Dollars",
+    "@dollarsLabel": {
+        "description": "Currency name label"
+    },
+    "workedDaysLabel": "Worked days:",
+    "@workedDaysLabel": {
+        "description": "Label for worked days in payment result"
+    },
+    "currencyPrefix": "$/. ",
+    "@currencyPrefix": {
+        "description": "Currency prefix displayed before payment amount"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Button label for save action"
     }
 }
