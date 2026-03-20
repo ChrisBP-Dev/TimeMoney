@@ -31,7 +31,7 @@ so that the web app is fully functional for time tracking (FR22, FR29, FR31).
 ## Tasks / Subtasks
 
 - [ ] Task 1: Add conversion extensions to times_table.dart (AC: #3)
-  - [ ] 1.1 Add `import 'package:time_money/src/features/times/domain/entities/time_entry.dart';` to `times_table.dart`
+  - [ ] 1.1 Add two imports to `times_table.dart`: `import 'package:time_money/src/core/services/app_database.dart';` (required — `TimesTableData` is generated in `app_database.g.dart` which is `part of` `app_database.dart`) and `import 'package:time_money/src/features/times/domain/entities/time_entry.dart';`
   - [ ] 1.2 Add `ConvertTimesTableData` extension on `TimesTableData` with `TimeEntry get toTimeEntry` getter — maps `id`, `hour`, `minutes` fields
   - [ ] 1.3 Add dartdoc comments on extension and getter
   - [ ] 1.4 Do NOT add a reverse extension (TimeEntry → TimesTableData) — the datasource API uses primitive parameters, not data classes
@@ -67,19 +67,19 @@ so that the web app is fully functional for time tracking (FR22, FR29, FR31).
   - [ ] 5.2 Add file-level dartdoc, `library;` directive (project standard from 4.1 code review)
   - [ ] 5.3 Use REAL in-memory database (`AppDatabase(NativeDatabase.memory())`) — NOT mocks — to test drift operations end-to-end
   - [ ] 5.4 setUp creates fresh `AppDatabase` + `TimesDriftDatasource`; tearDown closes database
-  - [ ] 5.5 Test `insert` returns auto-generated id and row is persisted (select to verify)
+  - [ ] 5.5 Test `insert` returns auto-generated id and row is persisted — verify with `db.select(db.timesTable).get()` (the datasource has no select method; use the raw `db` reference directly for verification)
   - [ ] 5.6 Test `watchAll` emits initial empty list, then updated list after insert (use `pumpEventQueue()` pattern from app_database_test.dart)
-  - [ ] 5.7 Test `update` modifies the correct row (insert → update → select → verify changed values)
-  - [ ] 5.8 Test `remove` deletes the row (insert → remove → select → verify empty)
+  - [ ] 5.7 Test `update` modifies the correct row (insert → update → verify with `db.select(db.timesTable).get()` → assert changed values; datasource has no select method, use raw `db`)
+  - [ ] 5.8 Test `remove` deletes the row (insert → remove → verify with `db.select(db.timesTable).get()` → assert empty)
   - [ ] 5.9 Test `watchAll` on empty table returns empty list (edge case)
   - [ ] 5.10 Test multiple inserts produce sequential auto-increment IDs
   - [ ] 5.11 Add why-comments on every group and test (project standard)
 
 - [ ] Task 6: Write repository tests (AC: #7)
   - [ ] 6.1 Create `test/src/features/times/data/repositories/drift_times_repository_test.dart`
-  - [ ] 6.2 Add file-level dartdoc, `library;` directive (project standard)
+  - [ ] 6.2 Add file-level dartdoc, `library;` directive (project standard); imports MUST include `package:time_money/src/core/services/app_database.dart` (for `TimesTableData` used in stubs)
   - [ ] 6.3 Use mocktail to create `MockTimesDriftDatasource extends Mock implements TimesDriftDatasource`
-  - [ ] 6.4 setUp creates mock datasource + `DriftTimesRepository`; no `setUpAll` needed (no ObjectBox fallback values to register)
+  - [ ] 6.4 setUp creates mock datasource + `DriftTimesRepository`; no `setUpAll` needed (no ObjectBox fallback values to register — drift datasource methods use `int` primitives, not model classes)
   - [ ] 6.5 Test `fetchTimesStream` returns Right with correctly mapped TimeEntry stream on success — stub `watchAll()` to return `Stream.value([TimesTableData(id: 1, hour: 1, minutes: 30)])` and verify the stream emits `[TimeEntry(id: 1, hour: 1, minutes: 30)]`
   - [ ] 6.6 Test `fetchTimesStream` returns Left with GlobalFailure on exception
   - [ ] 6.7 Test `create` returns Right with TimeEntry on success — stub `insert()` to return `1` and verify call
@@ -89,7 +89,7 @@ so that the web app is fully functional for time tracking (FR22, FR29, FR31).
   - [ ] 6.11 Test `delete` returns Right with unit on success — stub `remove()` to return `1` and verify call
   - [ ] 6.12 Test `delete` returns Left on exception
   - [ ] 6.13 Add why-comments on every group and test (project standard)
-  - [ ] 6.14 Use `verify(() => mockDatasource.method(args)).called(1)` after assertions
+  - [ ] 6.14 Use `verify(() => mockDatasource.method(args)).called(1)` after assertions — drift datasource methods use named parameters, so use `any(named: 'paramName')` matchers: e.g. `verify(() => mockDatasource.insert(hour: any(named: 'hour'), minutes: any(named: 'minutes'))).called(1)` (differs from ObjectBox's positional `put(any())`)
 
 - [ ] Task 7: Verification (AC: #8)
   - [ ] 7.1 Run `flutter analyze` — zero issues
@@ -151,14 +151,6 @@ class TimesDriftDatasource {
   }
 }
 ```
-
-**Key differences from ObjectBox datasource:**
-- Receives `AppDatabase` instead of `Box<TimeBox>`
-- Methods are async (`Future<int>`, `Future<void>`) instead of sync (`int`, `bool`)
-- `insert()` takes primitives, not a model class (drift uses Companions internally)
-- `update()` takes id + primitives, not a model (drift uses Value wrappers for partial updates)
-- `remove()` returns `int` (affected row count) instead of `bool`
-- No try/catch — datasource layer lets exceptions propagate (architecture: "Datasources may throw")
 
 ---
 
@@ -228,12 +220,22 @@ class DriftTimesRepository implements TimesRepository {
 }
 ```
 
-**Key differences from ObjectBox repository:**
-- Receives `TimesDriftDatasource` instead of `TimesObjectboxDatasource`
-- `create()` calls `_datasource.insert(hour:, minutes:)` instead of `_datasource.put(time.toTimeBox)`
-- `update()` calls `_datasource.update(time.id, hour:, minutes:)` instead of `_datasource.put(time.toTimeBox)`
-- `fetchTimesStream()` maps `TimesTableData` rows via `.toTimeEntry` extension instead of `TimeBox` via `.toTimeEntry`
-- Requires importing `times_table.dart` for the `ConvertTimesTableData` extension
+### ObjectBox vs Drift — Comparison Table
+
+| Aspect | ObjectBox | Drift |
+|--------|-----------|-------|
+| **Datasource dependency** | `Box<TimeBox>` | `AppDatabase` |
+| **Datasource method sync** | Sync (`int`, `bool`) | Async (`Future<int>`, `Future<void>`) |
+| **Insert API** | `put(TimeBox)` — model class | `insert(hour:, minutes:)` — primitives (Companions internally) |
+| **Update API** | `put(TimeBox)` — same as insert | `update(id, hour:, minutes:)` — id + primitives (`Value` wrappers) |
+| **Delete return** | `bool` (was deleted) | `int` (affected row count) |
+| **Stream source** | `query().watch(triggerImmediately: true).map(find)` | `select(table).watch()` (immediate by default) |
+| **Repository maps from** | `TimeBox` via `.toTimeEntry` | `TimesTableData` via `.toTimeEntry` |
+| **Repository create calls** | `_datasource.put(time.toTimeBox)` | `_datasource.insert(hour: time.hour, minutes: time.minutes)` |
+| **Repository update calls** | `_datasource.put(time.toTimeBox)` | `_datasource.update(time.id, hour: time.hour, minutes: time.minutes)` |
+| **Repository extra import** | `time_box.dart` for `ConvertTimeBox` | `times_table.dart` for `ConvertTimesTableData` |
+| **Mock verification style** | `verify(() => mock.put(any()))` — positional | `verify(() => mock.insert(hour: any(named: 'hour'), minutes: any(named: 'minutes')))` — named |
+| **Error handling** | No try/catch in datasource | No try/catch in datasource |
 
 ---
 
@@ -242,6 +244,7 @@ class DriftTimesRepository implements TimesRepository {
 Add to `lib/src/features/times/data/models/times_table.dart` (mirrors `ConvertTimeEntry` in `time_box.dart`):
 
 ```dart
+import 'package:time_money/src/core/services/app_database.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
 /// Maps a [TimesTableData] drift row to a [TimeEntry] domain entity.
@@ -255,7 +258,7 @@ extension ConvertTimesTableData on TimesTableData {
 }
 ```
 
-**Note:** `TimesTableData` is a generated class from `app_database.g.dart`. The import of `app_database.dart` (which has `part 'app_database.g.dart'`) makes it available. However, you may need to import `app_database.dart` directly OR rely on the fact that `TimesTableData` is accessible through the drift import. Verify after implementation that the extension resolves correctly — if `TimesTableData` is not in scope from `package:drift/drift.dart` alone, import `app_database.dart`.
+**Note:** `TimesTableData` is a generated class from `app_database.g.dart` (which is `part of` `app_database.dart`). The import of `app_database.dart` is REQUIRED for `TimesTableData` to be in scope — it is NOT available through `package:drift/drift.dart` alone.
 
 **CRITICAL:** The generated class name is `TimesTableData` (verified in `app_database_test.dart` line 57 where `TimesTableCompanion.insert()` is used and rows are `TimesTableData`). Do NOT guess other names.
 
@@ -319,6 +322,7 @@ void main() {
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:time_money/src/core/services/app_database.dart';
 import 'package:time_money/src/features/times/data/datasources/times_drift_datasource.dart';
 import 'package:time_money/src/features/times/data/repositories/drift_times_repository.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
@@ -401,7 +405,7 @@ void main() {
 - `test/src/features/times/data/repositories/drift_times_repository_test.dart` — repository tests
 
 **Files to MODIFY:**
-- `lib/src/features/times/data/models/times_table.dart` — add ConvertTimesTableData extension + TimeEntry import
+- `lib/src/features/times/data/models/times_table.dart` — add ConvertTimesTableData extension + `app_database.dart` import (for `TimesTableData`) + `time_entry.dart` import
 - `lib/src/features/times/data/datasources/datasources.dart` — add `export 'times_drift_datasource.dart';`
 - `lib/src/features/times/data/repositories/repositories.dart` — add `export 'drift_times_repository.dart';`
 
