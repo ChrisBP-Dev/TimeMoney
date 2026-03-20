@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/core/extensions/screen_size.dart';
+import 'package:time_money/src/core/locale/locale.dart';
 import 'package:time_money/src/features/home/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/times/presentation/pages/list_times_page.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
@@ -28,6 +30,7 @@ class HomePage extends StatelessWidget {
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
+        actions: const [_LocaleToggle()],
       ),
       body: Column(
         children: [
@@ -63,6 +66,40 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class _LocaleToggle extends StatelessWidget {
+  const _LocaleToggle();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LocaleCubit, LocaleState>(
+      builder: (context, state) {
+        final currentCode = switch (state) {
+          LocaleSystem() =>
+            Localizations.localeOf(context).languageCode,
+          LocaleSelected(:final locale) => locale.languageCode,
+        };
+        final isSpanish = currentCode == 'es';
+
+        return IconButton(
+          tooltip: isSpanish ? 'English' : 'Español',
+          onPressed: () => context.read<LocaleCubit>().setLocale(
+                isSpanish
+                    ? const Locale('en')
+                    : const Locale('es'),
+              ),
+          icon: Text(
+            isSpanish ? 'EN' : 'ES',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      },
     );
   }
 }

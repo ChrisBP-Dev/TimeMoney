@@ -361,6 +361,7 @@ Claude Opus 4.6 (1M context)
 - **Task 3:** Verified `pump_app.dart` already provides localization delegates. Confirmed zero `find.text()` calls in test suite. All 157 tests pass with zero regressions.
 - **Task 4:** iOS build compiles successfully. Android debug build compiles (release needs signing config — pre-existing). **Web build fixed**: refactored `bootstrap.dart` to use Dart conditional imports (`dart.library.io`), isolating ObjectBox from the web compiler at compile time. Created `bootstrap_repositories_native.dart` (ObjectBox factory) and `bootstrap_repositories_web.dart` (Drift factory). Web now compiles cleanly. Windows not verifiable on macOS. `flutter analyze` returns zero issues. All 157 tests pass.
 - **Task 5:** Grep audit confirms zero hardcoded string literals in presentation layer. EN/ES ARB files and generated code verified correct.
+- **Locale switcher:** Added `LocaleCubit` (core/locale/) with `LocaleSystem` / `LocaleSelected` sealed states, registered in `BlocInjections`, wired into `App` via `BlocBuilder` setting `MaterialApp.locale`. Toggle button in AppBar shows target language code (EN/ES) and switches on tap. 7 new cubit + state tests (164 total). Enables in-app locale testing without changing device/browser settings.
 - **Bug fix — Drift wage update (id=0):** `DriftWageRepository.update()` now handles `id == 0` by performing an INSERT instead of UPDATE. This mirrors ObjectBox's `put()` behaviour where id=0 triggers an INSERT. Without this, Drift's `UPDATE WHERE id=0` matches no rows (auto-increment starts at 1), causing wage updates to silently fail on web. Root cause: `UpdateWageBloc` always starts with `const WageHourly()` (id=0) and the update flow never carries the database-assigned ID. Pre-existing design issue from story 4.3, surfaced during web platform testing.
 - **Remaining environment limitation:**
   - Windows build (4.4) requires MSVC toolchain on Windows — not verifiable on macOS. Code is architecturally sound (conditional imports select ObjectBox on native, same as iOS/Android). Should be verified in CI.
@@ -377,15 +378,21 @@ Claude Opus 4.6 (1M context)
 **New files:**
 - `lib/bootstrap_repositories_native.dart` — ObjectBox repository factory for native platforms (iOS, Android, Windows)
 - `lib/bootstrap_repositories_web.dart` — Drift repository factory for web platform
+- `lib/src/core/locale/locale.dart` — Barrel export for locale module
+- `lib/src/core/locale/locale_cubit.dart` — Cubit managing app-wide locale override
+- `lib/src/core/locale/locale_state.dart` — Sealed state hierarchy (LocaleSystem, LocaleSelected)
+- `test/src/core/locale/locale_cubit_test.dart` — 7 tests for locale cubit + state equality
 
 **Modified files:**
 - `lib/bootstrap.dart` — Refactored to use conditional imports instead of runtime `kIsWeb` check
+- `lib/app/view/app.dart` — BlocBuilder wrapping MaterialApp for dynamic locale switching
+- `lib/src/shared/injections/bloc_injections.dart` — Registered LocaleCubit provider
 - `lib/l10n/arb/app_en.arb` — 24 localization keys (EN), removed counterAppBarTitle
 - `lib/l10n/arb/app_es.arb` — 24 localization keys (ES), removed counterAppBarTitle
 - `lib/l10n/gen/app_localizations.dart` — regenerated
 - `lib/l10n/gen/app_localizations_en.dart` — regenerated
 - `lib/l10n/gen/app_localizations_es.dart` — regenerated
-- `lib/src/features/home/presentation/pages/home_page.dart` — l10n import + 2 string replacements
+- `lib/src/features/home/presentation/pages/home_page.dart` — l10n import + 2 string replacements + locale toggle in AppBar
 - `lib/src/features/home/presentation/widgets/calculate_payment_button.dart` — l10n import + 1 string replacement
 - `lib/src/features/times/presentation/pages/create_time_page.dart` — l10n import + 1 string replacement
 - `lib/src/features/times/presentation/pages/update_time_page.dart` — l10n import + 1 string replacement
@@ -414,4 +421,4 @@ Claude Opus 4.6 (1M context)
 
 ### Change Log
 
-- 2026-03-20: Story 4.5 implementation — Full localization of 48 hardcoded strings across 25 files to 24 ARB keys (EN/ES), fixed 3 typos, refactored bootstrap to conditional imports for web compilation (resolved dart:ffi blocker), fixed Drift wage update bug (id=0 INSERT), multi-platform build verification (iOS ✓, Android ✓, Web ✓, Windows N/A on macOS), all 157 tests pass, zero analyze warnings. Documented 4 pre-existing issues for future stories.
+- 2026-03-20: Story 4.5 implementation — Full localization of 48 hardcoded strings across 25 files to 24 ARB keys (EN/ES), fixed 3 typos, refactored bootstrap to conditional imports for web compilation (resolved dart:ffi blocker), fixed Drift wage update bug (id=0 INSERT), added LocaleCubit with in-app EN/ES toggle in AppBar, multi-platform build verification (iOS ✓, Android ✓, Web ✓, Windows N/A on macOS), all 164 tests pass, zero analyze warnings. Documented 4 pre-existing issues for future stories.
