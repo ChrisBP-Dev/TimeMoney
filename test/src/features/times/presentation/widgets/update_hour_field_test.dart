@@ -61,5 +61,22 @@ void main() {
       verify(() => mockBloc.add(any(that: isA<UpdateTimeHourChanged>())))
           .called(1);
     });
+
+    // -- BS1: null time pre-population edge case --
+
+    testWidgets('field is empty when BLoC state has null time', (tester) async {
+      when(() => mockBloc.state).thenReturn(const UpdateTimeInitial());
+
+      await tester.pumpApp(
+        BlocProvider<UpdateTimeBloc>.value(
+          value: mockBloc,
+          child: const Scaffold(body: UpdateHourField()),
+        ),
+      );
+      await tester.pump();
+
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.controller?.text, isEmpty);
+    });
   });
 }

@@ -43,7 +43,8 @@ void main() {
       ).called(1);
     });
 
-    testWidgets('renders TextFormField with numeric keyboard', (tester) async {
+    testWidgets('renders TextFormField with decimal numeric keyboard',
+        (tester) async {
       await tester.pumpApp(
         BlocProvider<UpdateWageBloc>.value(
           value: mockBloc,
@@ -53,6 +54,11 @@ void main() {
       await tester.pump();
 
       expect(find.byType(TextFormField), findsOneWidget);
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      expect(
+        textField.keyboardType,
+        const TextInputType.numberWithOptions(decimal: true),
+      );
     });
   });
 }

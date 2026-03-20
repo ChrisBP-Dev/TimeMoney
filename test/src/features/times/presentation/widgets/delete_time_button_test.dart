@@ -5,6 +5,7 @@
 /// on tap. Uses `canPop()` guard before popping on success.
 library;
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -107,8 +108,49 @@ void main() {
 
       await tester.tap(find.byType(FilledButton));
 
-      verify(() => mockBloc.add(any(that: isA<DeleteTimeRequested>())))
-          .called(1);
+      final captured =
+          verify(() => mockBloc.add(captureAny())).captured;
+      final event = captured.last as DeleteTimeRequested;
+      expect(event.time, testTime);
+    });
+
+    // -- Pop-on-success with canPop guard (P5) --
+
+    testWidgets('pops dialog on Success via canPop guard', (tester) async {
+      whenListen(
+        mockBloc,
+        Stream.value(const DeleteTimeSuccess()),
+        initialState: const DeleteTimeInitial(),
+      );
+
+      await tester.pumpApp(
+        Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => BlocProvider<DeleteTimeBloc>.value(
+                  value: mockBloc,
+                  child: const AlertDialog(
+                    content: DeleteTimeButton(time: testTime),
+                  ),
+                ),
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
     });
   });
 }

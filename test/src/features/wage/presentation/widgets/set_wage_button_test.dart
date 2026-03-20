@@ -5,6 +5,7 @@
 /// Success, and Error states. Dispatches [UpdateWageSubmitted] on tap.
 library;
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -109,6 +110,48 @@ void main() {
 
       verify(() => mockBloc.add(any(that: isA<UpdateWageSubmitted>())))
           .called(1);
+    });
+
+    // -- Pop-on-success listener test (P6) --
+
+    testWidgets('pops dialog on Success via BlocConsumer listener',
+        (tester) async {
+      whenListen(
+        mockBloc,
+        Stream.value(
+          const UpdateWageSuccess(result: WageHourly(id: 1, value: 20)),
+        ),
+        initialState: const UpdateWageInitial(),
+      );
+
+      await tester.pumpApp(
+        Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => BlocProvider<UpdateWageBloc>.value(
+                  value: mockBloc,
+                  child: const AlertDialog(
+                    content: SetWageButton(),
+                  ),
+                ),
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
     });
   });
 }

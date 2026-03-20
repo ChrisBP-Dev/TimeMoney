@@ -5,6 +5,7 @@
 /// [CreateTimeSubmitted] on tap.
 library;
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -40,7 +41,9 @@ void main() {
       await tester.pump();
 
       expect(find.byType(FilledButton), findsOneWidget);
-      expect(find.byType(Text), findsOneWidget);
+      final text = tester.widget<Text>(find.byType(Text));
+      expect(text.data, isNotNull);
+      expect(text.data, isNotEmpty);
     });
 
     testWidgets('shows CircularProgressIndicator on Loading', (tester) async {
@@ -59,7 +62,7 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows success label on Success', (tester) async {
+    testWidgets('shows success label on Success (enabled)', (tester) async {
       when(() => mockBloc.state).thenReturn(
         const CreateTimeSuccess(
           TimeEntry(hour: 1, minutes: 30),
@@ -76,10 +79,14 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(Text), findsOneWidget);
+      final text = tester.widget<Text>(find.byType(Text));
+      expect(text.data, isNotNull);
+      expect(text.data, isNotEmpty);
+      final button = tester.widget<FilledButton>(find.byType(FilledButton));
+      expect(button.onPressed, isNotNull);
     });
 
-    testWidgets('shows error label on Error', (tester) async {
+    testWidgets('shows error label on Error (enabled)', (tester) async {
       when(() => mockBloc.state).thenReturn(
         const CreateTimeError(
           InternalError('test'),
@@ -96,7 +103,11 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(Text), findsOneWidget);
+      final text = tester.widget<Text>(find.byType(Text));
+      expect(text.data, isNotNull);
+      expect(text.data, isNotEmpty);
+      final button = tester.widget<FilledButton>(find.byType(FilledButton));
+      expect(button.onPressed, isNotNull);
     });
 
     testWidgets('button is ALWAYS enabled — dispatches on tap',
@@ -132,6 +143,50 @@ void main() {
 
       final button = tester.widget<FilledButton>(find.byType(FilledButton));
       expect(button.onPressed, isNotNull);
+    });
+
+    // -- Pop-on-success listener test (P3) --
+
+    testWidgets('pops dialog on Success via BlocConsumer listener',
+        (tester) async {
+      whenListen(
+        mockBloc,
+        Stream.value(const CreateTimeSuccess(
+          TimeEntry(hour: 1, minutes: 30),
+          hour: 1,
+          minutes: 30,
+        )),
+        initialState: const CreateTimeInitial(),
+      );
+
+      await tester.pumpApp(
+        Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => BlocProvider<CreateTimeBloc>.value(
+                  value: mockBloc,
+                  child: const AlertDialog(
+                    content: CreateTimeButton(),
+                  ),
+                ),
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
     });
   });
 }

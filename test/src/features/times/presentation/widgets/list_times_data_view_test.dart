@@ -7,6 +7,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/list_times_data_view.dart';
@@ -25,6 +26,8 @@ void main() {
 
     setUp(() {
       mockUpdateTimeBloc = MockUpdateTimeBloc();
+      when(() => mockUpdateTimeBloc.state)
+          .thenReturn(const UpdateTimeInitial());
     });
 
     testWidgets('renders ListView with correct count of TimeCard widgets',

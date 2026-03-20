@@ -1,6 +1,6 @@
 # Story 5.1: Times & Wage Feature Widget Tests
 
-Status: review
+Status: done
 
 ## Story
 
@@ -360,6 +360,38 @@ Claude Opus 4.6 (1M context)
 - **Task 6**: Created 2 wage BLoC-dependent widget tests — WageHourlyField, SetWageButton. Verified SetWageButton-specific enabled logic (disabled only on Loading).
 - **Task 7**: Created 2 wage page tests — UpdateWagePage, FetchWagePage. FetchWagePage verifies auto-dispatch, all 4 state renderings, listenWhen filter, retry.
 - **Task 8**: Final validation — 261 tests pass (165 existing + 96 new), zero `flutter analyze` warnings, all test files have `///` dartdoc, `library;` directive, and `group`/`test` comments.
+
+### Code Review Record
+
+**Date:** 2026-03-20
+**Agent:** Claude Opus 4.6 (1M context)
+**Layers:** Blind Hunter + Edge Case Hunter + Acceptance Auditor (3/3 completed)
+**Total findings evaluated:** 24 (14 patch, 2 bad_spec, 1 defer, 7 rejected)
+
+**Patches applied (14):**
+- **P1**: Added PaymentCubit sync listener tests in ListTimesPage (4 tests: Loaded/Empty/Error→setTimes, Loading→none)
+- **P2**: Added PaymentCubit sync listener tests in FetchWagePage (3 tests: Loaded→setWage, Error/Loading→none)
+- **P3**: Added pop-on-success listener test for CreateTimeButton (dialog auto-dismiss)
+- **P4**: Added pop-on-success listener test for UpdateTimeButton (canPop guard)
+- **P5**: Added pop-on-success listener test for DeleteTimeButton (canPop guard)
+- **P6**: Added pop-on-success listener test for SetWageButton (dialog auto-dismiss)
+- **P7**: Added explicit MockUpdateTimeBloc state stub in ListTimesDataView and TimeCard tests + added missing mocktail import
+- **P8**: Changed pumpAndSettle→pump in UpdateTimePage dialog tests for BlocConsumer consistency
+- **P9**: Enhanced CreateTimeButton text assertions with tester.widget<Text>() data verification
+- **P10**: Added onPressed isNotNull verification for CreateTimeButton on Success and Error states (ALWAYS enabled)
+- **P11**: Enhanced EditButton event payload verification — captureAny + verify event.time == testTime
+- **P12**: Enhanced DeleteTimeButton event payload verification — captureAny + verify event.time == testTime
+- **P13**: Added Card primary color verification in WageHourlyCard test via Theme.of(context)
+- **P14**: Added decimal keyboard type assertion in WageHourlyField test (TextInputType.numberWithOptions)
+
+**Bad spec amendments (2 — implemented as additional tests):**
+- **BS1**: Added null-time pre-population edge case tests for UpdateHourField and UpdateMinutesField
+- **BS2**: Added negative-path listenWhen tests for CreateHourField and CreateMinutesField
+
+**Deferred (1):**
+- **D1**: FetchWagePage wage value 0.0 boundary — not spec-required, noted for future coverage
+
+**Post-review validation:** 276 tests pass (261 prior + 15 new from CR), zero flutter analyze warnings.
 
 ### File List
 

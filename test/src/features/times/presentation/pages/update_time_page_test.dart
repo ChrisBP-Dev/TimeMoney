@@ -61,10 +61,10 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       await tester.tap(find.text('open'));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.byType(UpdateTimeCard), findsOneWidget);
@@ -98,13 +98,13 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       await tester.tap(find.text('open'));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       await tester.tap(find.byIcon(Icons.cancel));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(find.byType(AlertDialog), findsNothing);
     });

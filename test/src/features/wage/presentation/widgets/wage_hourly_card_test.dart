@@ -38,13 +38,16 @@ void main() {
       expect(find.byType(UpdateWageButton), findsOneWidget);
     });
 
-    testWidgets('renders inside a Card', (tester) async {
+    testWidgets('renders inside a Card with primary color', (tester) async {
       await tester.pumpApp(
         const WageHourlyCard(wageHourly: testWage),
       );
       await tester.pumpAndSettle();
 
       expect(find.byType(Card), findsOneWidget);
+      final card = tester.widget<Card>(find.byType(Card));
+      final context = tester.element(find.byType(Card));
+      expect(card.color, Theme.of(context).colorScheme.primary);
     });
   });
 }

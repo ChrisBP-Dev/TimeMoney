@@ -5,6 +5,7 @@
 /// on tap. Uses `canPop()` guard before popping on success.
 library;
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -127,6 +128,54 @@ void main() {
 
       verify(() => mockBloc.add(any(that: isA<UpdateTimeSubmitted>())))
           .called(1);
+    });
+
+    // -- Pop-on-success with canPop guard (P4) --
+
+    testWidgets('pops dialog on Success via canPop guard', (tester) async {
+      whenListen(
+        mockBloc,
+        Stream.value(const UpdateTimeSuccess(
+          testTime,
+          hour: 2,
+          minutes: 30,
+          time: testTime,
+        )),
+        initialState: const UpdateTimeInitial(
+          hour: 2,
+          minutes: 30,
+          time: testTime,
+        ),
+      );
+
+      await tester.pumpApp(
+        Scaffold(
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => BlocProvider<UpdateTimeBloc>.value(
+                  value: mockBloc,
+                  child: const AlertDialog(
+                    content: UpdateTimeButton(),
+                  ),
+                ),
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
     });
   });
 }

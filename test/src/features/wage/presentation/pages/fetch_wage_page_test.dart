@@ -5,6 +5,7 @@
 /// sync on [FetchWageLoaded] only, and retry button behavior.
 library;
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -107,6 +108,50 @@ void main() {
       await tester.tap(find.byType(FilledButton));
 
       verify(() => mockFetchBloc.add(const FetchWageRequested())).called(1);
+    });
+
+    // -- PaymentCubit listener sync tests (P2) --
+
+    testWidgets('listener calls setWage on Loaded state', (tester) async {
+      const testWage = WageHourly(id: 1, value: 15.5);
+      whenListen(
+        mockFetchBloc,
+        Stream.value(const FetchWageLoaded(testWage)),
+        initialState: const FetchWageInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verify(() => mockPaymentCubit.setWage(15.5)).called(1);
+    });
+
+    testWidgets('listener does not call setWage on Error state',
+        (tester) async {
+      whenListen(
+        mockFetchBloc,
+        Stream.value(const FetchWageError(InternalError('test'))),
+        initialState: const FetchWageInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verifyNever(() => mockPaymentCubit.setWage(any()));
+    });
+
+    testWidgets('listener does not call setWage on Loading state',
+        (tester) async {
+      whenListen(
+        mockFetchBloc,
+        Stream.value(const FetchWageLoading()),
+        initialState: const FetchWageInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verifyNever(() => mockPaymentCubit.setWage(any()));
     });
   });
 }

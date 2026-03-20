@@ -5,6 +5,7 @@
 /// listener, and retry button behavior.
 library;
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,6 +38,7 @@ void main() {
       mockPaymentCubit = MockPaymentCubit();
       mockUpdateBloc = MockUpdateTimeBloc();
       when(() => mockPaymentCubit.state).thenReturn(const PaymentInitial());
+      when(() => mockUpdateBloc.state).thenReturn(const UpdateTimeInitial());
     });
 
     Widget buildSubject() {
@@ -125,6 +127,67 @@ void main() {
       await tester.tap(find.byType(FilledButton));
 
       verify(() => mockListBloc.add(const ListTimesRequested())).called(1);
+    });
+
+    // -- PaymentCubit listener sync tests (P1) --
+
+    testWidgets('listener calls setTimes on Loaded state', (tester) async {
+      const testTimes = [
+        TimeEntry(id: 1, hour: 1, minutes: 0),
+        TimeEntry(id: 2, hour: 2, minutes: 30),
+      ];
+      whenListen(
+        mockListBloc,
+        Stream.value(const ListTimesLoaded(testTimes)),
+        initialState: const ListTimesInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verify(() => mockPaymentCubit.setTimes(testTimes)).called(1);
+    });
+
+    testWidgets('listener calls setTimes with empty list on Empty state',
+        (tester) async {
+      whenListen(
+        mockListBloc,
+        Stream.value(const ListTimesEmpty()),
+        initialState: const ListTimesInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verify(() => mockPaymentCubit.setTimes(const <TimeEntry>[])).called(1);
+    });
+
+    testWidgets('listener calls setTimes with empty list on Error state',
+        (tester) async {
+      whenListen(
+        mockListBloc,
+        Stream.value(const ListTimesError(InternalError('test'))),
+        initialState: const ListTimesInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verify(() => mockPaymentCubit.setTimes(const <TimeEntry>[])).called(1);
+    });
+
+    testWidgets('listener does not call setTimes on Loading state',
+        (tester) async {
+      whenListen(
+        mockListBloc,
+        Stream.value(const ListTimesLoading()),
+        initialState: const ListTimesInitial(),
+      );
+
+      await tester.pumpApp(buildSubject());
+      await tester.pump();
+
+      verifyNever(() => mockPaymentCubit.setTimes(any()));
     });
   });
 }

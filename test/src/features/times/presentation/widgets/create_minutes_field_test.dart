@@ -72,5 +72,39 @@ void main() {
       final textField = tester.widget<TextField>(find.byType(TextField));
       expect(textField.controller?.text, isEmpty);
     });
+
+    // -- BS2: listenWhen negative path --
+
+    testWidgets(
+        'does NOT auto-clear when previous state is also CreateTimeInitial',
+        (tester) async {
+      when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
+
+      await tester.pumpApp(
+        BlocProvider<CreateTimeBloc>.value(
+          value: mockBloc,
+          child: const Scaffold(body: CreateMinutesField()),
+        ),
+      );
+      await tester.pump();
+
+      // Enter text in field
+      await tester.enterText(find.byType(TextField), '30');
+
+      // Simulate transition from Initial to Initial with zero values
+      // listenWhen: previous is! CreateTimeInitial → false, so no clear
+      whenListen(
+        mockBloc,
+        Stream.value(const CreateTimeInitial()),
+        initialState: const CreateTimeInitial(minutes: 30),
+      );
+
+      await tester.pump();
+      await tester.pump();
+
+      // Field should retain its text because listenWhen blocked the listener
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.controller?.text, '30');
+    });
   });
 }
