@@ -153,10 +153,10 @@ void main() {
 **With data state** (`home_page_with_data.png`):
 ```dart
 when(() => mockListTimesBloc.state).thenReturn(
-  ListTimesLoaded(times: testTimes),
+  const ListTimesLoaded(testTimes),
 );
 when(() => mockFetchWageBloc.state).thenReturn(
-  FetchWageLoaded(wage: const WageHourly(id: 1, value: 15.0)),
+  const FetchWageLoaded(WageHourly(id: 1, value: 15.0)),
 );
 when(() => mockPaymentCubit.state).thenReturn(
   PaymentReady(times: testTimes, wageHourly: 15.0),
@@ -169,6 +169,8 @@ when(() => mockListTimesBloc.state).thenReturn(const ListTimesEmpty());
 when(() => mockFetchWageBloc.state).thenReturn(const FetchWageInitial());
 when(() => mockPaymentCubit.state).thenReturn(const PaymentInitial());
 ```
+
+**Note:** Unlike `home_page_test.dart` which uses a `buildSubject()` helper, golden tests configure each state uniquely per test — inline the MultiBlocProvider directly in each `testWidgets` body.
 
 **MultiBlocProvider wrapper** — same pattern as existing `home_page_test.dart`:
 ```dart
