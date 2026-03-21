@@ -23,14 +23,51 @@ void main() {
     });
 
     test('PaymentReady supports equality and hashCode', () {
-      const times = [TimeEntry(id: 1, hour: 2, minutes: 30)];
+      // Non-identical list instances to exercise deep equality comparison.
       // ignore: prefer_const_constructors, non-const to test equality body.
-      final a = PaymentReady(times: times, wageHourly: 15);
+      final a = PaymentReady(
+        // ignore: prefer_const_literals_to_create_immutables, non-const list.
+        times: [
+          // ignore: prefer_const_constructors, non-const to test equality body.
+          TimeEntry(id: 1, hour: 2, minutes: 30),
+        ],
+        wageHourly: 15,
+      );
       // ignore: prefer_const_constructors, non-const to test equality body.
-      final b = PaymentReady(times: times, wageHourly: 15);
+      final b = PaymentReady(
+        // ignore: prefer_const_literals_to_create_immutables, non-const list.
+        times: [
+          // ignore: prefer_const_constructors, non-const to test equality body.
+          TimeEntry(id: 1, hour: 2, minutes: 30),
+        ],
+        wageHourly: 15,
+      );
 
       expect(a, equals(b));
       expect(a.hashCode, b.hashCode);
+    });
+
+    test('PaymentReady supports inequality for different fields', () {
+      // ignore: prefer_const_constructors, non-const to test equality body.
+      final a = PaymentReady(
+        // ignore: prefer_const_literals_to_create_immutables, non-const list.
+        times: [
+          // ignore: prefer_const_constructors, non-const to test equality body.
+          TimeEntry(id: 1, hour: 2, minutes: 30),
+        ],
+        wageHourly: 15,
+      );
+      // ignore: prefer_const_constructors, non-const to test equality body.
+      final b = PaymentReady(
+        // ignore: prefer_const_literals_to_create_immutables, non-const list.
+        times: [
+          // ignore: prefer_const_constructors, non-const to test equality body.
+          TimeEntry(id: 1, hour: 2, minutes: 30),
+        ],
+        wageHourly: 25,
+      );
+
+      expect(a, isNot(equals(b)));
     });
   });
 }

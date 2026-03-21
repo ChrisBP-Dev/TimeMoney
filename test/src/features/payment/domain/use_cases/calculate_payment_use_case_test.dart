@@ -7,13 +7,17 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/features/payment/domain/entities/payment_result.dart';
 import 'package:time_money/src/features/payment/domain/use_cases/calculate_payment_use_case.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
-/// A fake [List] that throws on any access, used to trigger the
+/// A fake [List] that throws on iteration, used to trigger the
 /// defensive catch block in [CalculatePaymentUseCase].
-class _ThrowingTimesList extends Fake implements List<TimeEntry> {}
+class _ThrowingTimesList extends Fake implements List<TimeEntry> {
+  @override
+  Iterator<TimeEntry> get iterator => throw StateError('intentional');
+}
 
 void main() {
   // ignore: prefer_const_constructors, non-const to cover constructor line.
@@ -111,11 +115,15 @@ void main() {
     });
 
     // Defensive catch block: when the list throws during
-    // computation, the use case wraps it in a Left(GlobalFailure).
-    test('returns Left when computation throws unexpectedly', () {
+    // computation, the use case wraps it in a Left(InternalError).
+    test('returns Left(InternalError) when computation throws', () {
       final result = useCase(_ThrowingTimesList(), 10);
 
       expect(result.isLeft(), true);
+      result.fold(
+        (failure) => expect(failure, isA<InternalError>()),
+        (_) => fail('Expected Left'),
+      );
     });
 
     // NFR4 performance gate: 100 entries must compute in

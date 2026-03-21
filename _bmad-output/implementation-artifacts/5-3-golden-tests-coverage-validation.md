@@ -1,6 +1,6 @@
 # Story 5.3: Golden Tests & Coverage Validation
 
-Status: review
+Status: done
 
 ## Story
 
@@ -457,13 +457,12 @@ Claude Opus 4.6 (1M context)
 - Task 4: Generated 5 baseline PNGs, verified comparison passes without `--update-goldens`
 - Task 5: Initial coverage — use_cases 93.1%, blocs_cubits 87.9%. Gap closure: 3 state equality test files + use case catch block test. Final coverage — use_cases 100%, blocs_cubits 100%, repos 100%, presentation 97.9%, overall 92.3%
 - Task 6: 347 tests pass with randomized ordering, `flutter analyze` zero issues
-- Total new tests: 26 (5 golden + 21 gap-closure)
-- Test count: 321 → 347
+- Total new tests: 26 + 18 CR = 44 (5 golden + 21 gap-closure + 18 CR inequality)
+- Test count: 321 → 365
 
 ### File List
 
 **New files:**
-- test/helpers/pump_app.dart (modified — added `pumpGoldenApp`)
 - test/goldens/home_page_golden_test.dart
 - test/goldens/payment_result_page_golden_test.dart
 - test/goldens/create_time_dialog_golden_test.dart
@@ -480,3 +479,17 @@ Claude Opus 4.6 (1M context)
 **Modified files:**
 - test/helpers/pump_app.dart (added `pumpGoldenApp` method)
 - test/src/features/payment/domain/use_cases/calculate_payment_use_case_test.dart (added catch block test + `_ThrowingTimesList` fake)
+
+### Code Review Record
+
+- **Reviewer model:** Claude Opus 4.6 (1M context)
+- **Review method:** 3-layer adversarial (Blind Hunter, Edge Case Hunter, Acceptance Auditor)
+- **Findings raised:** 13 total
+- **Triage result:** 1 bad_spec, 2 patch, 1 defer, 9 reject
+- **Bad Spec (BS-1):** `pump_app.dart` listed in both "New files" and "Modified files" sections. **Amended:** removed duplicate entry from "New files".
+- **Patches applied (2):**
+  - P-1: Added inequality tests to all 3 equality test files — 18 new tests verifying that instances with different field values are NOT equal (prevents false-positive `operator ==` that always returns `true`). Also changed `ListTimesLoaded` and `PaymentReady` equality tests to use non-identical list instances for deep equality coverage.
+  - P-2: Improved `_ThrowingTimesList` fake — added explicit `Iterator<TimeEntry> get iterator => throw StateError('intentional')` override instead of relying on `Fake.noSuchMethod`. Added failure-type assertion: `expect(failure, isA<InternalError>())`.
+- **Deferred (D-1):** `PaymentInitial.operator ==` lacks `identical(this, other) ||` guard, unlike all sibling state classes. Pre-existing production code inconsistency — resolve in Epic 6 polish pass.
+- **Rejected (9):** pumpAndSettle unnecessary for golden tests with static mocked states (shimmer would timeout), no tearDown for mock blocs (project-wide pattern), `import 'dart:ui'` valid for `Size` (analyzer clean), `CreateTimeReset` tautological assertion (coverage purpose for marker class), `WageHourly` non-const in `FetchWageLoaded` test (tests deeper equality — better), golden file names standard Flutter convention, no error-state goldens (spec deliberately chose 5 representative goldens), home page listener events informational only, `PaymentReady` const list concern (subsumed by P-1).
+- **Final validation:** 365 tests pass (randomized ordering), `flutter analyze` zero issues.
