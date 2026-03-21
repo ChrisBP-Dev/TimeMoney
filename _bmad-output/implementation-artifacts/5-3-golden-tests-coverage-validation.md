@@ -1,6 +1,6 @@
 # Story 5.3: Golden Tests & Coverage Validation
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -20,38 +20,38 @@ So that the modernization is provably zero-regression visually and the test suit
 
 ### Task 1: Golden Test Helper Infrastructure (AC: 1, 2)
 
-- [ ] 1.1 Add `pumpGoldenApp` method to `test/helpers/pump_app.dart` — wraps widget with full Material 3 theme (`useMaterial3: true`, `colorSchemeSeed: Color.fromARGB(255, 6, 16, 31)`), localization delegates, `debugShowCheckedModeBanner: false`, fixed screen size + `devicePixelRatio=1.0`, with `addTearDown(view.reset)`
-- [ ] 1.2 Dartdoc comment on `pumpGoldenApp` following `public_member_api_docs` rule
+- [x] 1.1 Add `pumpGoldenApp` method to `test/helpers/pump_app.dart` — wraps widget with full Material 3 theme (`useMaterial3: true`, `colorSchemeSeed: Color.fromARGB(255, 6, 16, 31)`), localization delegates, `debugShowCheckedModeBanner: false`, fixed screen size + `devicePixelRatio=1.0`, with `addTearDown(view.reset)`
+- [x] 1.2 Dartdoc comment on `pumpGoldenApp` following `public_member_api_docs` rule
 
 ### Task 2: HomePage Golden Tests (AC: 1, 2)
 
-- [ ] 2.1 `test/goldens/home_page_golden_test.dart` — `home_page_with_data.png`: MultiBlocProvider with MockPaymentCubit(`PaymentReady`), MockListTimesBloc(`ListTimesLoaded`), MockFetchWageBloc(`FetchWageLoaded`); captures full HomePage with populated time entries, wage card, and both FABs (calculate + addTime)
-- [ ] 2.2 Same file — `home_page_empty.png`: MockPaymentCubit(`PaymentInitial`), MockListTimesBloc(`ListTimesEmpty`), MockFetchWageBloc(`FetchWageInitial`); captures HomePage with shimmer wage, empty times message, only addTime FAB
+- [x] 2.1 `test/goldens/home_page_golden_test.dart` — `home_page_with_data.png`: MultiBlocProvider with MockPaymentCubit(`PaymentReady`), MockListTimesBloc(`ListTimesLoaded`), MockFetchWageBloc(`FetchWageLoaded`); captures full HomePage with populated time entries, wage card, and both FABs (calculate + addTime)
+- [x] 2.2 Same file — `home_page_empty.png`: MockPaymentCubit(`PaymentInitial`), MockListTimesBloc(`ListTimesEmpty`), MockFetchWageBloc(`FetchWageInitial`); captures HomePage with shimmer wage, empty times message, only addTime FAB
 
 ### Task 3: Dialog Golden Tests (AC: 1, 2)
 
-- [ ] 3.1 `test/goldens/payment_result_page_golden_test.dart` → `payment_result_page.png`: direct render PaymentResultPage with test PaymentResult data; size 800x1200; pure presentation — no BLoC mocks
-- [ ] 3.2 `test/goldens/create_time_dialog_golden_test.dart` → `create_time_dialog.png`: BlocProvider<CreateTimeBloc>.value with MockCreateTimeBloc(`CreateTimeInitial`); size 800x1200
-- [ ] 3.3 `test/goldens/update_time_dialog_golden_test.dart` → `update_time_dialog.png`: MultiBlocProvider with MockUpdateTimeBloc(`UpdateTimeInitial(hour: 2, minutes: 30, time: testTime)`) + MockDeleteTimeBloc(`DeleteTimeInitial`); size 800x1200; passes `TimeEntry` via constructor
+- [x] 3.1 `test/goldens/payment_result_page_golden_test.dart` → `payment_result_page.png`: direct render PaymentResultPage with test PaymentResult data; size 800x1200; pure presentation — no BLoC mocks
+- [x] 3.2 `test/goldens/create_time_dialog_golden_test.dart` → `create_time_dialog.png`: BlocProvider<CreateTimeBloc>.value with MockCreateTimeBloc(`CreateTimeInitial`); size 800x1200
+- [x] 3.3 `test/goldens/update_time_dialog_golden_test.dart` → `update_time_dialog.png`: MultiBlocProvider with MockUpdateTimeBloc(`UpdateTimeInitial(hour: 2, minutes: 30, time: testTime)`) + MockDeleteTimeBloc(`DeleteTimeInitial`); size 800x1200; passes `TimeEntry` via constructor
 
 ### Task 4: Generate & Verify Golden Baselines (AC: 2)
 
-- [ ] 4.1 Run `flutter test --update-goldens test/goldens/` to generate baseline PNGs
-- [ ] 4.2 Verify all 5 PNG files created in `test/goldens/`
-- [ ] 4.3 Run `flutter test test/goldens/` (without `--update-goldens`) to verify comparison passes
+- [x] 4.1 Run `flutter test --update-goldens test/goldens/` to generate baseline PNGs
+- [x] 4.2 Verify all 5 PNG files created in `test/goldens/`
+- [x] 4.3 Run `flutter test test/goldens/` (without `--update-goldens`) to verify comparison passes
 
 ### Task 5: Coverage Validation & Gap Closure (AC: 3, 4)
 
-- [ ] 5.1 Run `flutter test --coverage` to generate `coverage/lcov.info`
-- [ ] 5.2 Analyze coverage per layer against targets (see Coverage Validation Approach below)
-- [ ] 5.3 If any layer below target, write minimal targeted tests to close gaps
-- [ ] 5.4 Re-run `flutter test --coverage` and confirm all thresholds met
+- [x] 5.1 Run `flutter test --coverage` to generate `coverage/lcov.info`
+- [x] 5.2 Analyze coverage per layer against targets (see Coverage Validation Approach below)
+- [x] 5.3 If any layer below target, write minimal targeted tests to close gaps
+- [x] 5.4 Re-run `flutter test --coverage` and confirm all thresholds met
 
 ### Task 6: Final Validation (AC: 5)
 
-- [ ] 6.1 Run `flutter test --test-randomize-ordering-seed random` — all tests pass (existing 321 + new golden + any gap-closure tests)
-- [ ] 6.2 Run `flutter analyze` — zero warnings on all files
-- [ ] 6.3 Verify dartdoc comments on all new files (`///` file-level docs, `library;` directive, `group`/`test` comments)
+- [x] 6.1 Run `flutter test --test-randomize-ordering-seed random` — all tests pass (existing 321 + new golden + any gap-closure tests)
+- [x] 6.2 Run `flutter analyze` — zero warnings on all files
+- [x] 6.3 Verify dartdoc comments on all new files (`///` file-level docs, `library;` directive, `group`/`test` comments)
 
 ## Dev Notes
 
@@ -441,10 +441,42 @@ The codebase has 321 passing tests, zero linter warnings, and mature widget test
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (1M context)
 
 ### Debug Log References
 
+- HomePage golden with-data test required wider viewport (480x892) due to Ahem font causing Row overflow with 2 FABs at default 412px width
+- Coverage gap analysis revealed uncovered `operator ==` / `hashCode` in state files caused by `const` canonicalization making objects `identical`, bypassing equality body
+- `CalculatePaymentUseCase` catch block covered via `Fake` list that throws `UnimplementedError` on any method access
+
 ### Completion Notes List
 
+- Task 1: Added `pumpGoldenApp` to `PumpApp` extension with Material 3 theme, fixed viewport, pixel ratio 1.0, debug banner disabled, tearDown reset
+- Task 2: HomePage golden tests — 2 snapshots (with-data at 480x892, empty at default 412x892) using 3 mock BLoCs
+- Task 3: Dialog golden tests — PaymentResultPage (pure, no mocks), CreateTimePage (1 mock), UpdateTimePage (2 mocks), all at 800x1200
+- Task 4: Generated 5 baseline PNGs, verified comparison passes without `--update-goldens`
+- Task 5: Initial coverage — use_cases 93.1%, blocs_cubits 87.9%. Gap closure: 3 state equality test files + use case catch block test. Final coverage — use_cases 100%, blocs_cubits 100%, repos 100%, presentation 97.9%, overall 92.3%
+- Task 6: 347 tests pass with randomized ordering, `flutter analyze` zero issues
+- Total new tests: 26 (5 golden + 21 gap-closure)
+- Test count: 321 → 347
+
 ### File List
+
+**New files:**
+- test/helpers/pump_app.dart (modified — added `pumpGoldenApp`)
+- test/goldens/home_page_golden_test.dart
+- test/goldens/payment_result_page_golden_test.dart
+- test/goldens/create_time_dialog_golden_test.dart
+- test/goldens/update_time_dialog_golden_test.dart
+- test/goldens/home_page_with_data.png (generated baseline)
+- test/goldens/home_page_empty.png (generated baseline)
+- test/goldens/payment_result_page.png (generated baseline)
+- test/goldens/create_time_dialog.png (generated baseline)
+- test/goldens/update_time_dialog.png (generated baseline)
+- test/src/features/payment/presentation/cubit/payment_state_test.dart
+- test/src/features/times/presentation/bloc/times_state_equality_test.dart
+- test/src/features/wage/presentation/bloc/wage_state_equality_test.dart
+
+**Modified files:**
+- test/helpers/pump_app.dart (added `pumpGoldenApp` method)
+- test/src/features/payment/domain/use_cases/calculate_payment_use_case_test.dart (added catch block test + `_ThrowingTimesList` fake)

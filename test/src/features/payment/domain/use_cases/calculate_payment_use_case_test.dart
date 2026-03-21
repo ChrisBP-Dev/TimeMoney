@@ -11,8 +11,13 @@ import 'package:time_money/src/features/payment/domain/entities/payment_result.d
 import 'package:time_money/src/features/payment/domain/use_cases/calculate_payment_use_case.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
+/// A fake [List] that throws on any access, used to trigger the
+/// defensive catch block in [CalculatePaymentUseCase].
+class _ThrowingTimesList extends Fake implements List<TimeEntry> {}
+
 void main() {
-  const useCase = CalculatePaymentUseCase();
+  // ignore: prefer_const_constructors, non-const to cover constructor line.
+  final useCase = CalculatePaymentUseCase();
 
   // Core business logic: aggregate time entries + hourly
   // wage into a payment summary. Pure function, no I/O.
@@ -103,6 +108,14 @@ void main() {
           expect(paymentResult.totalPayment, 30.0);
         },
       );
+    });
+
+    // Defensive catch block: when the list throws during
+    // computation, the use case wraps it in a Left(GlobalFailure).
+    test('returns Left when computation throws unexpectedly', () {
+      final result = useCase(_ThrowingTimesList(), 10);
+
+      expect(result.isLeft(), true);
     });
 
     // NFR4 performance gate: 100 entries must compute in
