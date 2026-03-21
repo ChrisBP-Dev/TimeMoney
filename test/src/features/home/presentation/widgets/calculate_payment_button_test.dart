@@ -143,6 +143,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(PaymentResultPage), findsNothing);
+      verify(() => mockPaymentCubit.calculate()).called(1);
     });
   });
 }

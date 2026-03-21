@@ -63,6 +63,8 @@ void main() {
 
       expect(find.byType(Scaffold), findsWidgets);
       expect(find.byType(AppBar), findsOneWidget);
+      // Verify localized title text is present
+      expect(find.text('Work Payment Controller'), findsOneWidget);
     });
 
     testWidgets('renders FetchWagePage', (tester) async {

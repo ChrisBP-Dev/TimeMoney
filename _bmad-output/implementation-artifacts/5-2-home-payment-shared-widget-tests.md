@@ -1,6 +1,6 @@
 # Story 5.2: Home, Payment & Shared Widget Tests
 
-Status: review
+Status: done
 
 ## Story
 
@@ -405,9 +405,26 @@ Claude Opus 4.6 (1M context)
 - Task 6 (AC 7, 8): Full suite 321 tests (278 existing + 43 new), zero linter warnings, all dartdoc/library directives present
 - Total new tests: 43 across 7 test files
 
+### Code Review Record
+
+- **Reviewer model:** Claude Opus 4.6 (1M context)
+- **Review method:** 3-layer adversarial (Blind Hunter, Edge Case Hunter, Acceptance Auditor)
+- **Findings raised:** 27 total
+- **Triage result:** 1 bad_spec, 5 patch, 1 defer, 20 reject
+- **Bad Spec (BS-1):** Dev notes recommended `find.textContaining` assertion strategy which fails for ambiguous values like '3'. **Amended:** replaced with direct `ListTile` subtitle field inspection.
+- **Patches applied (5):**
+  - P-1: `home_page_test.dart` — added localized `homeTitle` text assertion ("Work Payment Controller")
+  - P-2: `payment_result_page_test.dart` — added localized `resultInfoTitle` text assertion ("Result Info:")
+  - P-3: `payment_result_page_test.dart` — added currency prefix verification (`$/. 157.50`)
+  - P-4: `payment_result_page_test.dart` — added negative assertion: totalPayment NOT inside ListTile
+  - P-5: `calculate_payment_button_test.dart` — added `verify(calculate()).called(1)` on Left path
+- **Deferred (D-1):** `_LocaleToggle` unsupported-system-locale branch (`indexWhere` returns -1) untested — pre-existing, out of story scope
+- **Post-CR validation:** 321 tests pass, zero linter warnings
+
 ### Change Log
 
 - 2026-03-20: Implemented story 5.2 — 7 new test files, 43 widget tests for home, payment, and shared widgets
+- 2026-03-20: Code review story 5.2 — CR record, 1 bad_spec amended, 5 patches applied, status done
 
 ### File List
 

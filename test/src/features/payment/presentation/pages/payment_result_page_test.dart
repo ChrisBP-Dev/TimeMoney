@@ -52,6 +52,8 @@ void main() {
       await pumpDialog(tester);
 
       expect(find.byType(AlertDialog), findsOneWidget);
+      // P-2: verify localized title text content
+      expect(find.text('Result Info:'), findsOneWidget);
     });
 
     testWidgets('renders 4 ListTile entries with correct data',
@@ -60,19 +62,23 @@ void main() {
 
       expect(find.byType(ListTile), findsNWidgets(4));
 
-      // Verify data values are present
-      expect(find.textContaining('10'), findsWidgets);
-      expect(find.textContaining('30'), findsWidgets);
-      expect(find.textContaining('15.0'), findsWidgets);
-      expect(find.textContaining('3'), findsWidgets);
+      // BS-1: inspect each ListTile subtitle individually instead of
+      // loose textContaining assertions that match unintended widgets
+      final tiles = tester
+          .widgetList<ListTile>(find.byType(ListTile))
+          .toList();
+      expect((tiles[0].subtitle! as Text).data, '10');
+      expect((tiles[1].subtitle! as Text).data, '30');
+      expect((tiles[2].subtitle! as Text).data, '15.0 Dollars');
+      expect((tiles[3].subtitle! as Text).data, '3');
     });
 
     testWidgets('renders totalPayment as bold 28px Text inside Card',
         (tester) async {
       await pumpDialog(tester);
 
-      // Find the total payment text
-      final totalPaymentFinder = find.textContaining('157.50');
+      // P-3: verify currency prefix is present
+      final totalPaymentFinder = find.textContaining(r'$/. 157.50');
       expect(totalPaymentFinder, findsOneWidget);
 
       final totalPaymentText = tester.widget<Text>(totalPaymentFinder);
@@ -86,6 +92,15 @@ void main() {
           matching: find.byType(Card),
         ),
         findsWidgets,
+      );
+
+      // P-4: verify totalPayment is NOT inside a ListTile (per AC3)
+      expect(
+        find.ancestor(
+          of: totalPaymentFinder,
+          matching: find.byType(ListTile),
+        ),
+        findsNothing,
       );
     });
 
