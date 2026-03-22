@@ -2,6 +2,7 @@
 ///
 /// Captures a snapshot of the update-time dialog pre-populated with
 /// a test [TimeEntry] to detect unintended layout or styling changes.
+@Tags(['golden'])
 library;
 
 import 'package:flutter/material.dart';

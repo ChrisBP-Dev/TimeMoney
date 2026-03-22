@@ -2,6 +2,7 @@
 ///
 /// Captures a snapshot of the create-time dialog in its initial state
 /// to detect unintended layout or styling changes.
+@Tags(['golden'])
 library;
 
 import 'package:flutter/material.dart';
