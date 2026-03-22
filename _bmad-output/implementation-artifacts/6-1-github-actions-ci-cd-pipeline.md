@@ -26,7 +26,7 @@ so that no code is merged without passing lint, test, and build verification for
 
 ### Task 1: Replace VGV Reusable Workflow with Custom Multi-Platform Pipeline (AC: 1, 2, 3, 4, 5)
 
-- [ ] 1.1 Rewrite `.github/workflows/main.yaml` — replace VGV `flutter_package.yml` with custom `quality` job on `ubuntu-latest`: checkout → `subosito/flutter-action@v2` (flutter-version from pubspec, channel stable, cache+pub-cache enabled) → `flutter pub get` → `dart format --output=none --set-exit-if-changed .` → `flutter analyze --fatal-infos` → `flutter test --coverage --test-randomize-ordering-seed random`
+- [ ] 1.1 Rewrite `.github/workflows/main.yaml` — replace VGV `flutter_package.yml` with custom `quality` job on `ubuntu-latest`: checkout → `subosito/flutter-action@v2` (channel stable, cache enabled — do NOT pin flutter-version, use latest stable) → `flutter pub get` → `dart format --output=none --set-exit-if-changed .` → `flutter analyze --fatal-infos` → `flutter test --coverage --test-randomize-ordering-seed random` → upload coverage artifact
 - [ ] 1.2 Keep `semantic-pull-request` job using VGV `semantic_pull_request.yml@v1`
 - [ ] 1.3 Keep `spell-check` job using VGV `spell_check.yml@v1` with `includes: "**/*.md"` and `modified_files_only: false`
 - [ ] 1.4 Add `build-android` job (`needs: [quality]`, `ubuntu-latest`): `actions/setup-java@v4` (distribution: temurin, java-version: '17') → flutter-action → `flutter build appbundle --release`
@@ -35,12 +35,14 @@ so that no code is merged without passing lint, test, and build verification for
 - [ ] 1.7 Add `build-windows` job (`needs: [quality]`, `windows-latest`): flutter-action → `flutter build windows --release`
 - [ ] 1.8 Set workflow-level `permissions: contents: read` for least privilege
 - [ ] 1.9 Maintain concurrency group: `${{ github.workflow }}-${{ github.head_ref || github.ref }}` with `cancel-in-progress: true`
+- [ ] 1.10 Add `actions/upload-artifact@v4` step after `flutter test` in `quality` job — upload `coverage/lcov.info` as artifact named `coverage-report` (required by AC3: "coverage artifact uploaded for reference")
 
 ### Task 2: Update cspell.json with Project-Specific Terms (AC: 8)
 
-- [ ] 2.1 Add comprehensive project terms to `.github/cspell.json` `words` array: TimeMoney, ObjectBox, BLoC, Cubit, Drift, fpdart, Freezed, Dartdoc, dartdoc, Mocktail, codecov, lcov, datasource, datasources, BMad, BMAD, pubspec, appbundle, codesign, riverpod (false positive prevention), and any other terms found in project markdown/dart files that would fail spell-check
-- [ ] 2.2 Verify `useGitignore: true` excludes generated files (*.g.dart, *.freezed.dart)
-- [ ] 2.3 Test locally: run `npx cspell "**/*.md"` to verify zero false positives
+- [ ] 2.1 **FIRST** run `npx cspell "**/*.md"` on current codebase to discover ALL failing terms — the baseline list in Dev Notes is a minimum, not exhaustive. `_bmad-output/` and `docs/` contain many technical terms (BDD, ATDD, brownfield, monolith, json_serializable, flutter_bloc, bloc_test, very_good_analysis, intl, Impeller, pumpApp, setUp, genhtml, etc.)
+- [ ] 2.2 Add ALL discovered terms + the baseline list to `.github/cspell.json` `words` array
+- [ ] 2.3 Verify `useGitignore: true` excludes generated files (*.g.dart, *.freezed.dart)
+- [ ] 2.4 Re-run `npx cspell "**/*.md"` — must produce **zero** failures before proceeding
 
 ### Task 3: Update PR Template with Testing Verification (AC: 7)
 
@@ -55,8 +57,9 @@ so that no code is merged without passing lint, test, and build verification for
 - [ ] 5.1 Run `flutter analyze --fatal-infos` locally — confirm zero issues
 - [ ] 5.2 Run `dart format --output=none --set-exit-if-changed .` locally — confirm zero formatting issues
 - [ ] 5.3 Run `flutter test --coverage --test-randomize-ordering-seed random` locally — confirm all 373 tests pass
-- [ ] 5.4 Verify `flutter build web --release` succeeds locally (web is the easiest to test locally)
-- [ ] 5.5 Commit changes, create test PR to main → verify pipeline triggers and all jobs complete
+- [ ] 5.4 **Golden test CI compatibility check** — golden baselines were generated on macOS but CI `quality` runs on ubuntu. If golden tests fail on the CI ubuntu runner: (A) preferred: regenerate baselines on ubuntu and commit updated PNGs, or (B) last resort: tag golden tests with `@Tags(['golden'])` and add `--exclude-tags golden` to the CI test command. Verify this BEFORE merging.
+- [ ] 5.5 Verify `flutter build web --release` succeeds locally (web is the easiest to test locally)
+- [ ] 5.6 Commit changes, create test PR to main → verify pipeline triggers and all jobs complete
 
 ### Task 6: Final Validation (AC: all)
 
@@ -88,28 +91,15 @@ The `.github/` directory already has a working baseline from the VGV CLI project
 
 ### Pipeline Architecture — 3-Tier Job Design
 
-```
-┌─────────────────────┐
-│  semantic-pull-req   │  (VGV reusable — commit format)
-└─────────────────────┘
-┌─────────────────────┐
-│      quality         │  ubuntu-latest: format + analyze + test + coverage
-└─────────┬───────────┘
-          │ needs: [quality]
-    ┌─────┼─────────────────────────┐
-    │     │           │             │
-┌───┴──┐ ┌┴────┐ ┌───┴──┐ ┌───────┴─┐
-│android│ │ ios │ │ web  │ │ windows │
-│ubuntu │ │macOS│ │ubuntu│ │ windows │
-└──────┘ └─────┘ └──────┘ └─────────┘
-┌─────────────────────┐
-│    spell-check       │  (VGV reusable — parallel, no deps)
-└─────────────────────┘
-```
+- **Tier 0 (parallel, no deps):** `semantic-pull-request` (VGV reusable), `spell-check` (VGV reusable)
+- **Tier 1 (quality gate):** `quality` on ubuntu-latest — format + analyze + test + coverage upload
+- **Tier 2 (needs: [quality]):** `build-android` (ubuntu), `build-ios` (macos), `build-web` (ubuntu), `build-windows` (windows) — all run in parallel
 
-**Rationale:** Quality gate runs first on cheapest runner (ubuntu). Expensive macOS/Windows runners only consume minutes if lint+test passes. Build jobs run in parallel after quality gate.
+**Rationale:** Quality gate on cheapest runner first. Expensive macOS (10x) / Windows (2x) runners only consume minutes if lint+test passes. Concurrency group cancels stale runs.
 
 ### Workflow File Reference — main.yaml Structure
+
+> **This YAML is the source of truth.** Tasks describe *what* to do; this YAML shows the *target state*. When in doubt, match this output.
 
 ```yaml
 name: time_money
@@ -143,6 +133,10 @@ jobs:
       - run: dart format --output=none --set-exit-if-changed .
       - run: flutter analyze --fatal-infos
       - run: flutter test --coverage --test-randomize-ordering-seed random
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
 
   build-android:
     needs: [quality]
@@ -186,7 +180,7 @@ jobs:
 
   build-windows:
     needs: [quality]
-    runs-on: windows-latest
+    runs-on: windows-latest  # includes Visual Studio/MSVC toolchain required for Flutter Windows builds
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
@@ -217,7 +211,7 @@ Most Flutter projects with Ahem font + fixed pixel ratio see no platform differe
 
 ### cspell.json — Required Project Terms
 
-Current words list has only 5 Spanish terms. Add all domain terminology to prevent false positives:
+Current words list has only 5 Spanish terms. The list below is a **baseline minimum** — Task 2.1 requires running `npx cspell "**/*.md"` to discover ALL missing terms before finalizing:
 
 ```json
 "words": [
@@ -235,7 +229,7 @@ Current words list has only 5 Spanish terms. Add all domain terminology to preve
 ]
 ```
 
-Scan actual markdown files for additional terms that would fail before finalizing.
+**Known additional terms** likely needed (from `_bmad-output/` and `docs/` markdown scan): `BDD`, `ATDD`, `brownfield`, `monolith`, `json_serializable`, `flutter_bloc`, `bloc_test`, `very_good_analysis`, `intl`, `Impeller`, `pumpApp`, `setUp`, `tearDown`, `blocTest`, `matchesGoldenFile`, `pumpGoldenApp`, `NFR`, `PRD`, `CRUD`, `SOLID`, `SQLite`, `NoSQL`, `FFI`, `ARB`, among others. Run the cspell scan to get the definitive list.
 
 ### PR Template — Testing Section Addition
 
@@ -250,44 +244,25 @@ Add after existing "Type of Change" section:
 - [ ] Platforms verified (if persistence/DI changes)
 ```
 
-### Action Versions (March 2026)
+### Action Versions & Verification
 
-| Action | Version | Notes |
-|--------|---------|-------|
-| `actions/checkout` | v6 | |
-| `actions/setup-java` | v4 | `distribution: temurin`, `java-version: '17'` |
-| `subosito/flutter-action` | v2 (v2.22.0) | Supports Flutter 3.41+, built-in cache |
-| VGV semantic PR | @v1 | Enforces conventional commits |
-| VGV spell-check | @v1 | Uses cspell internally |
+**IMPORTANT:** Verify each action version exists before using. The YAML reference uses `actions/checkout@v6` — if v6 does not exist yet, fall back to the latest available (v4 as of mid-2025). Check https://github.com/actions/checkout/releases at implementation time.
 
-### Runner Cost Awareness
+- `actions/checkout` — v6 (verify exists; fallback v4)
+- `actions/setup-java` — v4 (`distribution: temurin`, `java-version: '17'`)
+- `actions/upload-artifact` — v4 (for coverage artifact upload)
+- `subosito/flutter-action` — v2 (built-in pub cache with `cache: true`)
+- VGV semantic PR / spell-check — @v1
 
-| Job | Runner | Relative Cost |
-|-----|--------|---------------|
-| quality | ubuntu-latest | 1x (base) |
-| build-android | ubuntu-latest | 1x |
-| build-web | ubuntu-latest | 1x |
-| build-ios | macos-latest | 10x (Apple Silicon) |
-| build-windows | windows-latest | 2x |
+### Build Environment Notes
 
-Build jobs are gated behind `quality` to avoid wasting expensive macOS/Windows minutes on code that fails lint/test. Concurrency group cancels stale runs.
+- **No flavor/environment needed** — CI builds are verification-only (no deployment). Default Flutter build with no `--dart-define` or flavor flags.
+- **Security:** `permissions: contents: read` (least privilege), no secrets, no codesign tokens.
+- **Cost awareness:** macOS runners are ~10x, Windows ~2x ubuntu cost. Build jobs gated behind `quality` to minimize waste.
 
-### Security Best Practices
+### Out of Scope
 
-- `permissions: contents: read` at workflow level (least privilege)
-- No secrets used — no codesign, no deployment tokens
-- Concurrency groups prevent resource waste
-- `cancel-in-progress: true` safe for PR validation (NOT for deployments)
-
-### This Story Does NOT Include
-
-- Coverage threshold enforcement in CI (Nice-to-have for future)
-- Coverage badge/reporting service integration (e.g., Codecov)
-- Release/deployment automation
-- Issue templates
-- CODEOWNERS file
-- Performance benchmarking
-These are explicitly out of scope per the epic's 2-story structure.
+Coverage threshold enforcement, Codecov integration, release/deployment automation, issue templates, CODEOWNERS, and performance benchmarking are out of scope per the epic's 2-story structure.
 
 ### Project Structure Notes
 
@@ -297,19 +272,11 @@ These are explicitly out of scope per the epic's 2-story structure.
 
 ### References
 
-- [Source: _bmad-output/planning-artifacts/epics.md#Story 6.1] — acceptance criteria and BDD specs
-- [Source: _bmad-output/planning-artifacts/epics.md#Epic 6] — epic objectives: CI/CD pipeline, professional README, Dependabot, code quality cleanup
-- [Source: _bmad-output/planning-artifacts/architecture.md#FR50-FR53] — CI/CD architecture mapping, `.github/` directory structure
-- [Source: _bmad-output/planning-artifacts/prd.md#FR50] — CI pipeline: linting, testing, coverage on every PR
-- [Source: _bmad-output/planning-artifacts/prd.md#FR51] — CI pipeline: build verification for all four platforms
-- [Source: _bmad-output/planning-artifacts/prd.md#NFR21] — CI pipeline must pass before merge to main
-- [Source: _bmad-output/project-context.md#Development Workflow Rules] — CI/CD: GitHub Actions with semantic PR, flutter_package, spell-check
-- [Source: _bmad-output/project-context.md#Testing Rules] — test command: `flutter test --coverage --test-randomize-ordering-seed random`, 373 tests, 92.3% coverage
-- [Source: _bmad-output/project-context.md#Code Quality] — zero warnings policy, `flutter analyze` must pass clean
-- [Source: .github/workflows/main.yaml] — current VGV reusable workflow baseline
-- [Source: .github/dependabot.yaml] — current Dependabot configuration
-- [Source: .github/cspell.json] — current spell-check configuration
-- [Source: .github/PULL_REQUEST_TEMPLATE.md] — current PR template
+- [epics.md#Epic 6 / Story 6.1] — AC, BDD specs, epic objectives (FR50, FR51, NFR21)
+- [architecture.md#FR50-FR53] — CI/CD architecture, `.github/` directory structure
+- [prd.md#FR50-FR51, NFR21] — pipeline requirements: lint, test, coverage, 4-platform builds, merge blocking
+- [project-context.md] — test command, 373 tests, 92.3% coverage, zero warnings policy
+- [.github/] — current baseline files: main.yaml (VGV), dependabot.yaml, cspell.json, PULL_REQUEST_TEMPLATE.md
 
 ### Previous Story Intelligence (Story 5.3)
 
@@ -334,10 +301,12 @@ Pipeline's semantic PR validation enforces this format. All 5 epics complete, co
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
-
-### Debug Log References
+<!-- filled by dev agent at implementation time -->
 
 ### Completion Notes List
 
+<!-- dev agent logs decisions, issues encountered, and resolution notes here -->
+
 ### File List
+
+<!-- dev agent lists all files created or modified -->
