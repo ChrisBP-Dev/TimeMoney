@@ -1,11 +1,11 @@
 ---
 project_name: 'TimeMoney'
 user_name: 'Christopher'
-date: '2026-03-20'
+date: '2026-03-22'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
-rule_count: 101
+rule_count: 113
 optimized_for_llm: true
 ---
 
@@ -25,10 +25,11 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Persistence (web)**: drift ^2.32.0 + drift_flutter (SQLite via WASM + OPFS)
 - **Code Generation**: build_runner ^2.4.14, json_serializable ^6.6.1, objectbox_generator ^5.2.0, drift_dev
 - **Linting**: very_good_analysis ^10.2.0 (strict, public_member_api_docs enabled)
-- **Testing**: bloc_test ^10.0.0, mocktail ^1.0.0
+- **Testing**: bloc_test ^10.0.0, mocktail ^1.0.0, flutter_test (widget + golden)
 - **i18n**: intl ^0.20.0 (en, es via ARB files)
 - **Environments**: 3 flavors — development, staging, production
 - **Platforms**: iOS, Android, Web, Windows (multi-platform with platform-aware DI)
+- **Test Metrics**: 373 tests, 92.3% coverage (presentation 97.9%, use cases/BLoCs/repositories 100%)
 
 ## Critical Implementation Rules
 
@@ -73,7 +74,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 - **Test framework**: `flutter_test` (widget), `bloc_test` (BLoC), `mocktail` (mocking)
 - **Test helper infrastructure**: `test/helpers/pump_app.dart` provides `pumpApp(widget)` extension that wraps widgets with localization and required providers — always use it for widget tests
-- **Mock with mocktail, not mockito**: Use `class MockTimesRepository extends Mock implements TimesRepository {}` pattern — declared locally in each test file
+- **Centralized mocks**: All project mocks live in `test/helpers/mocks.dart` barrel — `MockBloc`/`MockCubit` from `bloc_test` for widget tests, `Mock` from `mocktail` for unit tests. Import from barrel, do not redeclare per test file
 - **BLoC test structure**: Use `blocTest<BlocType, StateType>()` with `build`, `act`, `expect` pattern from `bloc_test` package
 - **Test command**: `flutter test --coverage --test-randomize-ordering-seed random`
 - **Coverage report**: `genhtml coverage/lcov.info -o coverage/`
@@ -89,6 +90,13 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Repository tests mock datasources**: Drift repository tests mock the datasource layer (not the database) and verify `Either<GlobalFailure, T>` wrapping and exception-to-failure mapping
 - **Affected-row semantics in tests**: Test that update/remove operations handle 0-row results (non-existent ID) as failure cases
 - **Test documentation standard**: Test files require `library;` dartdoc comment, `group()` comments explaining purpose, and `test()` names as complete descriptive sentences
+- **Golden tests (native)**: Use `matchesGoldenFile('name.png')` from `flutter_test` — no external golden test packages (no `golden_toolkit`, no `alchemist`). Baselines committed as PNG files in `test/goldens/`
+- **`pumpGoldenApp` extension**: Golden tests use dedicated `tester.pumpGoldenApp(widget, size: Size(...))` helper — sets `devicePixelRatio = 1.0`, fixed viewport, M3 theme, `debugShowCheckedModeBanner: false`, and auto-tearDown via `view.reset`
+- **Golden viewport sizing**: Ahem font (Flutter test default) renders wider than production fonts — HomePage uses `Size(480, 892)`, dialogs use `Size(800, 1200)` to prevent overflow. Always tune size per golden target
+- **`buildSubject()` convention**: Widget and golden tests centralize widget composition in a `Widget buildSubject()` local function — reduces duplication when multiple test cases share the same widget setup
+- **Dialog functional testing**: Functional (non-golden) dialog tests wrap in `Scaffold > Builder > showDialog` to simulate real overlay/Navigator context — golden tests render dialogs directly via `pumpGoldenApp`
+- **`_ThrowingXxx` Fake pattern**: To cover defensive catch blocks unreachable in normal operation, create private `Fake` implementations that throw on specific method calls (e.g., `_ThrowingTimesList extends Fake implements List<TimeEntry>`)
+- **Golden test file location**: Golden test files in `test/goldens/`, golden baseline PNGs alongside in same directory — naming: `{feature}_{state}.png` (e.g., `home_page_with_data.png`, `create_time_dialog.png`)
 
 ### Code Quality & Style Rules
 
@@ -121,8 +129,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Story-driven development**: Each story delivers implementation + tests together, status set to `review` (never `done`) — only code review decides done
 - **CI/CD**: GitHub Actions with semantic PR validation, flutter_package build/test, spell-check on markdown
 - **Multi-platform testing**: When touching persistence or DI code, verify changes across native (ObjectBox) and web (Drift) paths — both datasources must maintain behavioral parity
-- **BMad workflow**: Sprint planning → story creation → story validation → dev story → code review → retrospective
-- **Project context updates**: `project-context.md` must be reviewed and updated at each epic retrospective closure
+- **BMad workflow**: Sprint planning → story creation → story validation → dev story → code review → retrospective → project-context update
+- **Current project state**: Epics 1–5 complete (SDK migration, architecture, ObjectBox, Drift, Quality). Epic 6 (CI/CD & Documentation) in backlog. Zero deferred items — all Epic 5 tech debt resolved in post-retro quick dev
 
 ### Critical Don't-Miss Rules
 
@@ -141,6 +149,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - NEVER import ObjectBox packages in web bootstrap or Drift web packages in native bootstrap — conditional imports enforce separation at compile time
 - NEVER create per-feature Drift databases — all tables aggregate in single `AppDatabase`
 - NEVER accept "pre-existing" as justification for ignoring tech debt — must resolve or have explicit plan
+- NEVER render dialogs as bare widgets in `showDialog` — always constrain with proper layout (e.g., wrap content-only Card, place buttons in dialog `actions` parameter)
+- NEVER implement destructive actions (delete) without confirmation — always use a confirmation dialog (e.g., `DeleteTimeConfirmationDialog`)
 
 **Edge Cases:**
 - ObjectBox `put()` returns an `int` ID — domain models use `@Default(0) int id` for new entities
@@ -150,6 +160,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - `GlobalFailure.fromException()` handles `TimeoutException` → `TimeOutExceeded()` and everything else → `InternalError`. Platform-specific mappings (e.g. `SocketException` → `NotConnection`) belong in the data layer per Dependency Inversion, NOT in the domain factory
 - `TimeBox` and `WageHourlyBox` are ObjectBox-specific entities; `TimesTable` and `WageHourlyTable` are Drift-specific — always map between them and domain models using conversion extensions (`.toTimeEntry`, `.toWageHourly`)
 - Sealed class subtypes must carry parent state fields (e.g., `hour`, `minutes` carried in all `CreateTimeState` subtypes)
+- Golden test baselines must be regenerated when any visual change is made — run `flutter test --update-goldens test/goldens/` to update all baselines
+- `canPop` guard pattern: CRUD dialog buttons must check `Navigator.of(context).canPop` before calling `pop()` — prevents crashes when dialog context is invalid
 
 **Performance:**
 - Use reactive streams (`watch()` for ObjectBox, `watchAll()` for Drift) with `emit.forEach` instead of polling for list updates
@@ -175,4 +187,4 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Review at each epic retrospective for outdated rules
 - Remove rules that become obvious over time
 
-Last Updated: 2026-03-20
+Last Updated: 2026-03-22
