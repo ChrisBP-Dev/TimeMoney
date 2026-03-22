@@ -14,8 +14,8 @@ export 'delete_time_state.dart';
 class DeleteTimeBloc extends Bloc<DeleteTimeEvent, DeleteTimeState> {
   /// Creates a [DeleteTimeBloc] with the given [useCase].
   DeleteTimeBloc(DeleteTimeUseCase useCase)
-      : _deleteTimeUseCase = useCase,
-        super(const DeleteTimeInitial()) {
+    : _deleteTimeUseCase = useCase,
+      super(const DeleteTimeInitial()) {
     on<DeleteTimeRequested>(_onDelete);
   }
 

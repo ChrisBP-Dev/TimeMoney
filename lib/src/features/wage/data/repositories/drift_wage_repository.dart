@@ -52,8 +52,10 @@ class DriftWageRepository implements WageRepository {
         final id = await _datasource.insert(value: wageHourly.value);
         return right(wageHourly.copyWith(id: id));
       }
-      final affectedRows =
-          await _datasource.update(wageHourly.id, value: wageHourly.value);
+      final affectedRows = await _datasource.update(
+        wageHourly.id,
+        value: wageHourly.value,
+      );
       if (affectedRows == 0) {
         return left(
           GlobalFailure.fromException(Exception('Wage entry not found')),

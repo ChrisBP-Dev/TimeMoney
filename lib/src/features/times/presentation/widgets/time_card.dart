@@ -39,13 +39,15 @@ class TimeCard extends StatelessWidget {
               ),
               onPressed: () {
                 final deleteBloc = context.read<DeleteTimeBloc>();
-                unawaited(showDialog<void>(
-                  context: context,
-                  builder: (_) => BlocProvider<DeleteTimeBloc>.value(
-                    value: deleteBloc,
-                    child: DeleteTimeConfirmationDialog(time: time),
+                unawaited(
+                  showDialog<void>(
+                    context: context,
+                    builder: (_) => BlocProvider<DeleteTimeBloc>.value(
+                      value: deleteBloc,
+                      child: DeleteTimeConfirmationDialog(time: time),
+                    ),
                   ),
-                ));
+                );
               },
             ),
           ],

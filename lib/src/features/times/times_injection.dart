@@ -12,21 +12,17 @@ import 'package:time_money/src/features/times/domain/use_cases/update_time_use_c
 class TimesUseCasesInjections {
   /// Returns a list of [RepositoryProvider]s for every Times use case.
   static List<RepositoryProvider<Object>> list() => [
-        RepositoryProvider<ListTimesUseCase>(
-          create: (context) =>
-              ListTimesUseCase(context.read<TimesRepository>()),
-        ),
-        RepositoryProvider<CreateTimeUseCase>(
-          create: (context) =>
-              CreateTimeUseCase(context.read<TimesRepository>()),
-        ),
-        RepositoryProvider<DeleteTimeUseCase>(
-          create: (context) =>
-              DeleteTimeUseCase(context.read<TimesRepository>()),
-        ),
-        RepositoryProvider<UpdateTimeUseCase>(
-          create: (context) =>
-              UpdateTimeUseCase(context.read<TimesRepository>()),
-        ),
-      ];
+    RepositoryProvider<ListTimesUseCase>(
+      create: (context) => ListTimesUseCase(context.read<TimesRepository>()),
+    ),
+    RepositoryProvider<CreateTimeUseCase>(
+      create: (context) => CreateTimeUseCase(context.read<TimesRepository>()),
+    ),
+    RepositoryProvider<DeleteTimeUseCase>(
+      create: (context) => DeleteTimeUseCase(context.read<TimesRepository>()),
+    ),
+    RepositoryProvider<UpdateTimeUseCase>(
+      create: (context) => UpdateTimeUseCase(context.read<TimesRepository>()),
+    ),
+  ];
 }

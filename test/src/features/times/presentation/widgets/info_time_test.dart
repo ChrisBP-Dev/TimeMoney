@@ -16,8 +16,9 @@ void main() {
   group('InfoTime', () {
     const testTime = TimeEntry(hour: 2, minutes: 30);
 
-    testWidgets('renders two CustomInfo widgets for hour and minutes',
-        (tester) async {
+    testWidgets('renders two CustomInfo widgets for hour and minutes', (
+      tester,
+    ) async {
       await tester.pumpApp(
         const InfoTime(time: testTime),
       );

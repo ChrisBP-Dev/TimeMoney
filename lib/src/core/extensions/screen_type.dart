@@ -10,7 +10,7 @@ enum ScreenType {
   tablet,
 
   /// Desktop or large screen (> 1024 logical pixels wide).
-  desktop;
+  desktop,
 }
 
 /// Convenience boolean getters for [ScreenType] comparison.

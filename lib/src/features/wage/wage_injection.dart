@@ -9,17 +9,14 @@ import 'package:time_money/src/features/wage/domain/use_cases/update_wage_use_ca
 class WageUseCasesInjections {
   /// Returns the list of [RepositoryProvider]s for every Wage use case.
   static List<RepositoryProvider<Object>> list() => [
-        RepositoryProvider<FetchWageUseCase>(
-          create: (context) =>
-              FetchWageUseCase(context.read<WageRepository>()),
-        ),
-        RepositoryProvider<SetWageUseCase>(
-          create: (context) =>
-              SetWageUseCase(context.read<WageRepository>()),
-        ),
-        RepositoryProvider<UpdateWageUseCase>(
-          create: (context) =>
-              UpdateWageUseCase(context.read<WageRepository>()),
-        ),
-      ];
+    RepositoryProvider<FetchWageUseCase>(
+      create: (context) => FetchWageUseCase(context.read<WageRepository>()),
+    ),
+    RepositoryProvider<SetWageUseCase>(
+      create: (context) => SetWageUseCase(context.read<WageRepository>()),
+    ),
+    RepositoryProvider<UpdateWageUseCase>(
+      create: (context) => UpdateWageUseCase(context.read<WageRepository>()),
+    ),
+  ];
 }

@@ -19,8 +19,8 @@ export 'create_time_state.dart';
 class CreateTimeBloc extends Bloc<CreateTimeEvent, CreateTimeState> {
   /// Creates a [CreateTimeBloc] with the given [useCase].
   CreateTimeBloc(CreateTimeUseCase useCase)
-      : _createTimeUseCase = useCase,
-        super(const CreateTimeInitial()) {
+    : _createTimeUseCase = useCase,
+      super(const CreateTimeInitial()) {
     on<CreateTimeHourChanged>(_onHourChanged);
     on<CreateTimeMinutesChanged>(_onMinutesChanged);
     on<CreateTimeSubmitted>(_onSubmitted);

@@ -42,8 +42,8 @@ class _UpdateHourFieldState extends State<UpdateHourField> {
           title: context.l10n.hourTitle,
           controller: _controller,
           onChanged: (value) => context.read<UpdateTimeBloc>().add(
-                UpdateTimeHourChanged(value: value),
-              ),
+            UpdateTimeHourChanged(value: value),
+          ),
         );
       },
     );

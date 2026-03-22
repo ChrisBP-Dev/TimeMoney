@@ -42,10 +42,10 @@ class PaymentResult {
 
   @override
   int get hashCode => Object.hash(
-        totalHours,
-        totalMinutes,
-        wageHourly,
-        totalPayment,
-        workedDays,
-      );
+    totalHours,
+    totalMinutes,
+    wageHourly,
+    totalPayment,
+    workedDays,
+  );
 }

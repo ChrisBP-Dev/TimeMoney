@@ -26,35 +26,36 @@ void main() {
     });
 
     testWidgets(
-        'renders AlertDialog with CreateTimeCard and CreateTimeButton',
-        (tester) async {
-      await tester.pumpApp(
-        Scaffold(
-          body: Builder(
-            builder: (context) {
-              return ElevatedButton(
-                onPressed: () => showDialog<void>(
-                  context: context,
-                  builder: (_) => BlocProvider<CreateTimeBloc>.value(
-                    value: mockBloc,
-                    child: const CreateTimePage(),
+      'renders AlertDialog with CreateTimeCard and CreateTimeButton',
+      (tester) async {
+        await tester.pumpApp(
+          Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (_) => BlocProvider<CreateTimeBloc>.value(
+                      value: mockBloc,
+                      child: const CreateTimePage(),
+                    ),
                   ),
-                ),
-                child: const Text('open'),
-              );
-            },
+                  child: const Text('open'),
+                );
+              },
+            ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      await tester.tap(find.text('open'));
-      await tester.pump();
+        await tester.tap(find.text('open'));
+        await tester.pump();
 
-      expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.byType(CreateTimeCard), findsOneWidget);
-      expect(find.byType(CreateTimeButton), findsOneWidget);
-    });
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(find.byType(CreateTimeCard), findsOneWidget);
+        expect(find.byType(CreateTimeButton), findsOneWidget);
+      },
+    );
 
     testWidgets('close button pops dialog', (tester) async {
       await tester.pumpApp(

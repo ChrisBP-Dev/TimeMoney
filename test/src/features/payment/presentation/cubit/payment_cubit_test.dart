@@ -154,25 +154,26 @@ void main() {
     test(
       'calculate() when PaymentReady returns Right with all fields',
       () async {
-      final cubit = PaymentCubit(useCase)
-        ..setTimes([testEntry])
-        ..setWage(20);
+        final cubit = PaymentCubit(useCase)
+          ..setTimes([testEntry])
+          ..setWage(20);
 
-      final result = cubit.calculate();
+        final result = cubit.calculate();
 
-      expect(result.isRight(), true);
-      result.fold(
-        (_) => fail('Expected Right'),
-        (paymentResult) {
-          expect(paymentResult.totalHours, 2);
-          expect(paymentResult.totalMinutes, 30);
-          expect(paymentResult.totalPayment, 50.0);
-          expect(paymentResult.wageHourly, 20.0);
-          expect(paymentResult.workedDays, 1);
-        },
-      );
-      await cubit.close();
-    });
+        expect(result.isRight(), true);
+        result.fold(
+          (_) => fail('Expected Right'),
+          (paymentResult) {
+            expect(paymentResult.totalHours, 2);
+            expect(paymentResult.totalMinutes, 30);
+            expect(paymentResult.totalPayment, 50.0);
+            expect(paymentResult.wageHourly, 20.0);
+            expect(paymentResult.workedDays, 1);
+          },
+        );
+        await cubit.close();
+      },
+    );
 
     // Calling calculate() without both wage and entries
     // must return Left — protects against premature usage

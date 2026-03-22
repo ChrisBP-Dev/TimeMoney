@@ -32,9 +32,9 @@ value: $value,
 extension ConvertWageHourly on WageHourlyBox {
   /// Maps this box model to its domain-layer [WageHourly] equivalent.
   WageHourly get toWageHourly => WageHourly(
-        id: id,
-        value: value,
-      );
+    id: id,
+    value: value,
+  );
 }
 
 /// Converts a [WageHourly] domain entity to a [WageHourlyBox] data model.
@@ -42,7 +42,7 @@ extension ConvertWageHourlyBox on WageHourly {
   /// Maps this domain entity to its persistence-layer [WageHourlyBox]
   /// equivalent.
   WageHourlyBox get toWageHourlyBox => WageHourlyBox(
-        id: id,
-        value: value,
-      );
+    id: id,
+    value: value,
+  );
 }

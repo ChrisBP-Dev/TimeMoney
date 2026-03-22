@@ -14,25 +14,25 @@ import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc
 class TimesBlocs {
   /// Returns a list of [BlocProvider]s for every Times feature BLoC.
   static List<BlocProvider> list() => [
-        BlocProvider<ListTimesBloc>(
-          create: (context) => ListTimesBloc(
-            context.read<ListTimesUseCase>(),
-          ),
-        ),
-        BlocProvider<CreateTimeBloc>(
-          create: (context) => CreateTimeBloc(
-            context.read<CreateTimeUseCase>(),
-          ),
-        ),
-        BlocProvider<DeleteTimeBloc>(
-          create: (context) => DeleteTimeBloc(
-            context.read<DeleteTimeUseCase>(),
-          ),
-        ),
-        BlocProvider<UpdateTimeBloc>(
-          create: (context) => UpdateTimeBloc(
-            context.read<UpdateTimeUseCase>(),
-          ),
-        ),
-      ];
+    BlocProvider<ListTimesBloc>(
+      create: (context) => ListTimesBloc(
+        context.read<ListTimesUseCase>(),
+      ),
+    ),
+    BlocProvider<CreateTimeBloc>(
+      create: (context) => CreateTimeBloc(
+        context.read<CreateTimeUseCase>(),
+      ),
+    ),
+    BlocProvider<DeleteTimeBloc>(
+      create: (context) => DeleteTimeBloc(
+        context.read<DeleteTimeUseCase>(),
+      ),
+    ),
+    BlocProvider<UpdateTimeBloc>(
+      create: (context) => UpdateTimeBloc(
+        context.read<UpdateTimeUseCase>(),
+      ),
+    ),
+  ];
 }

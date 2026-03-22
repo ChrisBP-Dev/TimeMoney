@@ -11,8 +11,7 @@ extension DeclarativeBool on bool {
   W when<W>({
     required W Function() isTrue,
     required W Function() isFalse,
-  }) =>
-      this ? isTrue() : isFalse();
+  }) => this ? isTrue() : isFalse();
 
   /// Like [when], but both callbacks are optional and may return `null`.
   ///
@@ -20,6 +19,5 @@ extension DeclarativeBool on bool {
   W? whenOrNull<W>({
     W? Function()? isTrue,
     W? Function()? isFalse,
-  }) =>
-      this ? isTrue?.call() : isFalse?.call();
+  }) => this ? isTrue?.call() : isFalse?.call();
 }

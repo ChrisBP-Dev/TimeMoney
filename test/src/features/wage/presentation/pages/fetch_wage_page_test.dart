@@ -112,8 +112,9 @@ void main() {
 
     // -- PaymentCubit listener sync tests (P2) --
 
-    testWidgets('renders WageHourlyCard on Loaded state with zero wage',
-        (tester) async {
+    testWidgets('renders WageHourlyCard on Loaded state with zero wage', (
+      tester,
+    ) async {
       when(() => mockFetchBloc.state).thenReturn(
         const FetchWageLoaded(WageHourly(id: 1, value: 0)),
       );
@@ -124,9 +125,9 @@ void main() {
       expect(find.byType(WageHourlyCard), findsOneWidget);
     });
 
-    testWidgets(
-        'listener calls setWage(0) on Loaded with zero wage',
-        (tester) async {
+    testWidgets('listener calls setWage(0) on Loaded with zero wage', (
+      tester,
+    ) async {
       whenListen(
         mockFetchBloc,
         Stream.value(
@@ -155,8 +156,9 @@ void main() {
       verify(() => mockPaymentCubit.setWage(15.5)).called(1);
     });
 
-    testWidgets('listener does not call setWage on Error state',
-        (tester) async {
+    testWidgets('listener does not call setWage on Error state', (
+      tester,
+    ) async {
       whenListen(
         mockFetchBloc,
         Stream.value(const FetchWageError(InternalError('test'))),
@@ -169,8 +171,9 @@ void main() {
       verifyNever(() => mockPaymentCubit.setWage(any()));
     });
 
-    testWidgets('listener does not call setWage on Loading state',
-        (tester) async {
+    testWidgets('listener does not call setWage on Loading state', (
+      tester,
+    ) async {
       whenListen(
         mockFetchBloc,
         Stream.value(const FetchWageLoading()),

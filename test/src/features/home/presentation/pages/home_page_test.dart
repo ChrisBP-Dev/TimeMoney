@@ -39,12 +39,9 @@ void main() {
     mockListTimesBloc = MockListTimesBloc();
     mockFetchWageBloc = MockFetchWageBloc();
 
-    when(() => mockPaymentCubit.state)
-        .thenReturn(const PaymentInitial());
-    when(() => mockListTimesBloc.state)
-        .thenReturn(const ListTimesInitial());
-    when(() => mockFetchWageBloc.state)
-        .thenReturn(const FetchWageInitial());
+    when(() => mockPaymentCubit.state).thenReturn(const PaymentInitial());
+    when(() => mockListTimesBloc.state).thenReturn(const ListTimesInitial());
+    when(() => mockFetchWageBloc.state).thenReturn(const FetchWageInitial());
   });
 
   Widget buildSubject() {
@@ -59,8 +56,9 @@ void main() {
   }
 
   group('HomePage', () {
-    testWidgets('renders Scaffold with AppBar showing localized homeTitle',
-        (tester) async {
+    testWidgets('renders Scaffold with AppBar showing localized homeTitle', (
+      tester,
+    ) async {
       await tester.pumpApp(buildSubject());
 
       expect(find.byType(Scaffold), findsWidgets);
@@ -88,18 +86,19 @@ void main() {
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
-    testWidgets('hides CalculatePaymentButton when PaymentInitial',
-        (tester) async {
-      when(() => mockPaymentCubit.state)
-          .thenReturn(const PaymentInitial());
+    testWidgets('hides CalculatePaymentButton when PaymentInitial', (
+      tester,
+    ) async {
+      when(() => mockPaymentCubit.state).thenReturn(const PaymentInitial());
 
       await tester.pumpApp(buildSubject());
 
       expect(find.byType(CalculatePaymentButton), findsNothing);
     });
 
-    testWidgets('shows CalculatePaymentButton when PaymentReady',
-        (tester) async {
+    testWidgets('shows CalculatePaymentButton when PaymentReady', (
+      tester,
+    ) async {
       whenListen(
         mockPaymentCubit,
         Stream.value(
@@ -121,21 +120,17 @@ void main() {
         expect(find.byType(OutlinedButton), findsOneWidget);
       });
 
-      testWidgets(
-          'locale toggle defaults to first supported locale when '
-          'selected locale is unsupported',
-          (tester) async {
+      testWidgets('locale toggle defaults to first supported locale when '
+          'selected locale is unsupported', (tester) async {
         // Force LocaleSelected('fr') — 'fr' is NOT in supportedLocales,
         // so indexWhere returns -1 and the fallback clamps to index 0.
-        final localeCubit = LocaleCubit()
-          ..setLocale(const Locale('fr'));
+        final localeCubit = LocaleCubit()..setLocale(const Locale('fr'));
 
         await tester.pumpWidget(
           BlocProvider<LocaleCubit>.value(
             value: localeCubit,
             child: MaterialApp(
-              localizationsDelegates:
-                  AppLocalizations.localizationsDelegates,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               home: buildSubject(),
             ),
@@ -150,19 +145,20 @@ void main() {
       });
 
       testWidgets(
-          'locale toggle shows "ES" initially and cycles to "EN" after tap',
-          (tester) async {
-        await tester.pumpApp(buildSubject());
+        'locale toggle shows "ES" initially and cycles to "EN" after tap',
+        (tester) async {
+          await tester.pumpApp(buildSubject());
 
-        // Initial state: LocaleSystem → test default 'en' → shows "ES"
-        expect(find.text('ES'), findsOneWidget);
+          // Initial state: LocaleSystem → test default 'en' → shows "ES"
+          expect(find.text('ES'), findsOneWidget);
 
-        await tester.tap(find.byType(OutlinedButton));
-        await tester.pump();
+          await tester.tap(find.byType(OutlinedButton));
+          await tester.pump();
 
-        // After tap: setLocale(es) → shows "EN"
-        expect(find.text('EN'), findsOneWidget);
-      });
+          // After tap: setLocale(es) → shows "EN"
+          expect(find.text('EN'), findsOneWidget);
+        },
+      );
     });
   });
 }

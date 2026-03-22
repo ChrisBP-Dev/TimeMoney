@@ -20,8 +20,7 @@ abstract class TimesRepository {
 }
 
 /// Result type for [TimesRepository.fetchTimesStream].
-typedef FetchTimesResultStream
-    = Either<GlobalFailure, Stream<List<TimeEntry>>>;
+typedef FetchTimesResultStream = Either<GlobalFailure, Stream<List<TimeEntry>>>;
 
 /// Result type for [TimesRepository.create].
 typedef CreateTimeResult = Future<Either<GlobalFailure, TimeEntry>>;

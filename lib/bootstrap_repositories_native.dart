@@ -21,11 +21,13 @@ import 'package:time_money/src/features/wage/domain/repositories/wage_repository
 /// Returns the two repositories and a `close` callback that shuts down the
 /// underlying ObjectBox `Store`, releasing native resources.
 Future<
-    ({
-      TimesRepository timesRepository,
-      WageRepository wageRepository,
-      Future<void> Function() close,
-    })> createRepositories(String dbName) async {
+  ({
+    TimesRepository timesRepository,
+    WageRepository wageRepository,
+    Future<void> Function() close,
+  })
+>
+createRepositories(String dbName) async {
   final objectbox = await ObjectBox.create(dbName);
 
   final timesDatasource = TimesObjectboxDatasource(

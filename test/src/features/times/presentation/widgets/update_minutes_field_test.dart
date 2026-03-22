@@ -46,8 +46,7 @@ void main() {
       expect(textField.controller?.text, '30');
     });
 
-    testWidgets('dispatches UpdateTimeMinutesChanged on input',
-        (tester) async {
+    testWidgets('dispatches UpdateTimeMinutesChanged on input', (tester) async {
       await tester.pumpApp(
         BlocProvider<UpdateTimeBloc>.value(
           value: mockBloc,
@@ -65,8 +64,7 @@ void main() {
 
     // -- BS1: null time pre-population edge case --
 
-    testWidgets('field is empty when BLoC state has null time',
-        (tester) async {
+    testWidgets('field is empty when BLoC state has null time', (tester) async {
       when(() => mockBloc.state).thenReturn(const UpdateTimeInitial());
 
       await tester.pumpApp(

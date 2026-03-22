@@ -14,8 +14,9 @@ import '../../../helpers/helpers.dart';
 void main() {
   group('CatchErrorBuilder', () {
     group('error state', () {
-      testWidgets('renders custom error widget when snapshot.hasError',
-          (tester) async {
+      testWidgets('renders custom error widget when snapshot.hasError', (
+        tester,
+      ) async {
         const snapshot = AsyncSnapshot<String>.withError(
           ConnectionState.done,
           'test error',
@@ -32,8 +33,7 @@ void main() {
         expect(find.text('Custom error'), findsOneWidget);
       });
 
-      testWidgets(
-          'renders default "Something went wrong" text '
+      testWidgets('renders default "Something went wrong" text '
           'when snapshot.hasError and no custom error', (tester) async {
         const snapshot = AsyncSnapshot<String>.withError(
           ConnectionState.done,
@@ -52,9 +52,9 @@ void main() {
     });
 
     group('waiting state', () {
-      testWidgets(
-          'renders custom loading widget when snapshot is waiting',
-          (tester) async {
+      testWidgets('renders custom loading widget when snapshot is waiting', (
+        tester,
+      ) async {
         const snapshot = AsyncSnapshot<String>.waiting();
 
         await tester.pumpApp(
@@ -68,8 +68,7 @@ void main() {
         expect(find.text('Custom loading'), findsOneWidget);
       });
 
-      testWidgets(
-          'renders default CircularProgressIndicator.adaptive '
+      testWidgets('renders default CircularProgressIndicator.adaptive '
           'when snapshot is waiting and no custom loading', (tester) async {
         const snapshot = AsyncSnapshot<String>.waiting();
 
@@ -88,8 +87,9 @@ void main() {
     });
 
     group('data state', () {
-      testWidgets('calls builder with data when snapshot.hasData',
-          (tester) async {
+      testWidgets('calls builder with data when snapshot.hasData', (
+        tester,
+      ) async {
         const snapshot = AsyncSnapshot<String>.withData(
           ConnectionState.done,
           'test data',
@@ -107,8 +107,7 @@ void main() {
     });
 
     group('fallback state (no data, not waiting, no error)', () {
-      testWidgets(
-          'renders custom loading widget wrapped in Center '
+      testWidgets('renders custom loading widget wrapped in Center '
           'when snapshot is nothing and loading is provided', (tester) async {
         const snapshot = AsyncSnapshot<String>.nothing();
 
@@ -131,8 +130,7 @@ void main() {
         );
       });
 
-      testWidgets(
-          'renders default "error" text '
+      testWidgets('renders default "error" text '
           'when snapshot is nothing and no custom loading', (tester) async {
         const snapshot = AsyncSnapshot<String>.nothing();
 

@@ -24,8 +24,9 @@ void main() {
       when(() => mockBloc.state).thenReturn(const UpdateWageInitial());
     });
 
-    testWidgets('renders AlertDialog with WageHourlyField and SetWageButton',
-        (tester) async {
+    testWidgets('renders AlertDialog with WageHourlyField and SetWageButton', (
+      tester,
+    ) async {
       await tester.pumpApp(
         Scaffold(
           body: Builder(

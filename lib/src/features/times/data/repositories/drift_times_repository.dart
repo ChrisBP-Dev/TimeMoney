@@ -20,8 +20,8 @@ class DriftTimesRepository implements TimesRepository {
   FetchTimesResultStream fetchTimesStream() {
     try {
       final stream = _datasource.watchAll().map(
-            (rows) => rows.map((row) => row.toTimeEntry).toList(),
-          );
+        (rows) => rows.map((row) => row.toTimeEntry).toList(),
+      );
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));
@@ -31,8 +31,10 @@ class DriftTimesRepository implements TimesRepository {
   @override
   CreateTimeResult create(TimeEntry time) async {
     try {
-      final id =
-          await _datasource.insert(hour: time.hour, minutes: time.minutes);
+      final id = await _datasource.insert(
+        hour: time.hour,
+        minutes: time.minutes,
+      );
       return right(time.copyWith(id: id));
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));

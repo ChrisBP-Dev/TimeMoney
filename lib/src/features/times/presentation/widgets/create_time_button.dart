@@ -22,17 +22,17 @@ class CreateTimeButton extends StatelessWidget {
       },
       builder: (context, state) => FilledButton(
         onPressed: state is CreateTimeInitial
-            ? () => context
-                .read<CreateTimeBloc>()
-                .add(const CreateTimeSubmitted())
+            ? () => context.read<CreateTimeBloc>().add(
+                const CreateTimeSubmitted(),
+              )
             : null,
         child: switch (state) {
           CreateTimeInitial() => Text(context.l10n.create),
           CreateTimeLoading() => const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
           CreateTimeSuccess() => Text(context.l10n.success),
           CreateTimeError() => Text(context.l10n.error),
         },

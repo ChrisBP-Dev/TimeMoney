@@ -56,25 +56,23 @@ void main() {
       expect(find.text('Result Info:'), findsOneWidget);
     });
 
-    testWidgets('renders 4 ListTile entries with correct data',
-        (tester) async {
+    testWidgets('renders 4 ListTile entries with correct data', (tester) async {
       await pumpDialog(tester);
 
       expect(find.byType(ListTile), findsNWidgets(4));
 
       // BS-1: inspect each ListTile subtitle individually instead of
       // loose textContaining assertions that match unintended widgets
-      final tiles = tester
-          .widgetList<ListTile>(find.byType(ListTile))
-          .toList();
+      final tiles = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
       expect((tiles[0].subtitle! as Text).data, '10');
       expect((tiles[1].subtitle! as Text).data, '30');
       expect((tiles[2].subtitle! as Text).data, '15.0 Dollars');
       expect((tiles[3].subtitle! as Text).data, '3');
     });
 
-    testWidgets('renders totalPayment as bold 28px Text inside Card',
-        (tester) async {
+    testWidgets('renders totalPayment as bold 28px Text inside Card', (
+      tester,
+    ) async {
       await pumpDialog(tester);
 
       // P-3: verify currency prefix is present
@@ -104,8 +102,9 @@ void main() {
       );
     });
 
-    testWidgets('renders Divider between ListTiles and totalPayment Card',
-        (tester) async {
+    testWidgets('renders Divider between ListTiles and totalPayment Card', (
+      tester,
+    ) async {
       await pumpDialog(tester);
 
       expect(find.byType(Divider), findsOneWidget);

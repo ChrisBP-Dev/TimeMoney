@@ -43,10 +43,9 @@ class HomePage extends StatelessWidget {
               const Expanded(child: ListTimesPage()),
               SafeArea(
                 child: Container(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .surface
-                      .withValues(alpha: .2),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surface.withValues(alpha: .2),
                   height: context.getHeight * .13,
                   child: BlocBuilder<PaymentCubit, PaymentState>(
                     builder: (context, paymentState) => Row(
@@ -55,13 +54,16 @@ class HomePage extends StatelessWidget {
                         if (paymentState is PaymentReady)
                           const CalculatePaymentButton(),
                         FloatingActionButton.extended(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
                           onPressed: () {
-                            unawaited(showDialog<void>(
-                              context: context,
-                              builder: (context) => const CreateTimePage(),
-                            ));
+                            unawaited(
+                              showDialog<void>(
+                                context: context,
+                                builder: (context) => const CreateTimePage(),
+                              ),
+                            );
                           },
                           label: Text(
                             context.l10n.addTime,
@@ -91,8 +93,7 @@ class _LocaleToggle extends StatelessWidget {
     return BlocBuilder<LocaleCubit, LocaleState>(
       builder: (context, state) {
         final currentCode = switch (state) {
-          LocaleSystem() =>
-            Localizations.localeOf(context).languageCode,
+          LocaleSystem() => Localizations.localeOf(context).languageCode,
           LocaleSelected(:final locale) => locale.languageCode,
         };
 
@@ -113,8 +114,7 @@ class _LocaleToggle extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               minimumSize: const Size(0, 32),
             ),
-            onPressed: () =>
-                context.read<LocaleCubit>().setLocale(nextLocale),
+            onPressed: () => context.read<LocaleCubit>().setLocale(nextLocale),
             child: Text(
               nextLocale.languageCode.toUpperCase(),
               style: const TextStyle(

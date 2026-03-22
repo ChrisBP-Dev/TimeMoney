@@ -28,8 +28,7 @@ void main() {
       );
     });
 
-    testWidgets('renders two Text widgets for label and value',
-        (tester) async {
+    testWidgets('renders two Text widgets for label and value', (tester) async {
       await tester.pumpApp(
         const WageHourlyInfo(wageHourly: testWage),
       );

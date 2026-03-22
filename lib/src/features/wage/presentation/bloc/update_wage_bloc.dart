@@ -17,8 +17,8 @@ export 'update_wage_state.dart';
 class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
   /// Creates an [UpdateWageBloc] with the given [useCase].
   UpdateWageBloc(UpdateWageUseCase useCase)
-      : _updateWageUseCase = useCase,
-        super(const UpdateWageInitial()) {
+    : _updateWageUseCase = useCase,
+      super(const UpdateWageInitial()) {
     on<UpdateWageHourlyChanged>(_onHourlyChanged);
     on<UpdateWageSubmitted>(_onSubmitted);
   }
@@ -34,9 +34,11 @@ class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
     if (hourly == null) return _emitError(emit);
 
     final currentWage = state.wageHourly;
-    emit(UpdateWageInitial(
-      wageHourly: currentWage.copyWith(value: hourly),
-    ));
+    emit(
+      UpdateWageInitial(
+        wageHourly: currentWage.copyWith(value: hourly),
+      ),
+    );
   }
 
   Future<void> _onSubmitted(
@@ -62,10 +64,12 @@ class UpdateWageBloc extends Bloc<UpdateWageEvent, UpdateWageState> {
   Future<void> _emitError(Emitter<UpdateWageState> emit) async {
     final currentWage = state.wageHourly;
 
-    emit(UpdateWageError(
-      const InternalError('invalid number'),
-      wageHourly: currentWage,
-    ));
+    emit(
+      UpdateWageError(
+        const InternalError('invalid number'),
+        wageHourly: currentWage,
+      ),
+    );
 
     await Future<void>.delayed(AppDurations.actionFeedback);
 

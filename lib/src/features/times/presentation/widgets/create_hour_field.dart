@@ -45,8 +45,8 @@ class _CreateHourFieldState extends State<CreateHourField> {
         title: context.l10n.hourTitle,
         controller: _controller,
         onChanged: (value) => context.read<CreateTimeBloc>().add(
-              CreateTimeHourChanged(value: value),
-            ),
+          CreateTimeHourChanged(value: value),
+        ),
       ),
     );
   }

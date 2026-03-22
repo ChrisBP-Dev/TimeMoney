@@ -32,8 +32,9 @@ void main() {
       );
     });
 
-    testWidgets('renders UpdateHourField and UpdateMinutesField',
-        (tester) async {
+    testWidgets('renders UpdateHourField and UpdateMinutesField', (
+      tester,
+    ) async {
       await tester.pumpApp(
         BlocProvider<UpdateTimeBloc>.value(
           value: mockBloc,

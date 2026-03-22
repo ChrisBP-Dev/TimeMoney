@@ -18,7 +18,9 @@ class TimesDriftDatasource {
 
   /// Inserts a new time entry and returns its assigned id.
   Future<int> insert({required int hour, required int minutes}) {
-    return _db.into(_db.timesTable).insert(
+    return _db
+        .into(_db.timesTable)
+        .insert(
           TimesTableCompanion.insert(hour: hour, minutes: minutes),
         );
   }
@@ -27,8 +29,8 @@ class TimesDriftDatasource {
   /// affected rows.
   Future<int> update(int id, {required int hour, required int minutes}) {
     return (_db.update(_db.timesTable)..where((t) => t.id.equals(id))).write(
-          TimesTableCompanion(hour: Value(hour), minutes: Value(minutes)),
-        );
+      TimesTableCompanion(hour: Value(hour), minutes: Value(minutes)),
+    );
   }
 
   /// Removes the row identified by [id]; returns the number of deleted rows.

@@ -40,14 +40,16 @@ void main() {
   group('UpdateTimeBloc', () {
     // Default state must carry null time and zero fields
     // so the edit screen knows no entry is loaded yet.
-    test('initial state is UpdateTimeInitial(hour: 0, minutes: 0, time: null)',
-        () {
-      final bloc = UpdateTimeBloc(mockUseCase);
-      expect(bloc.state, const UpdateTimeInitial());
-      expect(bloc.state.hour, 0);
-      expect(bloc.state.minutes, 0);
-      expect(bloc.state.time, isNull);
-    });
+    test(
+      'initial state is UpdateTimeInitial(hour: 0, minutes: 0, time: null)',
+      () {
+        final bloc = UpdateTimeBloc(mockUseCase);
+        expect(bloc.state, const UpdateTimeInitial());
+        expect(bloc.state.hour, 0);
+        expect(bloc.state.minutes, 0);
+        expect(bloc.state.time, isNull);
+      },
+    );
 
     // Seeds the BLoC with an existing entry for editing.
     // The form fields must reflect the entry's current

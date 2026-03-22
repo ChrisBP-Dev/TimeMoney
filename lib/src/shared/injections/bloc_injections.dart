@@ -14,8 +14,8 @@ import 'package:time_money/src/features/wage/presentation/bloc/wage_blocs.dart';
 class BlocInjections {
   /// Returns the combined list of all feature bloc providers.
   static List<BlocProvider> list() => [
-        ...TimesBlocs.list(),
-        ...WageBlocs.list(),
-        ...PaymentCubits.list(),
-      ];
+    ...TimesBlocs.list(),
+    ...WageBlocs.list(),
+    ...PaymentCubits.list(),
+  ];
 }

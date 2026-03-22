@@ -18,7 +18,7 @@ class WageHourlyTable extends Table {
 extension ConvertWageHourlyTableData on WageHourlyTableData {
   /// Converts this drift row into a [WageHourly].
   WageHourly get toWageHourly => WageHourly(
-        id: id,
-        value: value,
-      );
+    id: id,
+    value: value,
+  );
 }

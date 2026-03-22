@@ -72,8 +72,9 @@ void main() {
       expect(find.byType(DeleteTimeButton), findsOneWidget);
     });
 
-    testWidgets('cancel button pops dialog without dispatching events',
-        (tester) async {
+    testWidgets('cancel button pops dialog without dispatching events', (
+      tester,
+    ) async {
       await pumpDialog(tester);
 
       await tester.tap(find.text('Cancel'));
@@ -83,8 +84,9 @@ void main() {
       verifyNever(() => mockBloc.add(any()));
     });
 
-    testWidgets('confirm button dispatches DeleteTimeRequested',
-        (tester) async {
+    testWidgets('confirm button dispatches DeleteTimeRequested', (
+      tester,
+    ) async {
       await pumpDialog(tester);
 
       await tester.tap(find.byType(DeleteTimeButton));

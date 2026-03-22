@@ -45,7 +45,7 @@ class ShowInfoSection extends StatelessWidget {
           if (actionWidget != null) ...[
             SizedBox(height: 60, child: Center(child: actionWidget)),
             const Spacer(),
-          ]
+          ],
         ],
       ),
     );

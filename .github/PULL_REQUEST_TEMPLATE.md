@@ -21,3 +21,10 @@
 - [ ] ✅ Build configuration change
 - [ ] 📝 Documentation
 - [ ] 🗑️ Chore
+
+## Testing
+
+- [ ] `flutter analyze` — zero warnings
+- [ ] `flutter test` — all tests pass
+- [ ] Coverage maintained or improved
+- [ ] Platforms verified (if persistence/DI changes)

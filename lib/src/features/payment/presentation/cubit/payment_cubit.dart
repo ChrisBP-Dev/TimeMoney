@@ -15,8 +15,7 @@ export 'payment_state.dart';
 /// actual computation to [CalculatePaymentUseCase].
 class PaymentCubit extends Cubit<PaymentState> {
   /// Creates a [PaymentCubit] with the given [CalculatePaymentUseCase].
-  PaymentCubit(this._calculatePaymentUseCase)
-      : super(const PaymentInitial());
+  PaymentCubit(this._calculatePaymentUseCase) : super(const PaymentInitial());
 
   final CalculatePaymentUseCase _calculatePaymentUseCase;
 
@@ -41,10 +40,13 @@ class PaymentCubit extends Cubit<PaymentState> {
   /// otherwise delegates to [CalculatePaymentUseCase].
   Either<GlobalFailure, PaymentResult> calculate() {
     return switch (state) {
-      PaymentInitial() =>
-        left(const InternalError('payment data not available')),
-      PaymentReady(:final times, :final wageHourly) =>
-        _calculatePaymentUseCase(times, wageHourly),
+      PaymentInitial() => left(
+        const InternalError('payment data not available'),
+      ),
+      PaymentReady(:final times, :final wageHourly) => _calculatePaymentUseCase(
+        times,
+        wageHourly,
+      ),
     };
   }
 

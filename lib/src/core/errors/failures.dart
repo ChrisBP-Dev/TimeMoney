@@ -169,8 +169,7 @@ final class InternalError extends GlobalFailure {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is InternalError && error == other.error;
+      identical(this, other) || other is InternalError && error == other.error;
 
   @override
   int get hashCode => error.hashCode;

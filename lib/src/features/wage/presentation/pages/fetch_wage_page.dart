@@ -24,24 +24,22 @@ class FetchWagePage extends StatelessWidget {
           context.read<PaymentCubit>().setWage(state.wage.value);
         }
       },
-      bloc: context.read<FetchWageBloc>()
-        ..add(const FetchWageRequested()),
+      bloc: context.read<FetchWageBloc>()..add(const FetchWageRequested()),
       builder: (context, state) => switch (state) {
         FetchWageInitial() => const ShimmerWageHourlyView(),
         FetchWageLoading() => const ShimmerWageHourlyView(),
         FetchWageLoaded(:final wage) => WageHourlyCard(wageHourly: wage),
         FetchWageError(:final failure) => ErrorFetchWageHourlyView(
-            failure,
-            actionWidget: Builder(
-              builder: (context) => FilledButton.icon(
-                onPressed: () => context
-                    .read<FetchWageBloc>()
-                    .add(const FetchWageRequested()),
-                icon: const Icon(Icons.refresh),
-                label: Text(context.l10n.retry),
-              ),
+          failure,
+          actionWidget: Builder(
+            builder: (context) => FilledButton.icon(
+              onPressed: () =>
+                  context.read<FetchWageBloc>().add(const FetchWageRequested()),
+              icon: const Icon(Icons.refresh),
+              label: Text(context.l10n.retry),
             ),
           ),
+        ),
       },
     );
   }

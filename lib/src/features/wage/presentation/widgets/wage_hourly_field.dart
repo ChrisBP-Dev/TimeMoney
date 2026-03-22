@@ -45,10 +45,9 @@ class _WageHourlyFieldState extends State<WageHourlyField> {
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                onChanged: (value) =>
-                    context.read<UpdateWageBloc>().add(
-                          UpdateWageHourlyChanged(value: value),
-                        ),
+                onChanged: (value) => context.read<UpdateWageBloc>().add(
+                  UpdateWageHourlyChanged(value: value),
+                ),
                 decoration: const InputDecoration(
                   filled: true,
                   border: OutlineInputBorder(),
@@ -56,7 +55,7 @@ class _WageHourlyFieldState extends State<WageHourlyField> {
               ),
             );
           },
-        )
+        ),
       ],
     );
   }

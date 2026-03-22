@@ -19,6 +19,5 @@ abstract class WageHourly with _$WageHourly {
   /// Deserializes a [WageHourly] from a JSON map.
   factory WageHourly.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      _$WageHourlyFromJson(json);
+  ) => _$WageHourlyFromJson(json);
 }

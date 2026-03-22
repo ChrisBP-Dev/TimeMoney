@@ -29,35 +29,37 @@ void main() {
       );
     });
 
-    testWidgets('renders AlertDialog with UpdateTimeCard and UpdateTimeButton',
-        (tester) async {
-      await tester.pumpApp(
-        Scaffold(
-          body: Builder(
-            builder: (context) {
-              return ElevatedButton(
-                onPressed: () => showDialog<void>(
-                  context: context,
-                  builder: (_) => BlocProvider<UpdateTimeBloc>.value(
-                    value: mockUpdateBloc,
-                    child: const UpdateTimePage(time: testTime),
+    testWidgets(
+      'renders AlertDialog with UpdateTimeCard and UpdateTimeButton',
+      (tester) async {
+        await tester.pumpApp(
+          Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (_) => BlocProvider<UpdateTimeBloc>.value(
+                      value: mockUpdateBloc,
+                      child: const UpdateTimePage(time: testTime),
+                    ),
                   ),
-                ),
-                child: const Text('open'),
-              );
-            },
+                  child: const Text('open'),
+                );
+              },
+            ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      await tester.tap(find.text('open'));
-      await tester.pump();
+        await tester.tap(find.text('open'));
+        await tester.pump();
 
-      expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.byType(UpdateTimeCard), findsOneWidget);
-      expect(find.byType(UpdateTimeButton), findsOneWidget);
-    });
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(find.byType(UpdateTimeCard), findsOneWidget);
+        expect(find.byType(UpdateTimeButton), findsOneWidget);
+      },
+    );
 
     testWidgets('close button pops dialog', (tester) async {
       await tester.pumpApp(

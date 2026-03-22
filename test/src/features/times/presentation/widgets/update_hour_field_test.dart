@@ -58,8 +58,9 @@ void main() {
 
       await tester.enterText(find.byType(TextField), '5');
 
-      verify(() => mockBloc.add(any(that: isA<UpdateTimeHourChanged>())))
-          .called(1);
+      verify(
+        () => mockBloc.add(any(that: isA<UpdateTimeHourChanged>())),
+      ).called(1);
     });
 
     // -- BS1: null time pre-population edge case --

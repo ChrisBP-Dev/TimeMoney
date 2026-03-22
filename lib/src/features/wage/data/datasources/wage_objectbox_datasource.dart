@@ -14,7 +14,10 @@ class WageObjectboxDatasource {
   /// whenever the underlying box changes, triggering immediately on
   /// subscription.
   Stream<List<WageHourlyBox>> watchAll() {
-    return _box.query().watch(triggerImmediately: true).map(
+    return _box
+        .query()
+        .watch(triggerImmediately: true)
+        .map(
           (query) => query.find(),
         );
   }
