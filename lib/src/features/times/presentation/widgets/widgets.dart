@@ -9,6 +9,7 @@ export 'custom_create_field.dart';
 export 'custom_info.dart';
 export 'custom_update_field.dart';
 export 'delete_time_button.dart';
+export 'delete_time_confirmation_dialog.dart';
 export 'edit_button.dart';
 export 'error_list_times_view.dart';
 export 'info_time.dart';

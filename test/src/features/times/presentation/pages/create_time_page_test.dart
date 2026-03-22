@@ -1,7 +1,8 @@
 /// Tests for [CreateTimePage] widget.
 ///
 /// Verifies that [CreateTimePage] renders an [AlertDialog] containing
-/// [CreateTimeCard] and a close button that pops the dialog.
+/// [CreateTimeCard], a [CreateTimeButton] action, and a close button
+/// that pops the dialog.
 library;
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/pages/create_time_page.dart';
+import 'package:time_money/src/features/times/presentation/widgets/create_time_button.dart';
 import 'package:time_money/src/features/times/presentation/widgets/create_time_card.dart';
 
 import '../../../../../helpers/helpers.dart';
@@ -23,7 +25,9 @@ void main() {
       when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
     });
 
-    testWidgets('renders AlertDialog with CreateTimeCard', (tester) async {
+    testWidgets(
+        'renders AlertDialog with CreateTimeCard and CreateTimeButton',
+        (tester) async {
       await tester.pumpApp(
         Scaffold(
           body: Builder(
@@ -49,6 +53,7 @@ void main() {
 
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.byType(CreateTimeCard), findsOneWidget);
+      expect(find.byType(CreateTimeButton), findsOneWidget);
     });
 
     testWidgets('close button pops dialog', (tester) async {

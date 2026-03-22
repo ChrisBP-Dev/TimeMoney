@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:time_money/l10n/l10n.dart';
+import 'package:time_money/src/core/locale/locale_cubit.dart';
 import 'package:time_money/src/features/home/presentation/pages/home_page.dart';
 import 'package:time_money/src/features/home/presentation/widgets/calculate_payment_button.dart';
 import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
@@ -117,6 +119,34 @@ void main() {
         await tester.pumpApp(buildSubject());
 
         expect(find.byType(OutlinedButton), findsOneWidget);
+      });
+
+      testWidgets(
+          'locale toggle defaults to first supported locale when '
+          'selected locale is unsupported',
+          (tester) async {
+        // Force LocaleSelected('fr') — 'fr' is NOT in supportedLocales,
+        // so indexWhere returns -1 and the fallback clamps to index 0.
+        final localeCubit = LocaleCubit()
+          ..setLocale(const Locale('fr'));
+
+        await tester.pumpWidget(
+          BlocProvider<LocaleCubit>.value(
+            value: localeCubit,
+            child: MaterialApp(
+              localizationsDelegates:
+                  AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: buildSubject(),
+            ),
+          ),
+        );
+
+        // rawIndex == -1 → currentIndex = 0 ('en')
+        // nextIndex = (0+1) % 2 = 1 → shows "ES"
+        expect(find.text('ES'), findsOneWidget);
+
+        await localeCubit.close();
       });
 
       testWidgets(

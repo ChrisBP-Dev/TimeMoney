@@ -8,8 +8,8 @@ import 'package:time_money/src/core/extensions/screen_size.dart';
 import 'package:time_money/src/core/locale/locale.dart';
 import 'package:time_money/src/features/home/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
+import 'package:time_money/src/features/times/presentation/pages/create_time_page.dart';
 import 'package:time_money/src/features/times/presentation/pages/list_times_page.dart';
-import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 import 'package:time_money/src/features/wage/presentation/pages/fetch_wage_page.dart';
 
 /// Main landing page of the application.
@@ -60,7 +60,7 @@ class HomePage extends StatelessWidget {
                           onPressed: () {
                             unawaited(showDialog<void>(
                               context: context,
-                              builder: (context) => const CreateTimeCard(),
+                              builder: (context) => const CreateTimePage(),
                             ));
                           },
                           label: Text(
@@ -96,11 +96,12 @@ class _LocaleToggle extends StatelessWidget {
           LocaleSelected(:final locale) => locale.languageCode,
         };
 
-        // Cycle through supported locales; defaults to the first if
-        // the current code is not found (e.g. unsupported system locale).
-        final currentIndex = supportedLocales.indexWhere(
+        // Cycle through supported locales; falls back to index 0 when
+        // the system locale is not in the supported list.
+        final rawIndex = supportedLocales.indexWhere(
           (l) => l.languageCode == currentCode,
         );
+        final currentIndex = rawIndex == -1 ? 0 : rawIndex;
         final nextIndex = (currentIndex + 1) % supportedLocales.length;
         final nextLocale = supportedLocales[nextIndex];
 

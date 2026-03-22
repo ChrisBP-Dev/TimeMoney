@@ -1,8 +1,9 @@
 /// Tests for [CreateTimeButton] widget.
 ///
 /// Verifies 4-state UI rendering (Initial, Loading, Success, Error),
-/// that the button is ALWAYS enabled, and that it dispatches
-/// [CreateTimeSubmitted] on tap.
+/// that the button is only enabled on [CreateTimeInitial], and that
+/// it dispatches [CreateTimeSubmitted] on tap. Uses `canPop()` guard
+/// before popping on success.
 library;
 
 import 'package:bloc_test/bloc_test.dart';
@@ -29,7 +30,8 @@ void main() {
       mockBloc = MockCreateTimeBloc();
     });
 
-    testWidgets('shows localized create label on Initial', (tester) async {
+    testWidgets('shows localized create label on Initial (enabled)',
+        (tester) async {
       when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
 
       await tester.pumpApp(
@@ -40,13 +42,11 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(FilledButton), findsOneWidget);
-      final text = tester.widget<Text>(find.byType(Text));
-      expect(text.data, isNotNull);
-      expect(text.data, isNotEmpty);
+      final button = tester.widget<FilledButton>(find.byType(FilledButton));
+      expect(button.onPressed, isNotNull);
     });
 
-    testWidgets('shows CircularProgressIndicator on Loading', (tester) async {
+    testWidgets('shows spinner on Loading (disabled)', (tester) async {
       when(() => mockBloc.state).thenReturn(
         const CreateTimeLoading(hour: 1, minutes: 30),
       );
@@ -60,9 +60,11 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      final button = tester.widget<FilledButton>(find.byType(FilledButton));
+      expect(button.onPressed, isNull);
     });
 
-    testWidgets('shows success label on Success (enabled)', (tester) async {
+    testWidgets('shows success label on Success (disabled)', (tester) async {
       when(() => mockBloc.state).thenReturn(
         const CreateTimeSuccess(
           TimeEntry(hour: 1, minutes: 30),
@@ -79,14 +81,11 @@ void main() {
       );
       await tester.pump();
 
-      final text = tester.widget<Text>(find.byType(Text));
-      expect(text.data, isNotNull);
-      expect(text.data, isNotEmpty);
       final button = tester.widget<FilledButton>(find.byType(FilledButton));
-      expect(button.onPressed, isNotNull);
+      expect(button.onPressed, isNull);
     });
 
-    testWidgets('shows error label on Error (enabled)', (tester) async {
+    testWidgets('shows error label on Error (disabled)', (tester) async {
       when(() => mockBloc.state).thenReturn(
         const CreateTimeError(
           InternalError('test'),
@@ -103,14 +102,11 @@ void main() {
       );
       await tester.pump();
 
-      final text = tester.widget<Text>(find.byType(Text));
-      expect(text.data, isNotNull);
-      expect(text.data, isNotEmpty);
       final button = tester.widget<FilledButton>(find.byType(FilledButton));
-      expect(button.onPressed, isNotNull);
+      expect(button.onPressed, isNull);
     });
 
-    testWidgets('button is ALWAYS enabled — dispatches on tap',
+    testWidgets('dispatches CreateTimeSubmitted on tap when Initial',
         (tester) async {
       when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
 
@@ -128,27 +124,9 @@ void main() {
           .called(1);
     });
 
-    testWidgets('button is enabled even on Loading state', (tester) async {
-      when(() => mockBloc.state).thenReturn(
-        const CreateTimeLoading(hour: 1, minutes: 30),
-      );
+    // -- Pop-on-success with canPop guard --
 
-      await tester.pumpApp(
-        BlocProvider<CreateTimeBloc>.value(
-          value: mockBloc,
-          child: const CreateTimeButton(),
-        ),
-      );
-      await tester.pump();
-
-      final button = tester.widget<FilledButton>(find.byType(FilledButton));
-      expect(button.onPressed, isNotNull);
-    });
-
-    // -- Pop-on-success listener test (P3) --
-
-    testWidgets('pops dialog on Success via BlocConsumer listener',
-        (tester) async {
+    testWidgets('pops dialog on Success via canPop guard', (tester) async {
       whenListen(
         mockBloc,
         Stream.value(const CreateTimeSuccess(

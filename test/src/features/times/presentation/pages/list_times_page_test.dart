@@ -13,6 +13,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:time_money/src/core/errors/failures.dart';
 import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
+import 'package:time_money/src/features/times/presentation/bloc/delete_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/bloc/list_times_bloc.dart';
 import 'package:time_money/src/features/times/presentation/bloc/update_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/pages/list_times_page.dart';
@@ -27,6 +28,7 @@ void main() {
     late MockListTimesBloc mockListBloc;
     late MockPaymentCubit mockPaymentCubit;
     late MockUpdateTimeBloc mockUpdateBloc;
+    late MockDeleteTimeBloc mockDeleteBloc;
 
     setUpAll(() {
       registerFallbackValue(const ListTimesRequested());
@@ -37,8 +39,10 @@ void main() {
       mockListBloc = MockListTimesBloc();
       mockPaymentCubit = MockPaymentCubit();
       mockUpdateBloc = MockUpdateTimeBloc();
+      mockDeleteBloc = MockDeleteTimeBloc();
       when(() => mockPaymentCubit.state).thenReturn(const PaymentInitial());
       when(() => mockUpdateBloc.state).thenReturn(const UpdateTimeInitial());
+      when(() => mockDeleteBloc.state).thenReturn(const DeleteTimeInitial());
     });
 
     Widget buildSubject() {
@@ -47,6 +51,7 @@ void main() {
           BlocProvider<ListTimesBloc>.value(value: mockListBloc),
           BlocProvider<PaymentCubit>.value(value: mockPaymentCubit),
           BlocProvider<UpdateTimeBloc>.value(value: mockUpdateBloc),
+          BlocProvider<DeleteTimeBloc>.value(value: mockDeleteBloc),
         ],
         child: const ListTimesPage(),
       );

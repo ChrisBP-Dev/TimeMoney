@@ -21,7 +21,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get createTimeTitle => 'Crear Tiempo:';
 
   @override
-  String get updateOrDeleteTitle => 'Actualizar o Eliminar:';
+  String get updateTimeTitle => 'Actualizar:';
+
+  @override
+  String get deleteConfirmTitle => '¿Eliminar Entrada de Tiempo?';
+
+  @override
+  String get deleteConfirmMessage =>
+      '¿Estás seguro de que deseas eliminar esta entrada?';
+
+  @override
+  String get cancel => 'Cancelar';
 
   @override
   String get error => 'Error';

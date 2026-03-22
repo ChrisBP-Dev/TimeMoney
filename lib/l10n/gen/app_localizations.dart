@@ -122,11 +122,29 @@ abstract class AppLocalizations {
   /// **'Create Time:'**
   String get createTimeTitle;
 
-  /// Title for the update/delete time dialog
+  /// Title for the update time dialog
   ///
   /// In en, this message translates to:
-  /// **'Update or Delete:'**
-  String get updateOrDeleteTitle;
+  /// **'Update:'**
+  String get updateTimeTitle;
+
+  /// Title for the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Time Entry?'**
+  String get deleteConfirmTitle;
+
+  /// Message body for the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this entry?'**
+  String get deleteConfirmMessage;
+
+  /// Button label for cancel action
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 
   /// Generic error label for buttons and states
   ///

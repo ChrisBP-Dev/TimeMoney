@@ -7,7 +7,7 @@ import 'package:time_money/src/features/times/presentation/pages/update_time_pag
 /// Button that opens the [UpdateTimePage] dialog for a time entry.
 ///
 /// Initialises the [UpdateTimeBloc] with the selected [time] and
-/// presents the update/delete dialog via [showDialog].
+/// presents the update dialog via [showDialog].
 class EditButton extends StatelessWidget {
   /// Creates an [EditButton] for the given [time] entry.
   const EditButton({

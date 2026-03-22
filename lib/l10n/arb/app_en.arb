@@ -16,9 +16,21 @@
     "@createTimeTitle": {
         "description": "Title for the create time dialog and card"
     },
-    "updateOrDeleteTitle": "Update or Delete:",
-    "@updateOrDeleteTitle": {
-        "description": "Title for the update/delete time dialog"
+    "updateTimeTitle": "Update:",
+    "@updateTimeTitle": {
+        "description": "Title for the update time dialog"
+    },
+    "deleteConfirmTitle": "Delete Time Entry?",
+    "@deleteConfirmTitle": {
+        "description": "Title for the delete confirmation dialog"
+    },
+    "deleteConfirmMessage": "Are you sure you want to delete this entry?",
+    "@deleteConfirmMessage": {
+        "description": "Message body for the delete confirmation dialog"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Button label for cancel action"
     },
     "error": "Error",
     "@error": {

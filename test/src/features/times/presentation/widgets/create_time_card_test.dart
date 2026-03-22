@@ -1,8 +1,8 @@
 /// Tests for [CreateTimeCard] widget.
 ///
-/// Verifies that [CreateTimeCard] renders [CreateHourField],
-/// [CreateMinutesField], and [CreateTimeButton] within a [Card].
-/// Provides [MockCreateTimeBloc] for BLoC-dependent children.
+/// Verifies that [CreateTimeCard] renders [CreateHourField] and
+/// [CreateMinutesField] within a [Card]. The submit button lives in
+/// `CreateTimePage` actions, not inside the card.
 library;
 
 import 'package:flutter/material.dart';
@@ -12,7 +12,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:time_money/src/features/times/presentation/bloc/create_time_bloc.dart';
 import 'package:time_money/src/features/times/presentation/widgets/create_hour_field.dart';
 import 'package:time_money/src/features/times/presentation/widgets/create_minutes_field.dart';
-import 'package:time_money/src/features/times/presentation/widgets/create_time_button.dart';
 import 'package:time_money/src/features/times/presentation/widgets/create_time_card.dart';
 
 import '../../../../../helpers/helpers.dart';
@@ -26,7 +25,7 @@ void main() {
       when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
     });
 
-    testWidgets('renders CreateHourField, CreateMinutesField, CreateTimeButton',
+    testWidgets('renders CreateHourField and CreateMinutesField',
         (tester) async {
       await tester.pumpApp(
         BlocProvider<CreateTimeBloc>.value(
@@ -38,7 +37,6 @@ void main() {
 
       expect(find.byType(CreateHourField), findsOneWidget);
       expect(find.byType(CreateMinutesField), findsOneWidget);
-      expect(find.byType(CreateTimeButton), findsOneWidget);
     });
 
     testWidgets('renders inside a Card', (tester) async {

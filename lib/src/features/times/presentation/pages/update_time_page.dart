@@ -3,12 +3,11 @@ import 'package:time_money/l10n/l10n.dart';
 import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 import 'package:time_money/src/features/times/presentation/widgets/widgets.dart';
 
-/// Dialog page for updating or deleting an existing time entry.
+/// Dialog page for updating an existing time entry.
 ///
 /// Presents an [AlertDialog] containing the [UpdateTimeCard] form
-/// pre-populated with the current values of [time]. Action buttons
-/// for [UpdateTimeButton] and [DeleteTimeButton] are shown at the
-/// bottom of the dialog.
+/// pre-populated with the current values of [time]. The
+/// [UpdateTimeButton] action submits changes.
 class UpdateTimePage extends StatelessWidget {
   /// Creates an [UpdateTimePage] for the given [time] entry.
   const UpdateTimePage({
@@ -16,13 +15,13 @@ class UpdateTimePage extends StatelessWidget {
     super.key,
   });
 
-  /// The time entry to update or delete.
+  /// The time entry to update.
   final TimeEntry time;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(context.l10n.updateOrDeleteTitle),
+      title: Text(context.l10n.updateTimeTitle),
       iconPadding: const EdgeInsets.all(7),
       icon: Align(
         alignment: Alignment.topRight,
@@ -40,9 +39,8 @@ class UpdateTimePage extends StatelessWidget {
         ],
       ),
       actionsAlignment: MainAxisAlignment.center,
-      actions: [
-        DeleteTimeButton(time: time),
-        const UpdateTimeButton(),
+      actions: const [
+        UpdateTimeButton(),
       ],
     );
   }

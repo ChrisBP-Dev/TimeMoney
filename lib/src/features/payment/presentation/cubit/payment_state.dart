@@ -16,7 +16,8 @@ final class PaymentInitial extends PaymentState {
   const PaymentInitial();
 
   @override
-  bool operator ==(Object other) => other is PaymentInitial;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is PaymentInitial;
 
   @override
   int get hashCode => runtimeType.hashCode;

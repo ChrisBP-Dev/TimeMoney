@@ -11,6 +11,11 @@ import 'package:time_money/src/features/times/domain/entities/time_entry.dart';
 
 void main() {
   group('PaymentState equality', () {
+    test('PaymentInitial identical guard short-circuits to true', () {
+      const a = PaymentInitial();
+      expect(a == a, isTrue);
+    });
+
     test('PaymentInitial supports equality and hashCode', () {
       // Non-const to avoid Dart const canonicalization (identical bypass).
       // ignore: prefer_const_constructors, non-const to test equality body.
