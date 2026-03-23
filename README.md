@@ -204,7 +204,7 @@ The brownfield modernization followed a deliberate sequence — each epic buildi
 
 Testing was not an afterthought confined to Epic 5 — unit and BLoC tests were written alongside every story from Epic 3 onward. Epic 5 added the remaining widget tests, golden tests, and coverage validation to reach 92.3%.
 
-**25 stories** executed across 144 commits, with retrospectives after each epic to capture lessons and adjust course.
+**25 stories** executed across 146 commits, with retrospectives after each epic to capture lessons and adjust course.
 
 ### Generated Artifacts
 
