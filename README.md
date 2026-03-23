@@ -223,6 +223,23 @@ This is a solo portfolio project, but contributions are welcome. Follow these st
 - **State Management:** sealed classes for BLoC states/events (not Freezed)
 - **Domain Entities:** Freezed for domain data classes only
 - **Tests:** ship with implementation, never deferred
+- **Spelling:** new technical terms in `.md` files must be added to `.github/cspell.json` (alphabetical order)
+
+### Verify Before Push
+
+Run these commands locally to ensure CI will pass:
+
+```bash
+# Code quality (must produce zero issues)
+dart format --output=none --set-exit-if-changed .
+flutter analyze --fatal-infos
+
+# Tests
+flutter test --coverage --test-randomize-ordering-seed random
+
+# Spell check on markdown files
+npx cspell --config .github/cspell.json "**/*.md"
+```
 
 See the [PR template](.github/PULL_REQUEST_TEMPLATE.md) for the pull request checklist.
 
