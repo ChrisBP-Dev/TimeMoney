@@ -91,11 +91,11 @@ The `.github/` directory already has a working baseline from the VGV CLI project
 
 ### Pipeline Architecture — 3-Tier Job Design
 
-- **Tier 0 (parallel, no deps):** `semantic-pull-request` (VGV reusable), `spell-check` (VGV reusable)
-- **Tier 1 (quality gate):** `quality` on ubuntu-latest — format + analyze + test + coverage upload
-- **Tier 2 (needs: [quality]):** `build-android` (ubuntu), `build-ios` (macos), `build-web` (ubuntu), `build-windows` (windows) — all run in parallel
+- **Tier 0 (parallel, no deps):** `semantic-pull-request` (VGV reusable, PR-only via `if:`), `spell-check` (VGV reusable)
+- **Tier 1 (quality gate):** `quality` on ubuntu-latest — format + analyze + test (excluding golden) + coverage upload
+- **Tier 2 (needs: [quality]):** `test-goldens` (macos — golden baselines are platform-specific), `build-android` (ubuntu), `build-ios` (macos), `build-web` (ubuntu), `build-windows` (windows) — all run in parallel
 
-**Rationale:** Quality gate on cheapest runner first. Expensive macOS (10x) / Windows (2x) runners only consume minutes if lint+test passes. Concurrency group cancels stale runs.
+**Rationale:** Quality gate on cheapest runner first. Expensive macOS (10x) / Windows (2x) runners only consume minutes if lint+test passes. Concurrency group cancels stale PR runs (push events to main always complete). Golden tests run on macOS where baselines were generated.
 
 ### Workflow File Reference — main.yaml Structure
 
@@ -106,7 +106,7 @@ name: time_money
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -119,6 +119,7 @@ on:
 
 jobs:
   semantic-pull-request:
+    if: github.event_name == 'pull_request'
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
 
   quality:
@@ -132,11 +133,23 @@ jobs:
       - run: flutter pub get
       - run: dart format --output=none --set-exit-if-changed .
       - run: flutter analyze --fatal-infos
-      - run: flutter test --coverage --test-randomize-ordering-seed random
+      - run: flutter test --coverage --test-randomize-ordering-seed random --exclude-tags golden
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/lcov.info
+
+  test-goldens:
+    needs: [quality]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test --tags golden
 
   build-android:
     needs: [quality]
@@ -152,7 +165,8 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter build appbundle --release
+      - run: echo "::warning::CI uses debug signing — release keystore not configured"
+      - run: flutter build appbundle --release --flavor production --target lib/main_production.dart
 
   build-ios:
     needs: [quality]
@@ -164,7 +178,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter build ios --release --no-codesign
+      - run: flutter build ios --release --no-codesign --flavor production --target lib/main_production.dart
 
   build-web:
     needs: [quality]
@@ -176,11 +190,11 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter build web --release
+      - run: flutter build web --release --target lib/main_production.dart
 
   build-windows:
     needs: [quality]
-    runs-on: windows-latest  # includes Visual Studio/MSVC toolchain required for Flutter Windows builds
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
@@ -188,7 +202,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter build windows --release
+      - run: flutter build windows --release --target lib/main_production.dart
 
   spell-check:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
@@ -200,14 +214,11 @@ jobs:
 
 ### Golden Tests in CI — Platform Consistency
 
-Golden tests use Ahem font (Flutter test default) with `devicePixelRatio = 1.0` and fixed viewport sizes. These are platform-deterministic for layout and color rendering. The golden baselines were generated on macOS but CI `quality` job runs on ubuntu.
+Golden tests use Ahem font (Flutter test default) with `devicePixelRatio = 1.0` and fixed viewport sizes. The golden baselines were generated on macOS and exhibit rendering differences on Ubuntu (confirmed during implementation).
 
-**If golden comparison fails on CI due to minor platform rendering differences:**
-- Option A (preferred): Regenerate golden baselines on ubuntu to match CI runner, commit updated PNGs
-- Option B: Add `--update-goldens` flag in CI and diff the output (not recommended — defeats regression purpose)
-- Option C: Skip golden tests in CI via `--exclude-tags golden` (requires tagging — last resort)
+**Resolution:** Golden tests are excluded from the Ubuntu `quality` job (`--exclude-tags golden`) and run in a dedicated `test-goldens` job on `macos-latest` where the baselines were generated. This ensures golden regression detection works correctly while keeping the quality gate on the cheapest runner.
 
-Most Flutter projects with Ahem font + fixed pixel ratio see no platform differences. Test first before adding workarounds.
+**Tag declaration:** `dart_test.yaml` at project root declares the `golden` tag to suppress undeclared-tag warnings. All golden test files use `@Tags(['golden'])` before the `library;` directive.
 
 ### cspell.json — Required Project Terms
 
@@ -256,9 +267,10 @@ Add after existing "Type of Change" section:
 
 ### Build Environment Notes
 
-- **No flavor/environment needed** — CI builds are verification-only (no deployment). Default Flutter build with no `--dart-define` or flavor flags.
+- **Flavor and target flags required** — Project uses flavor-specific entry points (`lib/main_production.dart`, no `lib/main.dart`). Android/iOS builds require `--flavor production --target lib/main_production.dart`; Web/Windows require only `--target lib/main_production.dart` (no `--flavor` support on those platforms). CI builds are verification-only (no deployment).
+- **Android signing:** CI has no release keystore — `build.gradle` falls back to debug signing with a `::warning::` annotation in the workflow log. Release signing will be configured in a future deployment story.
 - **Security:** `permissions: contents: read` (least privilege), no secrets, no codesign tokens.
-- **Cost awareness:** macOS runners are ~10x, Windows ~2x ubuntu cost. Build jobs gated behind `quality` to minimize waste.
+- **Cost awareness:** macOS runners are ~10x, Windows ~2x ubuntu cost. Build jobs and `test-goldens` gated behind `quality` to minimize waste. `cancel-in-progress` only applies to PR events; push events to main always complete full validation.
 
 ### Out of Scope
 
@@ -266,9 +278,9 @@ Coverage threshold enforcement, Codecov integration, release/deployment automati
 
 ### Project Structure Notes
 
-- All changes are in `.github/` directory — no Dart code changes
+- Primary changes in `.github/` directory; additional changes to `android/app/build.gradle` (signing fallback), `dart_test.yaml` (new), and `test/goldens/*.dart` (tag annotations)
 - Alignment with architecture.md project structure tree: `.github/workflows/main.yaml`, `.github/dependabot.yaml`, `.github/cspell.json`, `.github/PULL_REQUEST_TEMPLATE.md`
-- No new directories created — all files exist; only content changes
+- 91 Dart files in `lib/` and `test/` reformatted by `dart format` (formatting only — required for CI format check)
 
 ### References
 
@@ -312,13 +324,15 @@ Claude Opus 4.6 (1M context)
 - **Task 5:** `flutter analyze` zero issues; `dart format` discovered 91 files needing formatting — fixed all. 373 tests pass with random ordering. `flutter build web --release` succeeds. Golden tests fail on Ubuntu CI (macOS baselines) — applied Option C: tagged with `@Tags(['golden'])` and added `--exclude-tags golden` to CI test command. 368 tests pass in CI. All 4 platform builds verified green (PR #8, run 23415764297).
 - **Task 6:** YAML and JSON validated syntactically. All 9 ACs verified against pipeline run output. Full E2E pipeline passes: quality → 4 platform builds.
 - **CI Fixes (3 iterations):** (1) Added `--target lib/main_production.dart` — project uses flavor entry points, no `lib/main.dart`. (2) Added `--flavor production` — iOS/Android need explicit flavor for Xcode/Gradle build configs. (3) Android `build.gradle` signing fallback to debug when no release keystore available in CI.
+- **Code Review (3 bad_spec, 3 patch, 0 defer, 11 reject):** (BS-1) Spec incorrectly stated no flavors needed — amended to document required `--flavor/--target` flags. (BS-2) Android debug signing fallback was undocumented — added `::warning::` annotation and documented in spec. (BS-3) `cancel-in-progress: true` cancelled main-branch CI on rapid merges — changed to `${{ github.event_name == 'pull_request' }}`. (P-1) Golden tests used last-resort exclusion — added dedicated `test-goldens` job on macOS to validate golden baselines in CI. (P-2) `semantic-pull-request` ran on push events — added `if: github.event_name == 'pull_request'` guard. (P-3) Missing `dart_test.yaml` for golden tag — created with tag declaration. (D-1→resolved) `_bmad/` cspell ignorePaths is correct — it's third-party framework tooling (1064 md files); `_bmad-output/` is NOT ignored and passes with zero failures. (D-2→resolved) 91 Dart format changes were necessary for CI `dart format --set-exit-if-changed` check — documented as process learning.
 
 ### File List
 
-- `.github/workflows/main.yaml` — rewritten: custom quality + 4 platform build jobs
+- `.github/workflows/main.yaml` — rewritten: custom quality + test-goldens + 4 platform build jobs
 - `.github/cspell.json` — updated: 190+ words, ignorePaths, ignoreWords
 - `.github/PULL_REQUEST_TEMPLATE.md` — updated: Testing section added
 - `android/app/build.gradle` — release signing fallback to debug when storeFile is null
+- `dart_test.yaml` — new: declares `golden` tag for test runner
 - `test/goldens/create_time_dialog_golden_test.dart` — added `@Tags(['golden'])`
 - `test/goldens/home_page_golden_test.dart` — added `@Tags(['golden'])`
 - `test/goldens/payment_result_page_golden_test.dart` — added `@Tags(['golden'])`
