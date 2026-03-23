@@ -1,0 +1,9 @@
+flutter_launcher_icons:
+  image_path: "time-money-logo.png"
+
+  android: true
+  adaptive_icon_background: "#245db4"
+  adaptive_icon_foreground: "time-money-logo.png"
+
+  ios: true
+  remove_alpha_ios: true

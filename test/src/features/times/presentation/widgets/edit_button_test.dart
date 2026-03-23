@@ -53,8 +53,7 @@ void main() {
 
       await tester.tap(find.byType(FilledButton));
 
-      final captured =
-          verify(() => mockBloc.add(captureAny())).captured;
+      final captured = verify(() => mockBloc.add(captureAny())).captured;
       final event = captured.last as UpdateTimeInit;
       expect(event.time, testTime);
     });

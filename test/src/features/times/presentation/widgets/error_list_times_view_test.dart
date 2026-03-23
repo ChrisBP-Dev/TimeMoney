@@ -28,8 +28,7 @@ void main() {
       expect(find.byType(ErrorView), findsOneWidget);
     });
 
-    testWidgets('displays optional actionWidget when provided',
-        (tester) async {
+    testWidgets('displays optional actionWidget when provided', (tester) async {
       await tester.pumpApp(
         const ErrorListTimesView(
           testFailure,

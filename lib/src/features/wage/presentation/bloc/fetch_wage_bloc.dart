@@ -15,8 +15,8 @@ export 'fetch_wage_state.dart';
 class FetchWageBloc extends Bloc<FetchWageEvent, FetchWageState> {
   /// Creates a [FetchWageBloc] with the given [useCase].
   FetchWageBloc(FetchWageUseCase useCase)
-      : _fetchWageUseCase = useCase,
-        super(const FetchWageInitial()) {
+    : _fetchWageUseCase = useCase,
+      super(const FetchWageInitial()) {
     on<FetchWageRequested>(_onFetchWageRequested);
   }
 

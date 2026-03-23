@@ -24,8 +24,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(WageHourlyInfo), findsOneWidget);
-      final info =
-          tester.widget<WageHourlyInfo>(find.byType(WageHourlyInfo));
+      final info = tester.widget<WageHourlyInfo>(find.byType(WageHourlyInfo));
       expect(info.wageHourly, testWage);
     });
 

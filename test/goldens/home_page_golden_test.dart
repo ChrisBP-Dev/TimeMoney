@@ -2,6 +2,7 @@
 ///
 /// Captures two snapshots — populated data and empty state — to detect
 /// unintended layout or styling changes across the main landing page.
+@Tags(['golden'])
 library;
 
 import 'dart:ui';

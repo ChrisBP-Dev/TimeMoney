@@ -30,8 +30,9 @@ void main() {
       mockBloc = MockDeleteTimeBloc();
     });
 
-    testWidgets('shows localized delete label on Initial (enabled)',
-        (tester) async {
+    testWidgets('shows localized delete label on Initial (enabled)', (
+      tester,
+    ) async {
       when(() => mockBloc.state).thenReturn(const DeleteTimeInitial());
 
       await tester.pumpApp(
@@ -94,8 +95,9 @@ void main() {
       expect(button.onPressed, isNull);
     });
 
-    testWidgets('dispatches DeleteTimeRequested on tap when Initial',
-        (tester) async {
+    testWidgets('dispatches DeleteTimeRequested on tap when Initial', (
+      tester,
+    ) async {
       when(() => mockBloc.state).thenReturn(const DeleteTimeInitial());
 
       await tester.pumpApp(
@@ -108,8 +110,7 @@ void main() {
 
       await tester.tap(find.byType(FilledButton));
 
-      final captured =
-          verify(() => mockBloc.add(captureAny())).captured;
+      final captured = verify(() => mockBloc.add(captureAny())).captured;
       final event = captured.last as DeleteTimeRequested;
       expect(event.time, testTime);
     });

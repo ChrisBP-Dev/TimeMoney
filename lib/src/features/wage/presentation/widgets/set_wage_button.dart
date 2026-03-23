@@ -24,15 +24,15 @@ class SetWageButton extends StatelessWidget {
           onPressed: state is UpdateWageLoading
               ? null
               : () => context.read<UpdateWageBloc>().add(
-                    const UpdateWageSubmitted(),
-                  ),
+                  const UpdateWageSubmitted(),
+                ),
           child: switch (state) {
             UpdateWageInitial() => Text(context.l10n.update),
             UpdateWageLoading() => const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
             UpdateWageSuccess() => Text(context.l10n.success),
             UpdateWageError() => Text(context.l10n.error),
           },

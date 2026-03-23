@@ -39,8 +39,7 @@ void main() {
 
   setUp(() {
     mockPaymentCubit = MockPaymentCubit();
-    when(() => mockPaymentCubit.state)
-        .thenReturn(const PaymentInitial());
+    when(() => mockPaymentCubit.state).thenReturn(const PaymentInitial());
   });
 
   Widget buildSubject() {
@@ -51,8 +50,9 @@ void main() {
   }
 
   group('CalculatePaymentButton', () {
-    testWidgets('renders FloatingActionButton.extended with localized label',
-        (tester) async {
+    testWidgets('renders FloatingActionButton.extended with localized label', (
+      tester,
+    ) async {
       await tester.pumpApp(buildSubject());
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
@@ -63,10 +63,10 @@ void main() {
       expect(fab.isExtended, isTrue);
     });
 
-    testWidgets('onPressed is null when PaymentInitial (disabled)',
-        (tester) async {
-      when(() => mockPaymentCubit.state)
-          .thenReturn(const PaymentInitial());
+    testWidgets('onPressed is null when PaymentInitial (disabled)', (
+      tester,
+    ) async {
+      when(() => mockPaymentCubit.state).thenReturn(const PaymentInitial());
 
       await tester.pumpApp(buildSubject());
 
@@ -76,13 +76,13 @@ void main() {
       expect(fab.onPressed, isNull);
     });
 
-    testWidgets('onPressed is non-null when PaymentReady (enabled)',
-        (tester) async {
+    testWidgets('onPressed is non-null when PaymentReady (enabled)', (
+      tester,
+    ) async {
       when(() => mockPaymentCubit.state).thenReturn(
         const PaymentReady(times: _testTimes, wageHourly: 15),
       );
-      when(() => mockPaymentCubit.calculate())
-          .thenReturn(right(_testResult));
+      when(() => mockPaymentCubit.calculate()).thenReturn(right(_testResult));
 
       await tester.pumpApp(buildSubject());
 
@@ -96,8 +96,7 @@ void main() {
       when(() => mockPaymentCubit.state).thenReturn(
         const PaymentReady(times: _testTimes, wageHourly: 15),
       );
-      when(() => mockPaymentCubit.calculate())
-          .thenReturn(right(_testResult));
+      when(() => mockPaymentCubit.calculate()).thenReturn(right(_testResult));
 
       // Increase surface to avoid dialog overflow
       tester.view.physicalSize = const Size(800, 1200);
@@ -111,14 +110,13 @@ void main() {
       verify(() => mockPaymentCubit.calculate()).called(1);
     });
 
-    testWidgets(
-        'on Right(PaymentResult) showDialog opens PaymentResultPage',
-        (tester) async {
+    testWidgets('on Right(PaymentResult) showDialog opens PaymentResultPage', (
+      tester,
+    ) async {
       when(() => mockPaymentCubit.state).thenReturn(
         const PaymentReady(times: _testTimes, wageHourly: 15),
       );
-      when(() => mockPaymentCubit.calculate())
-          .thenReturn(right(_testResult));
+      when(() => mockPaymentCubit.calculate()).thenReturn(right(_testResult));
 
       tester.view.physicalSize = const Size(800, 1200);
       tester.view.devicePixelRatio = 1.0;
@@ -135,8 +133,9 @@ void main() {
       when(() => mockPaymentCubit.state).thenReturn(
         const PaymentReady(times: _testTimes, wageHourly: 15),
       );
-      when(() => mockPaymentCubit.calculate())
-          .thenReturn(left(const InternalError('test error')));
+      when(
+        () => mockPaymentCubit.calculate(),
+      ).thenReturn(left(const InternalError('test error')));
 
       await tester.pumpApp(buildSubject());
       await tester.tap(find.byType(FloatingActionButton));

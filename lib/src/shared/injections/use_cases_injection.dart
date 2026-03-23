@@ -9,7 +9,7 @@ import 'package:time_money/src/features/wage/wage_injection.dart';
 class UseCasesInjection {
   /// Returns the combined list of all feature use case providers.
   static List<RepositoryProvider<Object>> list() => [
-        ...TimesUseCasesInjections.list(),
-        ...WageUseCasesInjections.list(),
-      ];
+    ...TimesUseCasesInjections.list(),
+    ...WageUseCasesInjections.list(),
+  ];
 }

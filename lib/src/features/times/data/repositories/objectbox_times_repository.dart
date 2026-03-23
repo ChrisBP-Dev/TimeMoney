@@ -19,8 +19,8 @@ class ObjectboxTimesRepository implements TimesRepository {
   FetchTimesResultStream fetchTimesStream() {
     try {
       final stream = _datasource.watchAll().map(
-            (boxes) => boxes.map((box) => box.toTimeEntry).toList(),
-          );
+        (boxes) => boxes.map((box) => box.toTimeEntry).toList(),
+      );
       return right(stream);
     } on Object catch (e) {
       return left(GlobalFailure.fromException(e));

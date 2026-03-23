@@ -1,212 +1,264 @@
 # Development Guide - TimeMoney
 
-> Generated: 2026-03-16 | Scan Level: Exhaustive
+> Generated: 2026-03-23 | Scan Level: Exhaustive | Mode: Full Rescan
 
 ## Prerequisites
 
-| Requirement | Version | Notes |
-|-------------|---------|-------|
-| Dart SDK | >=2.19.2 <3.0.0 | |
-| Flutter | 3.7.5 | Stable channel |
-| IDE | VS Code or Android Studio | Launch configurations included |
-| Xcode | Latest | For iOS development |
-| Android Studio | Latest | For Android development |
+| Requirement | Version |
+|---|---|
+| Flutter | 3.41+ |
+| Dart SDK | >=3.11.0 <4.0.0 |
+| Java (Android) | 17 |
+| Xcode (iOS) | Latest stable |
+| Browser (Web) | Modern with OPFS support |
 
-## Installation
+## Setup
 
-```sh
+```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/ChrisBP-Dev/TimeMoney.git
 cd TimeMoney
 
 # Install dependencies
 flutter pub get
 
-# Generate code (Freezed, JSON serializable, ObjectBox)
-flutter pub run build_runner build --delete-conflicting-outputs
+# Generate code (Freezed, ObjectBox, Drift, JSON)
+dart run build_runner build --delete-conflicting-outputs
+
+# Regenerate app icons (only needed if time-money-logo.png changes)
+dart run flutter_launcher_icons
 ```
 
 ## Running the App
 
-The project has three flavors with separate database instances:
+The project uses flavor-specific entry points. There is no `lib/main.dart`.
 
-```sh
-# Development (ObjectBox db: test-1)
+```bash
+# Development
 flutter run --flavor development --target lib/main_development.dart
 
-# Staging (ObjectBox db: stg-1)
+# Staging
 flutter run --flavor staging --target lib/main_staging.dart
 
-# Production (ObjectBox db: prod-1)
+# Production
 flutter run --flavor production --target lib/main_production.dart
 ```
 
-## Supported Platforms
+### Platform-Specific Notes
 
-- iOS
-- Android
-- Web
-- Windows
+- **Web/Windows:** Use `--target` only (no `--flavor` needed)
+- **Android:** Requires Java 17 (`actions/setup-java` with `temurin` distribution in CI)
+- **iOS:** Requires Xcode, builds with `--no-codesign` in CI
 
-## Running Tests
+### Environment-Isolated Databases
 
-```sh
-# Run all tests with coverage
+Each flavor uses a separate database name to prevent data conflicts:
+
+| Flavor | Database Name |
+|---|---|
+| Development | `test-1` |
+| Staging | `stg-1` |
+| Production | `prod-1` |
+
+## App Icons
+
+Custom app icons are generated via `flutter_launcher_icons` (^0.14.3) from a single source image (`time-money-logo.png` at project root).
+
+### Configuration Files
+
+| File | Platforms | Notes |
+|---|---|---|
+| `flutter_launcher_icons-development.yaml` | iOS, Android | Adaptive icon with `#245db4` background |
+| `flutter_launcher_icons-staging.yaml` | iOS, Android | Adaptive icon with `#245db4` background |
+| `flutter_launcher_icons-production.yaml` | iOS, Android, Web, Windows | Full platform coverage |
+
+### Regenerating Icons
+
+```bash
+# Regenerate all platform icons from time-money-logo.png
+dart run flutter_launcher_icons
+```
+
+This generates platform-specific icons in `android/`, `ios/`, `web/`, and `windows/` directories. Only needed when the source `time-money-logo.png` changes.
+
+## Testing
+
+```bash
+# Run all tests with coverage and random ordering
 flutter test --coverage --test-randomize-ordering-seed random
+
+# Run only golden tests
+flutter test --tags golden
+
+# Run excluding golden tests (CI on non-macOS)
+flutter test --test-randomize-ordering-seed random --exclude-tags golden
 
 # Generate HTML coverage report
 genhtml coverage/lcov.info -o coverage/
-
-# Open coverage report
 open coverage/index.html
+
+# Update golden test baselines
+flutter test --update-goldens test/goldens/
 ```
+
+### Test Structure
+
+| Category | Count | Framework | Location |
+|---|---|---|---|
+| Unit (use cases, repositories) | ~80 | flutter_test + mocktail | `test/src/**/domain/`, `test/src/**/data/` |
+| BLoC | ~50 | bloc_test | `test/src/**/presentation/bloc/` |
+| Widget | ~230 | flutter_test | `test/src/**/presentation/` |
+| Golden | 8 (4 files) | flutter_test (matchesGoldenFile) | `test/goldens/` |
+| **Total** | **373** | | |
+
+### Test Tag Configuration
+
+Golden tests are tagged via `dart_test.yaml`:
+
+```yaml
+tags:
+  golden:
+    description: Golden image tests — platform-specific baselines
+```
+
+This allows CI to run golden tests separately on macOS (for consistent font rendering).
+
+### Test Helpers
+
+- **`pumpApp(widget)`** — Wraps widget with localization and required providers
+- **`pumpGoldenApp(widget, size)`** — Sets devicePixelRatio=1.0, fixed viewport, M3 theme
+- **`buildSubject()`** — Centralized widget composition convention
+- **Centralized mocks** — All mocks in `test/helpers/mocks.dart`
+
+### Test Conventions
+
+- Mirror source path: `lib/src/.../file.dart` -> `test/src/.../file_test.dart`
+- `group('ClassName', () { ... })` wrapping related tests
+- `late` variables initialized in `setUp()`
+- `const` test fixtures at top-level
+- `verify(() => mock.method(args)).called(1)` after assertions
+- Drift tests use `NativeDatabase.memory()` for fast isolated testing
 
 ## Code Generation
 
-The project uses `build_runner` for code generation:
+Run after modifying Freezed, ObjectBox, or Drift entities:
 
-```sh
-# One-time build
-flutter pub run build_runner build --delete-conflicting-outputs
-
-# Watch mode (regenerates on file changes)
-flutter pub run build_runner watch --delete-conflicting-outputs
+```bash
+dart run build_runner build --delete-conflicting-outputs
 ```
 
-**Generated files** (do not edit manually):
-- `*.freezed.dart` - Freezed immutable classes and union types
-- `*.g.dart` - JSON serialization code
-- `lib/objectbox.g.dart` - ObjectBox model definitions
+Freezed code generation options are configured in `build.yaml`:
 
-## Linting
-
-```sh
-# Run analyzer
-flutter analyze
-
-# Linting configuration
-# Uses very_good_analysis v4 (strict rules)
-# See analysis_options.yaml for overrides
+```yaml
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          when: { when: true, maybeWhen: true }
+          map: { map: true, maybeMap: true }
 ```
 
-**Analyzer Exclusions**:
-- `**/**.g.dart` - Generated code
-- `**/generated_plugin_registrant.dart` - Flutter generated
-- `**/**.freezed.dart` - Freezed generated
-- `**.yaml` - YAML files
+Run after modifying `.arb` localization files:
 
-## Localization
-
-**Configuration**: `l10n.yaml`
-- ARB directory: `lib/l10n/arb/`
-- Template: `app_en.arb`
-- Output: `app_localizations.dart`
-
-**Supported Locales**: English (en), Spanish (es)
-
-### Adding New Strings
-
-1. Add key/value to `lib/l10n/arb/app_en.arb`:
-```json
-{
-    "newKey": "English value",
-    "@newKey": {
-        "description": "Description of the string"
-    }
-}
+```bash
+flutter gen-l10n
 ```
 
-2. Add translation to `lib/l10n/arb/app_es.arb`:
-```json
-{
-    "newKey": "Spanish value"
-}
+## Code Quality
+
+### Linting
+
+```bash
+# Static analysis (zero warnings policy)
+flutter analyze --fatal-infos
+
+# Format check
+dart format --output=none --set-exit-if-changed .
+
+# Auto-format
+dart format .
 ```
 
-3. Use in code:
-```dart
-import 'package:time_money/l10n/l10n.dart';
+### Rules
 
-final l10n = context.l10n;
-Text(l10n.newKey);
+- **Linter:** `very_good_analysis` ^10.2.0 (strict)
+- **Dartdoc:** `public_member_api_docs` enabled — all public APIs require `///` comments
+- **Generated files excluded:** `*.g.dart`, `*.freezed.dart`, `generated_plugin_registrant.dart`
+- **Zero warnings policy:** `flutter analyze --fatal-infos` must pass clean
+
+### Spell Check
+
+```bash
+# Check all markdown files (uses .github/cspell.json config)
+npx cspell --config .github/cspell.json "**/*.md"
 ```
 
-### Adding New Locales
+## CI/CD Pipeline
 
-1. Create new ARB file: `lib/l10n/arb/app_<locale>.arb`
-2. Update iOS `Info.plist` `CFBundleLocalizations` array
+GitHub Actions pipeline (`.github/workflows/main.yaml`) runs on push to `main` and PRs:
 
-## Project Structure Conventions
+| Job | Runner | Purpose |
+|---|---|---|
+| semantic-pull-request | (PR only) | Validates conventional commit PR titles |
+| quality | ubuntu-latest | Format + analyze + tests + coverage |
+| test-goldens | macos-latest | Golden tests (font rendering consistency) |
+| build-android | ubuntu-latest | APK build (Java 17, debug signing) |
+| build-ios | macos-latest | iOS build (no codesign) |
+| build-web | ubuntu-latest | Web release build |
+| build-windows | windows-latest | Windows release build |
+| spell-check | (VGV workflow) | cspell on all .md files |
 
-### Feature Organization
+### Pipeline Features
 
-Each feature follows Clean Architecture:
-```
-lib/src/features/<feature_name>/
-├── domain/           # Entities + Repository interfaces
-├── aplication/       # Use cases + DI injection
-└── infraestructure/  # Repository implementations + DB entities
-```
+- **Concurrency control:** Groups by workflow + branch, cancels in-progress PR runs
+- **Dependency chain:** Platform builds and golden tests depend on quality gate passing first
+- **Coverage artifact:** Quality gate uploads `coverage/lcov.info` as build artifact
+- **Spell check:** Uses VeryGoodOpenSource reusable workflow with `.github/cspell.json` dictionary
 
-### Presentation Organization
-
-Each UI feature follows:
-```
-lib/src/presentation/<feature>/
-├── bloc/             # BLoC (event + state + bloc)
-├── views/            # State-specific views (data, error, loading, empty)
-└── widgets/          # Reusable UI components
-```
+## Coding Standards
 
 ### Naming Conventions
 
-- **BLoC files**: `<name>_bloc.dart`, `<name>_event.dart`, `<name>_state.dart`
-- **Use cases**: `<action>_<entity>_use_case.dart`
-- **Repositories**: `<entity>_repository.dart` (interface), `i_<entity>_objectbox_repository.dart` (implementation)
-- **ObjectBox entities**: `<name>box.dart`
-- **Barrel exports**: `widgets.dart`, `views.dart`, `aplications.dart`
+| Element | Pattern | Example |
+|---|---|---|
+| Files | snake_case with type suffix | `create_time_bloc.dart` |
+| Classes | PascalCase | `CreateTimeBloc` |
+| BLoCs | `{Action}{Feature}Bloc` | `DeleteTimeBloc` |
+| Cubits | `{Feature}Cubit` | `PaymentCubit` |
+| Use Cases | `{Action}{Feature}UseCase` | `ListTimesUseCase` |
+| Repositories (interface) | `{Feature}Repository` | `TimesRepository` |
+| Repositories (ObjectBox) | `ObjectBox{Feature}Repository` | `ObjectBoxTimesRepository` |
+| Repositories (Drift) | `Drift{Feature}Repository` | `DriftTimesRepository` |
+| Datasources | `{Feature}{Platform}Datasource` | `TimesDriftDatasource` |
+| ObjectBox models | `{Feature}Box` | `TimeBox` |
+| Drift tables | `{Feature}Table` | `TimesTable` |
+| Barrel files | Named after folder content | `entities.dart`, `use_cases.dart` |
 
-## CI/CD
+### Import Order
 
-**Platform**: GitHub Actions (`.github/workflows/main.yaml`)
+1. `dart:` (core libraries)
+2. `package:` (external packages)
+3. `package:time_money/` (project imports)
 
-**Jobs**:
-1. `semantic-pull-request` - Validates PR titles follow conventional commits
-2. `build` - Runs Flutter build and tests via VGV reusable workflow
-3. `spell-check` - Checks spelling in all `.md` files
+Always use absolute imports (`package:time_money/...`), never relative imports.
 
-**Triggers**: Push to `main`, PRs targeting `main`
+### Commit Conventions
 
-**Dependency Management**: Dependabot configured for daily updates on:
-- GitHub Actions workflows
-- Pub (Dart) dependencies
+| Prefix | Usage |
+|---|---|
+| `feat:` | New features |
+| `fix:` | Bug fixes |
+| `refactor:` | Code improvements |
+| `docs:` | Documentation |
+| `chore:` | Admin/reviews |
 
-## Common Development Tasks
+### Architecture Rules
 
-### Adding a New Feature
-
-1. Create domain layer:
-   - Entity (Freezed model) in `domain/`
-   - Repository interface in `domain/`
-2. Create application layer:
-   - Use cases in `aplication/`
-   - DI injection class in `aplication/`
-3. Create infrastructure layer:
-   - ObjectBox entity in `infraestructure/`
-   - Repository implementation in `infraestructure/`
-4. Create presentation layer:
-   - BLoC (event, state, bloc) in `presentation/<feature>/bloc/`
-   - Views (data, error, loading) in `views/`
-   - Widgets in `widgets/`
-5. Register in DI:
-   - Add use cases to `UseCasesInjection`
-   - Add blocs to `BlocInjections`
-   - Add repository to `InjectionRepositories`
-6. Run code generation: `flutter pub run build_runner build`
-
-### Adding a New ObjectBox Entity
-
-1. Create entity class with `@Entity()` annotation and `@Id()` field
-2. Create converter extensions (toFreezed... / to...Box)
-3. Run code generation to update `objectbox.g.dart`
-4. Add Box to `ObjectBox` service class
+- **BLoC for complex flows, Cubit for simple state**
+- **Sealed classes for BLoC states/events** (not Freezed)
+- **Freezed for domain entities only** (TimeEntry, WageHourly)
+- **Either<GlobalFailure, T> for all repository returns** (fpdart)
+- **Never throw from repositories** — catch with `on Object catch (e)` and wrap
+- **Tests ship with implementation** — never deferred
+- **Conditional imports for platform DI** — never runtime `kIsWeb` checks

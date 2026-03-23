@@ -28,17 +28,17 @@ class UpdateTimeButton extends StatelessWidget {
           onPressed: state is UpdateTimeInitial
               ? () {
                   context.read<UpdateTimeBloc>().add(
-                        const UpdateTimeSubmitted(),
-                      );
+                    const UpdateTimeSubmitted(),
+                  );
                 }
               : null,
           child: switch (state) {
             UpdateTimeInitial() => Text(context.l10n.update),
             UpdateTimeLoading() => const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
             UpdateTimeSuccess() => Text(context.l10n.success),
             UpdateTimeError() => Text(context.l10n.error),
           },

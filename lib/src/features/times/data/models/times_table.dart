@@ -21,8 +21,8 @@ class TimesTable extends Table {
 extension ConvertTimesTableData on TimesTableData {
   /// Converts this drift row into a [TimeEntry].
   TimeEntry get toTimeEntry => TimeEntry(
-        id: id,
-        hour: hour,
-        minutes: minutes,
-      );
+    id: id,
+    hour: hour,
+    minutes: minutes,
+  );
 }

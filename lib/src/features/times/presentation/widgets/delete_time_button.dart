@@ -35,17 +35,17 @@ class DeleteTimeButton extends StatelessWidget {
           onPressed: state is DeleteTimeInitial
               ? () {
                   context.read<DeleteTimeBloc>().add(
-                        DeleteTimeRequested(time: time),
-                      );
+                    DeleteTimeRequested(time: time),
+                  );
                 }
               : null,
           child: switch (state) {
             DeleteTimeInitial() => Text(context.l10n.delete),
             DeleteTimeLoading() => const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
             DeleteTimeSuccess() => Text(context.l10n.success),
             DeleteTimeError() => Text(context.l10n.error),
           },

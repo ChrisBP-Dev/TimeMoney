@@ -29,8 +29,9 @@ void main() {
       mockBloc = MockUpdateWageBloc();
     });
 
-    testWidgets('shows localized update label on Initial (enabled)',
-        (tester) async {
+    testWidgets('shows localized update label on Initial (enabled)', (
+      tester,
+    ) async {
       when(() => mockBloc.state).thenReturn(const UpdateWageInitial());
 
       await tester.pumpApp(
@@ -108,14 +109,16 @@ void main() {
 
       await tester.tap(find.byType(FilledButton));
 
-      verify(() => mockBloc.add(any(that: isA<UpdateWageSubmitted>())))
-          .called(1);
+      verify(
+        () => mockBloc.add(any(that: isA<UpdateWageSubmitted>())),
+      ).called(1);
     });
 
     // -- Pop-on-success listener test (P6) --
 
-    testWidgets('pops dialog on Success via BlocConsumer listener',
-        (tester) async {
+    testWidgets('pops dialog on Success via BlocConsumer listener', (
+      tester,
+    ) async {
       whenListen(
         mockBloc,
         Stream.value(

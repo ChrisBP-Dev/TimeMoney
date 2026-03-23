@@ -28,10 +28,12 @@ void main() {
     setUp(() {
       mockUpdateTimeBloc = MockUpdateTimeBloc();
       mockDeleteTimeBloc = MockDeleteTimeBloc();
-      when(() => mockUpdateTimeBloc.state)
-          .thenReturn(const UpdateTimeInitial());
-      when(() => mockDeleteTimeBloc.state)
-          .thenReturn(const DeleteTimeInitial());
+      when(
+        () => mockUpdateTimeBloc.state,
+      ).thenReturn(const UpdateTimeInitial());
+      when(
+        () => mockDeleteTimeBloc.state,
+      ).thenReturn(const DeleteTimeInitial());
     });
 
     Widget buildSubject() {
@@ -44,8 +46,7 @@ void main() {
       );
     }
 
-    testWidgets('renders InfoTime with correct TimeEntry data',
-        (tester) async {
+    testWidgets('renders InfoTime with correct TimeEntry data', (tester) async {
       await tester.pumpApp(buildSubject());
       await tester.pumpAndSettle();
 
@@ -54,8 +55,9 @@ void main() {
       expect(infoTime.time, testTime);
     });
 
-    testWidgets('renders EditButton with correct TimeEntry data',
-        (tester) async {
+    testWidgets('renders EditButton with correct TimeEntry data', (
+      tester,
+    ) async {
       await tester.pumpApp(buildSubject());
       await tester.pumpAndSettle();
 
@@ -71,8 +73,9 @@ void main() {
       expect(find.byIcon(Icons.delete_outline), findsOneWidget);
     });
 
-    testWidgets('delete button opens DeleteTimeConfirmationDialog',
-        (tester) async {
+    testWidgets('delete button opens DeleteTimeConfirmationDialog', (
+      tester,
+    ) async {
       await tester.pumpApp(buildSubject());
       await tester.pumpAndSettle();
 

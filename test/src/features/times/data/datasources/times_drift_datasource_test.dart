@@ -55,25 +55,27 @@ void main() {
 
     // watchAll is the reactive API the repository uses to feed
     // the BLoC layer — must emit immediately and on every mutation.
-    test('watchAll emits initial empty list then updated list after insert',
-        () async {
-      final stream = datasource.watchAll();
+    test(
+      'watchAll emits initial empty list then updated list after insert',
+      () async {
+        final stream = datasource.watchAll();
 
-      final expectation = expectLater(
-        stream,
-        emitsInOrder([
-          isEmpty,
-          hasLength(1),
-        ]),
-      );
+        final expectation = expectLater(
+          stream,
+          emitsInOrder([
+            isEmpty,
+            hasLength(1),
+          ]),
+        );
 
-      // Allow the stream to emit its initial empty-table value.
-      await pumpEventQueue();
+        // Allow the stream to emit its initial empty-table value.
+        await pumpEventQueue();
 
-      await datasource.insert(hour: 5, minutes: 10);
+        await datasource.insert(hour: 5, minutes: 10);
 
-      await expectation;
-    });
+        await expectation;
+      },
+    );
 
     // Empty table must return an empty list through the stream,
     // so downstream code can safely iterate without null checks.
@@ -91,26 +93,26 @@ void main() {
     // Update must modify only the targeted row so other entries
     // in the table are not accidentally changed. Returns the number
     // of affected rows so the repository can detect non-existent IDs.
-    test('update modifies the correct row and returns affected row count',
-        () async {
-      final id = await datasource.insert(hour: 1, minutes: 0);
+    test(
+      'update modifies the correct row and returns affected row count',
+      () async {
+        final id = await datasource.insert(hour: 1, minutes: 0);
 
-      final affectedRows =
-          await datasource.update(id, hour: 8, minutes: 45);
+        final affectedRows = await datasource.update(id, hour: 8, minutes: 45);
 
-      expect(affectedRows, 1);
-      final rows = await db.select(db.timesTable).get();
-      expect(rows, hasLength(1));
-      expect(rows.first.hour, 8);
-      expect(rows.first.minutes, 45);
-    });
+        expect(affectedRows, 1);
+        final rows = await db.select(db.timesTable).get();
+        expect(rows, hasLength(1));
+        expect(rows.first.hour, 8);
+        expect(rows.first.minutes, 45);
+      },
+    );
 
     // Updating a non-existent ID must return 0 affected rows so the
     // repository layer can surface a failure instead of silently
     // succeeding.
     test('update returns 0 when targeting non-existent id', () async {
-      final affectedRows =
-          await datasource.update(999, hour: 1, minutes: 0);
+      final affectedRows = await datasource.update(999, hour: 1, minutes: 0);
 
       expect(affectedRows, 0);
     });

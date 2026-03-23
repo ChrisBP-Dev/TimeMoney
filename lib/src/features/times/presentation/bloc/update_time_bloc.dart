@@ -15,8 +15,8 @@ export 'update_time_state.dart';
 class UpdateTimeBloc extends Bloc<UpdateTimeEvent, UpdateTimeState> {
   /// Creates an [UpdateTimeBloc] with the given [useCase].
   UpdateTimeBloc(UpdateTimeUseCase useCase)
-      : _updateTimeUseCase = useCase,
-        super(const UpdateTimeInitial()) {
+    : _updateTimeUseCase = useCase,
+      super(const UpdateTimeInitial()) {
     on<UpdateTimeInit>(_onInit);
     on<UpdateTimeHourChanged>(_onHourChanged);
     on<UpdateTimeMinutesChanged>(_onMinutesChanged);

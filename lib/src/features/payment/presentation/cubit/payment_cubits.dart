@@ -8,10 +8,10 @@ import 'package:time_money/src/features/payment/presentation/cubit/payment_cubit
 class PaymentCubits {
   /// Returns a list containing the [PaymentCubit] provider.
   static List<BlocProvider> list() => [
-        BlocProvider<PaymentCubit>(
-          create: (context) => PaymentCubit(
-            const CalculatePaymentUseCase(),
-          ),
-        ),
-      ];
+    BlocProvider<PaymentCubit>(
+      create: (context) => PaymentCubit(
+        const CalculatePaymentUseCase(),
+      ),
+    ),
+  ];
 }

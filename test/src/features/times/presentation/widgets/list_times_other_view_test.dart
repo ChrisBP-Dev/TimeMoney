@@ -30,8 +30,7 @@ void main() {
       expect(find.byType(IconText), findsOneWidget);
     });
 
-    testWidgets('displays optional actionWidget when provided',
-        (tester) async {
+    testWidgets('displays optional actionWidget when provided', (tester) async {
       await tester.pumpApp(
         const EmptyListTimesView(
           actionWidget: Text('action'),

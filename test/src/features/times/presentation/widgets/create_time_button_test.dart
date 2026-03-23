@@ -30,8 +30,9 @@ void main() {
       mockBloc = MockCreateTimeBloc();
     });
 
-    testWidgets('shows localized create label on Initial (enabled)',
-        (tester) async {
+    testWidgets('shows localized create label on Initial (enabled)', (
+      tester,
+    ) async {
       when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
 
       await tester.pumpApp(
@@ -106,8 +107,9 @@ void main() {
       expect(button.onPressed, isNull);
     });
 
-    testWidgets('dispatches CreateTimeSubmitted on tap when Initial',
-        (tester) async {
+    testWidgets('dispatches CreateTimeSubmitted on tap when Initial', (
+      tester,
+    ) async {
       when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
 
       await tester.pumpApp(
@@ -120,8 +122,9 @@ void main() {
 
       await tester.tap(find.byType(FilledButton));
 
-      verify(() => mockBloc.add(any(that: isA<CreateTimeSubmitted>())))
-          .called(1);
+      verify(
+        () => mockBloc.add(any(that: isA<CreateTimeSubmitted>())),
+      ).called(1);
     });
 
     // -- Pop-on-success with canPop guard --
@@ -129,11 +132,13 @@ void main() {
     testWidgets('pops dialog on Success via canPop guard', (tester) async {
       whenListen(
         mockBloc,
-        Stream.value(const CreateTimeSuccess(
-          TimeEntry(hour: 1, minutes: 30),
-          hour: 1,
-          minutes: 30,
-        )),
+        Stream.value(
+          const CreateTimeSuccess(
+            TimeEntry(hour: 1, minutes: 30),
+            hour: 1,
+            minutes: 30,
+          ),
+        ),
         initialState: const CreateTimeInitial(),
       );
 

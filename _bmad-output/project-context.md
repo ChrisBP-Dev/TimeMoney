@@ -1,11 +1,11 @@
 ---
 project_name: 'TimeMoney'
 user_name: 'Christopher'
-date: '2026-03-22'
+date: '2026-03-23'
 sections_completed:
   ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
-rule_count: 113
+rule_count: 125
 optimized_for_llm: true
 ---
 
@@ -27,8 +27,12 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Linting**: very_good_analysis ^10.2.0 (strict, public_member_api_docs enabled)
 - **Testing**: bloc_test ^10.0.0, mocktail ^1.0.0, flutter_test (widget + golden)
 - **i18n**: intl ^0.20.0 (en, es via ARB files)
+- **App Icons**: flutter_launcher_icons ^0.14.3 (per-flavor configs: development, staging, production) with custom `time-money-logo.png`
+- **CI/CD**: GitHub Actions (8-job pipeline), VeryGoodOpenSource workflows (semantic PR, spell check), dependabot (daily pub + actions updates)
+- **Spell Check**: cspell via VGV workflows — custom dictionary at `.github/cspell.json` with project-specific terms
 - **Environments**: 3 flavors — development, staging, production
 - **Platforms**: iOS, Android, Web, Windows (multi-platform with platform-aware DI)
+- **License**: MIT (Copyright 2023-2026 Christopher Bobadilla Plasencia)
 - **Test Metrics**: 373 tests, 92.3% coverage (presentation 97.9%, use cases/BLoCs/repositories 100%)
 
 ## Critical Implementation Rules
@@ -127,10 +131,18 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - **Localization workflow**: After modifying `.arb` files, run `flutter gen-l10n` to regenerate localization code
 - **Git commit prefixes**: `feat:` (new features), `refactor:` (code improvements), `fix:` (bug fixes), `chore:` (admin/reviews), `docs:` (documentation)
 - **Story-driven development**: Each story delivers implementation + tests together, status set to `review` (never `done`) — only code review decides done
-- **CI/CD**: GitHub Actions with semantic PR validation, flutter_package build/test, spell-check on markdown
+- **CI/CD pipeline (8 jobs)**: GitHub Actions on push to `main` and PRs against `main` — (1) Semantic PR title validation (conventional commits, PR-only), (2) Quality gate (format + analyze + tests with coverage upload), (3) Golden tests on macOS (font rendering consistency), (4) Build Android (APK with debug signing, Java 17), (5) Build iOS (no codesign), (6) Build Web (release), (7) Build Windows (release), (8) Spell check (cspell on all `.md` files)
+- **CI concurrency**: Workflow group per branch with `cancel-in-progress` on PRs — prevents duplicate CI runs on rapid pushes
+- **Golden tests excluded from Ubuntu CI**: `--exclude-tags golden` on quality job (Ubuntu), separate `--tags golden` job on macOS — font rendering differs across platforms
+- **CI build commands**: All platform builds use `--flavor production --target lib/main_production.dart` (except web/windows which omit `--flavor`)
+- **Dependabot**: Automated daily dependency updates for both `pub` and `github-actions` ecosystems — configured in `.github/dependabot.yaml`
+- **PR template**: Standardized PR checklist at `.github/PULL_REQUEST_TEMPLATE.md` — includes type-of-change checkboxes and testing verification steps
+- **Verify before push**: Run locally before pushing: `dart format --output=none --set-exit-if-changed .` + `flutter analyze --fatal-infos` + `flutter test --coverage --test-randomize-ordering-seed random` + `npx cspell --config .github/cspell.json "**/*.md"`
+- **Spell check dictionary**: New technical terms in `.md` files must be added to `.github/cspell.json` `words` array in alphabetical order — CI will fail otherwise
 - **Multi-platform testing**: When touching persistence or DI code, verify changes across native (ObjectBox) and web (Drift) paths — both datasources must maintain behavioral parity
+- **App icon generation**: After modifying `time-money-logo.png`, run `dart run flutter_launcher_icons` — per-flavor configs at project root (`flutter_launcher_icons-{development,staging,production}.yaml`) generate icons for Android (adaptive), iOS, Web, and Windows
 - **BMad workflow**: Sprint planning → story creation → story validation → dev story → code review → retrospective → project-context update
-- **Current project state**: Epics 1–5 complete (SDK migration, architecture, ObjectBox, Drift, Quality). Epic 6 (CI/CD & Documentation) in backlog. Zero deferred items — all Epic 5 tech debt resolved in post-retro quick dev
+- **Current project state**: Epics 1–5 complete (SDK migration, architecture, ObjectBox, Drift, Quality). Epic 6 in-progress: story 6.1 (CI/CD pipeline) done, story 6.2 (README, LICENSE, icons) in review. 25 stories across 138+ commits. Zero deferred items
 
 ### Critical Don't-Miss Rules
 
@@ -151,6 +163,9 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - NEVER accept "pre-existing" as justification for ignoring tech debt — must resolve or have explicit plan
 - NEVER render dialogs as bare widgets in `showDialog` — always constrain with proper layout (e.g., wrap content-only Card, place buttons in dialog `actions` parameter)
 - NEVER implement destructive actions (delete) without confirmation — always use a confirmation dialog (e.g., `DeleteTimeConfirmationDialog`)
+- NEVER add markdown content with misspelled or project-specific terms without updating `.github/cspell.json` — CI spell check will fail
+- NEVER run golden tests on Ubuntu CI — font rendering differs from macOS; use `--exclude-tags golden` on Ubuntu and `--tags golden` on macOS
+- NEVER push without running `dart format` + `flutter analyze --fatal-infos` locally — CI quality gate will reject unformatted or warning-laden code
 
 **Edge Cases:**
 - ObjectBox `put()` returns an `int` ID — domain models use `@Default(0) int id` for new entities
@@ -187,4 +202,4 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Review at each epic retrospective for outdated rules
 - Remove rules that become obvious over time
 
-Last Updated: 2026-03-22
+Last Updated: 2026-03-23

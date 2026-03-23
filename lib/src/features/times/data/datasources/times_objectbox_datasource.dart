@@ -12,7 +12,10 @@ class TimesObjectboxDatasource {
 
   /// Watches all [TimeBox] rows, emitting immediately and on every change.
   Stream<List<TimeBox>> watchAll() {
-    return _box.query().watch(triggerImmediately: true).map(
+    return _box
+        .query()
+        .watch(triggerImmediately: true)
+        .map(
           (query) => query.find(),
         );
   }

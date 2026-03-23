@@ -41,18 +41,18 @@ minutes: $minutes,
 extension ConvertTimeEntry on TimeBox {
   /// Converts this [TimeBox] into a [TimeEntry].
   TimeEntry get toTimeEntry => TimeEntry(
-        id: id,
-        hour: hour,
-        minutes: minutes,
-      );
+    id: id,
+    hour: hour,
+    minutes: minutes,
+  );
 }
 
 /// Maps a [TimeEntry] domain entity to a [TimeBox] persistence model.
 extension ConvertTimeBox on TimeEntry {
   /// Converts this [TimeEntry] into a [TimeBox].
   TimeBox get toTimeBox => TimeBox(
-        id: id,
-        hour: hour,
-        minutes: minutes,
-      );
+    id: id,
+    hour: hour,
+    minutes: minutes,
+  );
 }

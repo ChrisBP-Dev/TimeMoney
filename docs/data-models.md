@@ -1,169 +1,213 @@
 # Data Models - TimeMoney
 
-> Generated: 2026-03-16 | Scan Level: Exhaustive
+> Generated: 2026-03-23 | Scan Level: Exhaustive | Mode: Full Rescan
 
 ## Overview
 
-TimeMoney uses **ObjectBox** as its local NoSQL database. The app has two main entities stored in separate ObjectBox Boxes. Domain models are implemented with **Freezed** for immutability, and bidirectional converters bridge domain and database layers.
+TimeMoney uses a three-tier data model strategy:
 
-## Database: ObjectBox
+1. **Domain Entities** (Freezed) — Platform-agnostic business objects
+2. **ObjectBox Models** — Native persistence (iOS, Android, Windows)
+3. **Drift Tables** — Web persistence (SQLite via WASM + OPFS)
 
-- **Type**: Local embedded NoSQL database
-- **Reactive**: Provides `Stream` watchers for real-time UI updates
-- **Environments**: Separate database names per flavor (test-1, stg-1, prod-1)
+Conversion between tiers is handled by extension methods on each data model class.
 
-## Entity Relationship Diagram
+## Domain Entities
 
-```
-┌──────────────────────┐     ┌──────────────────────────┐
-│      TimeBox         │     │     WageHourlyBox         │
-│ (ObjectBox Entity)   │     │  (ObjectBox Entity)       │
-├──────────────────────┤     ├──────────────────────────┤
-│ @Id int id           │     │ @Id int id               │
-│ int hour             │     │ double value              │
-│ int minutes          │     │                           │
-└──────────┬───────────┘     └──────────┬───────────────┘
-           │ toFreezedModelTime          │ toFreezedWageHourly
-           │ ↕ toTimeBox                 │ ↕ toWageHourlyBox
-┌──────────┴───────────┐     ┌──────────┴───────────────┐
-│     ModelTime        │     │       WageHourly          │
-│  (Domain Entity)     │     │    (Domain Entity)        │
-├──────────────────────┤     ├──────────────────────────┤
-│ int id (default: 0)  │     │ int id (default: 0)      │
-│ int hour             │     │ double value (default: 15)│
-│ int minutes          │     │                           │
-├──────────────────────┤     └──────────────────────────┘
-│ Duration toDuration  │
-│ fromJson()           │
-└──────────────────────┘
+### TimeEntry
+
+```dart
+@freezed
+class TimeEntry with _$TimeEntry {
+  const TimeEntry._();
+  const factory TimeEntry({
+    @Default(0) int id,
+    required int hour,
+    required int minutes,
+  }) = _TimeEntry;
+}
 ```
 
-**Note**: No explicit relationship between TimeBox and WageHourlyBox. They are independent entities. The relationship is implicit at the presentation layer where both are combined for payment calculation.
+**Location:** `lib/src/features/times/domain/entities/time_entry.dart`
 
-## Domain Models
-
-### ModelTime
-
-**Location**: `lib/src/features/times/domain/model_time.dart`
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `id` | `int` | `0` | ObjectBox primary key (auto-assigned) |
-| `hour` | `int` | required | Hours worked |
-| `minutes` | `int` | required | Minutes worked |
-
-**Computed Properties**:
-- `toDuration` → `Duration` - Converts hour + minutes to Duration
-
-**Extension Methods** (`CalculatePay` on `List<ModelTime>`):
-- `calculatePayment(double wageHourly)` → `double` - Total payment for all entries
-- `totalHours` → `int` - Sum of all hours across entries
-- `totalMinutes` → `int` - Remaining minutes after hour calculation
-
-**Payment Formula**:
-```
-totalDuration = sum of all (hour + minutes) as Duration
-totalPayment = (totalDuration.inMinutes / 60) * wageHourly
-```
+**Extensions:**
+- `toDuration` → converts to `Duration`
+- `CalculatePay` on `List<TimeEntry>`:
+  - `calculatePayment(double wageHourly)` → total payment
+  - `totalHours` → sum of hours across all entries
+  - `totalMinutes` → sum of minutes across all entries
 
 ### WageHourly
 
-**Location**: `lib/src/features/wage_hourly/domain/wage_hourly.dart`
+```dart
+@freezed
+class WageHourly with _$WageHourly {
+  const factory WageHourly({
+    @Default(0) int id,
+    @Default(15.0) double value,
+  }) = _WageHourly;
+}
+```
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `id` | `int` | `0` | ObjectBox primary key (auto-assigned) |
-| `value` | `double` | `15.0` | Hourly wage rate |
+**Location:** `lib/src/features/wage/domain/entities/wage_hourly.dart`
 
-## ObjectBox Entities
+### PaymentResult
+
+```dart
+@immutable
+class PaymentResult {
+  final int totalHours;
+  final int totalMinutes;
+  final double wageHourly;
+  final double totalPayment;
+  final int workedDays;
+}
+```
+
+**Location:** `lib/src/features/payment/domain/entities/payment_result.dart`
+
+Implements manual `operator ==` and `hashCode` (not Freezed — simple immutable class).
+
+## ObjectBox Models (Native Persistence)
 
 ### TimeBox
 
-**Location**: `lib/src/features/times/infraestructure/timebox.dart`
+```dart
+@Entity()
+class TimeBox {
+  @Id()
+  int id;
+  int hour;
+  int minutes;
+}
+```
 
-| Field | Type | Annotation | Description |
-|-------|------|------------|-------------|
-| `id` | `int` | `@Id` | ObjectBox auto-generated ID |
-| `hour` | `int` | - | Hours worked |
-| `minutes` | `int` | - | Minutes worked |
+**Location:** `lib/src/features/times/data/models/time_box.dart`
 
-**Converter Extensions**:
-- `TimeBox.toFreezedModelTime` → `ModelTime`
-- `ModelTime.toTimeBox` → `TimeBox`
+**Conversion Extensions:**
+- `TimeBox.toTimeEntry` → `TimeEntry`
+- `TimeEntry.toTimeBox` → `TimeBox`
 
 ### WageHourlyBox
 
-**Location**: `lib/src/features/wage_hourly/infraestructure/wage_hourly_box.dart`
+```dart
+@Entity()
+class WageHourlyBox {
+  @Id()
+  int id;
+  double value;
+}
+```
 
-| Field | Type | Annotation | Description |
-|-------|------|------------|-------------|
-| `id` | `int` | `@Id` | ObjectBox auto-generated ID |
-| `value` | `double` | - | Hourly wage rate |
+**Location:** `lib/src/features/wage/data/models/wage_hourly_box.dart`
 
-**Converter Extensions**:
-- `WageHourlyBox.toFreezedWageHourly` → `WageHourly`
+**Conversion Extensions:**
+- `WageHourlyBox.toWageHourly` → `WageHourly`
 - `WageHourly.toWageHourlyBox` → `WageHourlyBox`
 
-## Repository Interfaces
+## Drift Tables (Web Persistence)
 
-### TimesRepository
+### TimesTable
 
-**Location**: `lib/src/features/times/domain/times_repository.dart`
+```dart
+class TimesTable extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get hour => integer()();
+  IntColumn get minutes => integer()();
+}
+```
 
-| Method | Parameters | Return Type | Description |
-|--------|-----------|-------------|-------------|
-| `fetchTimesStream()` | none | `Either<GlobalFailure, Stream<List<ModelTime>>>` | Reactive stream of all time entries |
-| `create(ModelTime time)` | `ModelTime` | `Future<Either<GlobalFailure, ModelTime>>` | Create new time entry |
-| `delete(ModelTime time)` | `ModelTime` | `Future<Either<GlobalFailure, Unit>>` | Delete time entry by ID |
-| `update(ModelTime time)` | `ModelTime` | `Future<Either<GlobalFailure, ModelTime>>` | Update existing time entry |
+**Location:** `lib/src/features/times/data/models/times_table.dart`
 
-### WageHourlyRepository
+**Generated Data Class:** `TimesTableData`
 
-**Location**: `lib/src/features/wage_hourly/domain/wage_hourly_repository.dart`
+**Conversion Extensions:**
+- `TimesTableData.toTimeEntry` → `TimeEntry`
 
-| Method | Parameters | Return Type | Description |
-|--------|-----------|-------------|-------------|
-| `fetchWageHourly()` | none | `Either<GlobalFailure, Stream<WageHourly>>` | Reactive stream of current wage |
-| `setWageHourly(WageHourly)` | `WageHourly` | `Future<Either<GlobalFailure, WageHourly>>` | Set initial wage value |
-| `update(WageHourly)` | `WageHourly` | `Future<Either<GlobalFailure, WageHourly>>` | Update wage value |
+### WageHourlyTable
 
-## ObjectBox Service
+```dart
+class WageHourlyTable extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  RealColumn get value => realColumn()();
+}
+```
 
-**Location**: `lib/src/core/services/objectbox.dart`
+**Location:** `lib/src/features/wage/data/models/wage_hourly_table.dart`
 
-The `ObjectBox` class wraps the ObjectBox Store and provides:
+**Generated Data Class:** `WageHourlyTableData`
 
-| Property/Method | Type | Description |
-|----------------|------|-------------|
-| `store` | `Store` | ObjectBox store instance |
-| `time` | `Box<TimeBox>` | Box for time entries |
-| `wageHourly` | `Box<WageHourlyBox>` | Box for wage data |
-| `getTimesStream()` | `Stream<List<ModelTime>>` | Watches time box, maps to domain models |
-| `getWageHourlyStream()` | `Stream<WageHourly>` | Watches wage box, maps to domain model |
-| `create(String path)` | `static Future<ObjectBox>` | Factory: initializes with app directory |
-| `close()` | `void` | Closes the store |
+**Conversion Extensions:**
+- `WageHourlyTableData.toWageHourly` → `WageHourly`
 
-## Error Types
+## Database Configuration
 
-### GlobalFailure\<F\>
+### ObjectBox (Native)
 
-**Location**: `lib/src/core/failures/failures.dart`
+- **Service:** `ObjectboxService` in `lib/src/core/services/objectbox_service.dart`
+- **Schema:** `objectbox-model.json` at project root
+- **Initialization:** `ObjectboxService.create()` (async factory)
+- **Entities registered:** `TimeBox`, `WageHourlyBox`
 
-| Variant | Parameters | Description |
-|---------|-----------|-------------|
-| `serverError` | `F` | Server-side error |
-| `notConnection` | none | No network connectivity |
-| `timeOutExceeded` | none | Request timeout |
-| `internalError` | `dynamic, StackTrace?` | Local/internal error |
+### Drift (Web)
 
-### ValueFailure\<T\>
+- **Database:** `AppDatabase` in `lib/src/core/services/app_database.dart`
+- **Tables registered:** `TimesTable`, `WageHourlyTable` via `@DriftDatabase(tables: [TimesTable, WageHourlyTable])`
+- **Connection:** `driftDatabase(name: dbName)` — WASM + OPFS on web, file system on native
+- **Single database instance** aggregates all feature tables (no per-feature databases)
 
-| Variant | Parameters | Description |
-|---------|-----------|-------------|
-| `characterLimitExceeded` | `T failedValue` | Input too long |
-| `shortOrNullCharacters` | `T failedValue` | Input too short or null |
-| `invalidFormat` | `T failedValue` | Invalid format |
+## Repository Layer
 
-## Migration Strategy
+### TimesRepository (Interface)
 
-ObjectBox handles schema migrations automatically. No manual migration files exist. The database name differs per environment to isolate data.
+```dart
+abstract class TimesRepository {
+  Stream<Either<GlobalFailure, List<TimeEntry>>> watchAll();
+  Future<Either<GlobalFailure, TimeEntry>> insert(TimeEntry entry);
+  Future<Either<GlobalFailure, TimeEntry>> update(TimeEntry entry);
+  Future<Either<GlobalFailure, Unit>> remove(int id);
+}
+```
+
+**Implementations:**
+- `ObjectBoxTimesRepository` — wraps `TimesObjectBoxDatasource`
+- `DriftTimesRepository` — wraps `TimesDriftDatasource`
+
+### WageRepository (Interface)
+
+```dart
+abstract class WageRepository {
+  Stream<Either<GlobalFailure, WageHourly>> watch();
+  Future<Either<GlobalFailure, WageHourly>> set(WageHourly wage);
+  Future<Either<GlobalFailure, WageHourly>> update(WageHourly wage);
+}
+```
+
+**Implementations:**
+- `ObjectBoxWageRepository` — wraps `WageObjectBoxDatasource`
+- `DriftWageRepository` — wraps `WageDriftDatasource`
+
+## Data Flow Diagram
+
+```
+Domain Entity (TimeEntry / WageHourly)
+    ↕ Conversion Extensions
+ObjectBox Model (TimeBox / WageHourlyBox)     Drift Data (TimesTableData / WageHourlyTableData)
+    ↕                                              ↕
+ObjectBox Datasource                          Drift Datasource
+    ↕                                              ↕
+ObjectBox Repository                          Drift Repository
+    ↕                                              ↕
+    └──────────── Repository Interface ────────────┘
+                         ↕
+                     Use Case
+                         ↕
+                    BLoC / Cubit
+```
+
+## Edge Cases
+
+- ObjectBox `put()` returns `int` ID — domain models use `@Default(0) int id` for new entities
+- Drift `insert()` returns `int` auto-increment ID — same `@Default(0)` convention
+- Drift `update()`/`remove()` return affected row count — 0 rows = record not found = failure
+- Drift wage repository: when `id == 0`, performs insert instead of update (mirrors ObjectBox `put()` behavior)

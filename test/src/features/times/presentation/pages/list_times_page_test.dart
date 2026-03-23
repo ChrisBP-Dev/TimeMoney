@@ -153,8 +153,9 @@ void main() {
       verify(() => mockPaymentCubit.setTimes(testTimes)).called(1);
     });
 
-    testWidgets('listener calls setTimes with empty list on Empty state',
-        (tester) async {
+    testWidgets('listener calls setTimes with empty list on Empty state', (
+      tester,
+    ) async {
       whenListen(
         mockListBloc,
         Stream.value(const ListTimesEmpty()),
@@ -167,8 +168,9 @@ void main() {
       verify(() => mockPaymentCubit.setTimes(const <TimeEntry>[])).called(1);
     });
 
-    testWidgets('listener calls setTimes with empty list on Error state',
-        (tester) async {
+    testWidgets('listener calls setTimes with empty list on Error state', (
+      tester,
+    ) async {
       whenListen(
         mockListBloc,
         Stream.value(const ListTimesError(InternalError('test'))),
@@ -181,8 +183,9 @@ void main() {
       verify(() => mockPaymentCubit.setTimes(const <TimeEntry>[])).called(1);
     });
 
-    testWidgets('listener does not call setTimes on Loading state',
-        (tester) async {
+    testWidgets('listener does not call setTimes on Loading state', (
+      tester,
+    ) async {
       whenListen(
         mockListBloc,
         Stream.value(const ListTimesLoading()),

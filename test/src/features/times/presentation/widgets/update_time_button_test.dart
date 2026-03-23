@@ -30,8 +30,9 @@ void main() {
       mockBloc = MockUpdateTimeBloc();
     });
 
-    testWidgets('shows localized update label on Initial (enabled)',
-        (tester) async {
+    testWidgets('shows localized update label on Initial (enabled)', (
+      tester,
+    ) async {
       when(() => mockBloc.state).thenReturn(
         const UpdateTimeInitial(hour: 2, minutes: 30, time: testTime),
       );
@@ -110,8 +111,9 @@ void main() {
       expect(button.onPressed, isNull);
     });
 
-    testWidgets('dispatches UpdateTimeSubmitted on tap when Initial',
-        (tester) async {
+    testWidgets('dispatches UpdateTimeSubmitted on tap when Initial', (
+      tester,
+    ) async {
       when(() => mockBloc.state).thenReturn(
         const UpdateTimeInitial(hour: 2, minutes: 30, time: testTime),
       );
@@ -126,8 +128,9 @@ void main() {
 
       await tester.tap(find.byType(FilledButton));
 
-      verify(() => mockBloc.add(any(that: isA<UpdateTimeSubmitted>())))
-          .called(1);
+      verify(
+        () => mockBloc.add(any(that: isA<UpdateTimeSubmitted>())),
+      ).called(1);
     });
 
     // -- Pop-on-success with canPop guard (P4) --
@@ -135,12 +138,14 @@ void main() {
     testWidgets('pops dialog on Success via canPop guard', (tester) async {
       whenListen(
         mockBloc,
-        Stream.value(const UpdateTimeSuccess(
-          testTime,
-          hour: 2,
-          minutes: 30,
-          time: testTime,
-        )),
+        Stream.value(
+          const UpdateTimeSuccess(
+            testTime,
+            hour: 2,
+            minutes: 30,
+            time: testTime,
+          ),
+        ),
         initialState: const UpdateTimeInitial(
           hour: 2,
           minutes: 30,

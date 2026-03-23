@@ -39,13 +39,13 @@ void main() {
 
       await tester.enterText(find.byType(TextField), '5');
 
-      final captured =
-          verify(() => mockBloc.add(captureAny())).captured;
+      final captured = verify(() => mockBloc.add(captureAny())).captured;
       expect(captured.last, isA<CreateTimeHourChanged>());
     });
 
-    testWidgets('auto-clears when BLoC resets to initial with zero values',
-        (tester) async {
+    testWidgets('auto-clears when BLoC resets to initial with zero values', (
+      tester,
+    ) async {
       whenListen(
         mockBloc,
         Stream<CreateTimeState>.fromIterable([
@@ -78,35 +78,36 @@ void main() {
     // -- BS2: listenWhen negative path --
 
     testWidgets(
-        'does NOT auto-clear when previous state is also CreateTimeInitial',
-        (tester) async {
-      when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
+      'does NOT auto-clear when previous state is also CreateTimeInitial',
+      (tester) async {
+        when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
 
-      await tester.pumpApp(
-        BlocProvider<CreateTimeBloc>.value(
-          value: mockBloc,
-          child: const Scaffold(body: CreateHourField()),
-        ),
-      );
-      await tester.pump();
+        await tester.pumpApp(
+          BlocProvider<CreateTimeBloc>.value(
+            value: mockBloc,
+            child: const Scaffold(body: CreateHourField()),
+          ),
+        );
+        await tester.pump();
 
-      // Enter text in field
-      await tester.enterText(find.byType(TextField), '5');
+        // Enter text in field
+        await tester.enterText(find.byType(TextField), '5');
 
-      // Simulate transition from Initial to Initial with zero values
-      // listenWhen: previous is! CreateTimeInitial → false, so no clear
-      whenListen(
-        mockBloc,
-        Stream.value(const CreateTimeInitial()),
-        initialState: const CreateTimeInitial(hour: 5),
-      );
+        // Simulate transition from Initial to Initial with zero values
+        // listenWhen: previous is! CreateTimeInitial → false, so no clear
+        whenListen(
+          mockBloc,
+          Stream.value(const CreateTimeInitial()),
+          initialState: const CreateTimeInitial(hour: 5),
+        );
 
-      await tester.pump();
-      await tester.pump();
+        await tester.pump();
+        await tester.pump();
 
-      // Field should retain its text because listenWhen blocked the listener
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.controller?.text, '5');
-    });
+        // Field should retain its text because listenWhen blocked the listener
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        expect(textField.controller?.text, '5');
+      },
+    );
   });
 }

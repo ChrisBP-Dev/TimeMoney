@@ -45,8 +45,8 @@ class _CreateMinutesFieldState extends State<CreateMinutesField> {
         title: context.l10n.minutesTitle,
         controller: _controller,
         onChanged: (value) => context.read<CreateTimeBloc>().add(
-              CreateTimeMinutesChanged(value: value),
-            ),
+          CreateTimeMinutesChanged(value: value),
+        ),
       ),
     );
   }

@@ -39,7 +39,8 @@ class CatchErrorBuilder<T> extends StatelessWidget {
     return snapshot.hasData
         ? builder.call(snapshot.data as T)
         : Center(
-            child: loading ??
+            child:
+                loading ??
                 const Text(
                   'error',
                 ),

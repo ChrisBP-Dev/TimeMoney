@@ -25,8 +25,9 @@ void main() {
       when(() => mockBloc.state).thenReturn(const CreateTimeInitial());
     });
 
-    testWidgets('renders CreateHourField and CreateMinutesField',
-        (tester) async {
+    testWidgets('renders CreateHourField and CreateMinutesField', (
+      tester,
+    ) async {
       await tester.pumpApp(
         BlocProvider<CreateTimeBloc>.value(
           value: mockBloc,

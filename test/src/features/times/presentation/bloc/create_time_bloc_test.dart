@@ -40,8 +40,7 @@ void main() {
   group('CreateTimeBloc', () {
     // Verifies default form state. hour/minutes must be
     // zero so the form starts blank for new entries.
-    test('initial state is CreateTimeInitial(hour: 0, minutes: 0)',
-        () {
+    test('initial state is CreateTimeInitial(hour: 0, minutes: 0)', () {
       final bloc = CreateTimeBloc(mockUseCase);
       expect(bloc.state, const CreateTimeInitial());
       expect(bloc.state.hour, 0);
@@ -124,8 +123,7 @@ void main() {
       'emits [loading, success, initial] on successful submit',
       build: () {
         when(() => mockUseCase.call(any<TimeEntry>())).thenAnswer(
-          (_) async =>
-              const Right<GlobalFailure, TimeEntry>(testTime),
+          (_) async => const Right<GlobalFailure, TimeEntry>(testTime),
         );
         return CreateTimeBloc(mockUseCase);
       },

@@ -3,6 +3,7 @@
 /// Captures a snapshot of the payment result dialog with test data to
 /// detect unintended layout or styling changes. Pure presentation — no
 /// BLoC mocks needed.
+@Tags(['golden'])
 library;
 
 import 'package:flutter/material.dart';

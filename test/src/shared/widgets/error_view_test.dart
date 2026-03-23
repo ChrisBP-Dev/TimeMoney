@@ -17,8 +17,9 @@ import '../../../helpers/helpers.dart';
 void main() {
   group('ErrorView', () {
     group('InternalError', () {
-      testWidgets('renders IconText with ⚠️ and message containing error',
-          (tester) async {
+      testWidgets('renders IconText with ⚠️ and message containing error', (
+        tester,
+      ) async {
         await tester.pumpApp(
           const ErrorView(
             InternalError('test error'),
@@ -43,8 +44,9 @@ void main() {
     });
 
     group('TimeOutExceeded', () {
-      testWidgets('renders IconText with ⏳ and timeout message',
-          (tester) async {
+      testWidgets('renders IconText with ⏳ and timeout message', (
+        tester,
+      ) async {
         await tester.pumpApp(
           const ErrorView(
             TimeOutExceeded(),
@@ -66,8 +68,9 @@ void main() {
     });
 
     group('ServerError', () {
-      testWidgets('renders IconText with 🚨 and server error message',
-          (tester) async {
+      testWidgets('renders IconText with 🚨 and server error message', (
+        tester,
+      ) async {
         await tester.pumpApp(
           const ErrorView(
             ServerError('500'),
@@ -89,8 +92,9 @@ void main() {
     });
 
     group('NotConnection', () {
-      testWidgets('renders IconText with 📡 and connection message',
-          (tester) async {
+      testWidgets('renders IconText with 📡 and connection message', (
+        tester,
+      ) async {
         await tester.pumpApp(
           const ErrorView(
             NotConnection(),

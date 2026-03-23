@@ -19,8 +19,7 @@ abstract class WageRepository {
 
 /// Result type for [WageRepository.fetchWageHourly]: a synchronous [Either]
 /// holding either a [GlobalFailure] or a reactive [Stream] of [WageHourly].
-typedef FetchWageResultStream
-    = Either<GlobalFailure, Stream<WageHourly>>;
+typedef FetchWageResultStream = Either<GlobalFailure, Stream<WageHourly>>;
 
 /// Result type for [WageRepository.setWageHourly]: an async [Either]
 /// holding either a [GlobalFailure] or the persisted [WageHourly].

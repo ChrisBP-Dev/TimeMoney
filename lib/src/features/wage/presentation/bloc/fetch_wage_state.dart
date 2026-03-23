@@ -31,8 +31,7 @@ final class FetchWageLoaded extends FetchWageState {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is FetchWageLoaded && wage == other.wage;
+      identical(this, other) || other is FetchWageLoaded && wage == other.wage;
 
   @override
   int get hashCode => wage.hashCode;

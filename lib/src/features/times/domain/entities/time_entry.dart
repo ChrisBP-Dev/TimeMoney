@@ -23,8 +23,7 @@ abstract class TimeEntry with _$TimeEntry {
   /// Deserializes a [TimeEntry] from a JSON map.
   factory TimeEntry.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      _$TimeEntryFromJson(json);
+  ) => _$TimeEntryFromJson(json);
 
   const TimeEntry._();
 

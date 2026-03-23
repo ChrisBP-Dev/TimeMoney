@@ -26,8 +26,7 @@ void main() {
       when(() => mockBloc.state).thenReturn(const UpdateWageInitial());
     });
 
-    testWidgets('dispatches UpdateWageHourlyChanged on input',
-        (tester) async {
+    testWidgets('dispatches UpdateWageHourlyChanged on input', (tester) async {
       await tester.pumpApp(
         BlocProvider<UpdateWageBloc>.value(
           value: mockBloc,
@@ -43,8 +42,9 @@ void main() {
       ).called(1);
     });
 
-    testWidgets('renders TextFormField with decimal numeric keyboard',
-        (tester) async {
+    testWidgets('renders TextFormField with decimal numeric keyboard', (
+      tester,
+    ) async {
       await tester.pumpApp(
         BlocProvider<UpdateWageBloc>.value(
           value: mockBloc,

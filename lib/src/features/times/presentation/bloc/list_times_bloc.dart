@@ -15,8 +15,8 @@ export 'list_times_state.dart';
 class ListTimesBloc extends Bloc<ListTimesEvent, ListTimesState> {
   /// Creates a [ListTimesBloc] with the given [useCase].
   ListTimesBloc(ListTimesUseCase useCase)
-      : _listTimesUseCase = useCase,
-        super(const ListTimesInitial()) {
+    : _listTimesUseCase = useCase,
+      super(const ListTimesInitial()) {
     on<ListTimesRequested>(_onListTimesRequested);
   }
 

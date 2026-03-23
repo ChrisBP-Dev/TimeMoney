@@ -42,40 +42,44 @@ void main() {
 
     // watchAll is the reactive API the repository uses to feed
     // the BLoC layer — must emit immediately and on every mutation.
-    test('watchAll emits initial empty list then updated list after insert',
-        () async {
-      final stream = datasource.watchAll();
+    test(
+      'watchAll emits initial empty list then updated list after insert',
+      () async {
+        final stream = datasource.watchAll();
 
-      final expectation = expectLater(
-        stream,
-        emitsInOrder([
-          isEmpty,
-          hasLength(1),
-        ]),
-      );
+        final expectation = expectLater(
+          stream,
+          emitsInOrder([
+            isEmpty,
+            hasLength(1),
+          ]),
+        );
 
-      // Allow the stream to emit its initial empty-table value.
-      await pumpEventQueue();
+        // Allow the stream to emit its initial empty-table value.
+        await pumpEventQueue();
 
-      await datasource.insert(value: 30);
+        await datasource.insert(value: 30);
 
-      await expectation;
-    });
+        await expectation;
+      },
+    );
 
     // Update must modify only the targeted row so other entries
     // in the table are not accidentally changed. Returns the number
     // of affected rows so the repository can detect non-existent IDs.
-    test('update modifies the correct row and returns affected row count',
-        () async {
-      final id = await datasource.insert(value: 25);
+    test(
+      'update modifies the correct row and returns affected row count',
+      () async {
+        final id = await datasource.insert(value: 25);
 
-      final affectedRows = await datasource.update(id, value: 35);
+        final affectedRows = await datasource.update(id, value: 35);
 
-      expect(affectedRows, 1);
-      final rows = await db.select(db.wageHourlyTable).get();
-      expect(rows, hasLength(1));
-      expect(rows.first.value, 35);
-    });
+        expect(affectedRows, 1);
+        final rows = await db.select(db.wageHourlyTable).get();
+        expect(rows, hasLength(1));
+        expect(rows.first.value, 35);
+      },
+    );
 
     // Updating a non-existent ID must return 0 affected rows so the
     // repository layer can surface a failure instead of silently

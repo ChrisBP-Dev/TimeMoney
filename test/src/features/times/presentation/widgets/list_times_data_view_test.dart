@@ -26,12 +26,14 @@ void main() {
 
     setUp(() {
       mockUpdateTimeBloc = MockUpdateTimeBloc();
-      when(() => mockUpdateTimeBloc.state)
-          .thenReturn(const UpdateTimeInitial());
+      when(
+        () => mockUpdateTimeBloc.state,
+      ).thenReturn(const UpdateTimeInitial());
     });
 
-    testWidgets('renders ListView with correct count of TimeCard widgets',
-        (tester) async {
+    testWidgets('renders ListView with correct count of TimeCard widgets', (
+      tester,
+    ) async {
       await tester.pumpApp(
         BlocProvider<UpdateTimeBloc>.value(
           value: mockUpdateTimeBloc,

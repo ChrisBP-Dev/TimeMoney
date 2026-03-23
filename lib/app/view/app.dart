@@ -28,8 +28,7 @@ class App extends StatelessWidget {
             LocaleSystem() => null,
             LocaleSelected(:final locale) => locale,
           },
-          localizationsDelegates:
-              AppLocalizations.localizationsDelegates,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: const HomePage(),
         );
