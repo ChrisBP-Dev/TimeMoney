@@ -1,158 +1,206 @@
 # Component Inventory - TimeMoney
 
-> Generated: 2026-03-16 | Scan Level: Exhaustive
+> Generated: 2026-03-23 | Scan Level: Exhaustive | Mode: Full Rescan
 
-## Overview
+## Summary
 
-TimeMoney uses Flutter's widget system with Material 3 design. Components are organized by feature domain following the BLoC pattern. The app uses `flutter_hooks` for form state management in input widgets.
+| Component Type | Count |
+|---|---|
+| BLoCs | 6 |
+| Cubits | 2 (PaymentCubit, LocaleCubit) |
+| Use Cases | 8 |
+| Repository Interfaces | 2 |
+| Repository Implementations | 4 |
+| Datasources | 4 |
+| Pages | 8 |
+| Feature Widgets | 30 |
+| Shared Widgets | 4 |
+| Domain Entities | 3 |
 
-## State Management Components
+## BLoCs
 
-### BLoCs (Event-Driven)
+### Times Feature (4 BLoCs)
 
-| BLoC | Feature | Events | States | Use Case |
-|------|---------|--------|--------|----------|
-| `CreateTimeBloc` | times | changeHour, changeMinutes, create, reset | CreateTimeState (ActionState + hour + minutes) | CreateTimeUseCase |
-| `DeleteTimeBloc` | times | delete(ModelTime) | initial, loading, success, error | DeleteTimeUseCase |
-| `UpdateTimeBloc` | times | init, changeHour, changeMinutes, update | UpdateTimeState (ActionState + time?) | UpdateTimeUseCase |
-| `ListTimesBloc` | times | getTimes | initial, loading, empty, error, hasDataStream | ListTimesUseCase |
-| `FetchWageHourlyBloc` | wage | getWage | initial, loading, empty, error, hasDataStream | FetchWageHourlyUseCase |
-| `UpdateWageHourlyBloc` | wage | changeHourly, update | UpdateWageHourlyState (ActionState + wageHourly) | UpdateWageHourlyUseCase |
+#### CreateTimeBloc
 
-### Cubits (State-Driven)
+- **File:** `lib/src/features/times/presentation/bloc/create_time_bloc.dart`
+- **Events:** `CreateTimeHourChanged`, `CreateTimeMinutesChanged`, `CreateTimeSubmitted`, `CreateTimeReset`
+- **States:** `CreateTimeInitial`, `CreateTimeLoading`, `CreateTimeSuccess`, `CreateTimeError` (sealed, with `ActionState`)
+- **Use Case:** `CreateTimeUseCase`
+- **State fields carried:** `hour`, `minutes`, `actionState`
 
-| Cubit | Feature | Methods | State |
-|-------|---------|---------|-------|
-| `ResultPaymentCubit` | result_payment | setList(times), setWage(wage) | ResultPaymentState (times list + wageHourly) |
+#### ListTimesBloc
 
-## Page Components
+- **File:** `lib/src/features/times/presentation/bloc/list_times_bloc.dart`
+- **Events:** `ListTimesRequested`
+- **States:** `ListTimesInitial`, `ListTimesLoading`, `ListTimesEmpty`, `ListTimesError`, `ListTimesSuccess`
+- **Use Case:** `ListTimesUseCase`
+- **Pattern:** `emit.forEach` for reactive stream consumption
 
-### ControlHoursPage
+#### UpdateTimeBloc
 
-**Location**: `lib/src/presentation/control_hours/control_hours_page.dart`
-**Type**: StatelessWidget (Main Page)
-**Description**: Primary application screen containing all features.
+- **File:** `lib/src/features/times/presentation/bloc/update_time_bloc.dart`
+- **Events:** `UpdateTimeInitialized`, `UpdateTimeHourChanged`, `UpdateTimeMinutesChanged`, `UpdateTimeSubmitted`
+- **States:** `UpdateTimeInitial`, `UpdateTimeLoading`, `UpdateTimeSuccess`, `UpdateTimeError` (sealed, with `ActionState`)
+- **Use Case:** `UpdateTimeUseCase`
+- **State fields carried:** `hour`, `minutes`, `id`, `actionState`
 
-**Layout**:
-```
-Scaffold
-├── AppBar: "Work Payment Controller"
-└── Column
-    ├── FetchWagePage            (wage display card)
-    ├── Expanded: ListTimesPage  (scrollable time entries)
-    └── SafeArea: Bottom Action Bar
-        ├── CalculatePaymentButton (FAB)
-        └── FloatingActionButton "Add Time" → CreateTimeCard dialog
-```
+#### DeleteTimeBloc
 
-## Feature: Time Entry CRUD
+- **File:** `lib/src/features/times/presentation/bloc/delete_time_bloc.dart`
+- **Events:** `DeleteTimeSubmitted`
+- **States:** `DeleteTimeInitial`, `DeleteTimeLoading`, `DeleteTimeSuccess`, `DeleteTimeError` (sealed, with `ActionState`)
+- **Use Case:** `DeleteTimeUseCase`
 
-### Create Time
+### Wage Feature (2 BLoCs)
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `CreateTimeView` | StatelessWidget | create_time/ | AlertDialog wrapper with title and close button |
-| `CreateTimeCard` | StatelessWidget | create_time/widgets/ | Card layout: hour field + minutes field + create button |
-| `CreateHourField` | HookWidget | create_time/widgets/ | Numeric input for hours (useTextEditingController) |
-| `CreateMinutesField` | HookWidget | create_time/widgets/ | Numeric input for minutes (useTextEditingController) |
-| `CreateTimeButton` | StatelessWidget | create_time/widgets/ | Submit button with ActionState visual feedback |
-| `CustomCreateField` | StatelessWidget | create_time/widgets/ | Reusable labeled numeric TextField |
+#### FetchWageBloc
 
-### List Times
+- **File:** `lib/src/features/wage/presentation/bloc/fetch_wage_bloc.dart`
+- **Events:** `FetchWageRequested`
+- **States:** `FetchWageInitial`, `FetchWageLoading`, `FetchWageEmpty`, `FetchWageError`, `FetchWageSuccess`
+- **Use Case:** `FetchWageUseCase`
+- **Pattern:** `emit.forEach` for reactive stream consumption
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `ListTimesPage` | StatelessWidget | list_times/ | State-based rendering: dispatches getTimes, renders appropriate view |
-| `ListTimesDataView` | StatelessWidget | list_times/views/ | StreamBuilder → ListView.builder of TimeCards |
-| `ErrorListTimesView` | StatelessWidget | list_times/views/ | Error display delegating to ErrorView |
-| `ShimmerListTimesView` | StatelessWidget | list_times/views/ | CircularProgressIndicator loading state |
-| `EmptyListTimesView` | StatelessWidget | list_times/views/ | ShowInfoSection with clock emoji |
-| `TimeCard` | StatelessWidget | list_times/widgets/ | Card: InfoTime + EditButton |
-| `InfoTime` | StatelessWidget | list_times/widgets/ | Row: hour CustomInfo + minutes CustomInfo |
-| `CustomInfo` | StatelessWidget | list_times/widgets/ | Labeled value row (category + bold value) |
-| `EditButton` | StatelessWidget | list_times/widgets/ | FilledButton with edit icon → opens UpdateTimeView |
+#### UpdateWageBloc
 
-### Update Time
+- **File:** `lib/src/features/wage/presentation/bloc/update_wage_bloc.dart`
+- **Events:** `UpdateWageHourlyChanged`, `UpdateWageSubmitted`
+- **States:** `UpdateWageInitial`, `UpdateWageLoading`, `UpdateWageSuccess`, `UpdateWageError` (sealed, with `ActionState`)
+- **Use Cases:** `UpdateWageUseCase`, `SetWageUseCase`
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `UpdateTimeView` | StatelessWidget | update_time/ | AlertDialog: UpdateTimeCard + DeleteTimeButton + UpdateTimeButton |
-| `UpdateTimeCard` | StatelessWidget | update_time/widgets/ | Card layout: hour field + minutes field |
-| `UpdateHourField` | HookWidget | update_time/widgets/ | Pre-populated numeric input for hours |
-| `UpdateMinutesField` | HookWidget | update_time/widgets/ | Pre-populated numeric input for minutes |
-| `UpdateTimeButton` | StatelessWidget | update_time/widgets/ | Green submit button with ActionState feedback |
-| `CustomUpdateField` | StatelessWidget | update_time/widgets/ | Reusable labeled numeric TextField (no outside-tap) |
+## Cubits
 
-### Delete Time
+### PaymentCubit
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `DeleteTimeButton` | StatelessWidget | delete_time/widgets/ | Red button with ActionState feedback |
+- **File:** `lib/src/features/payment/presentation/cubit/payment_cubit.dart`
+- **State:** `PaymentState` (holds `totalHours`, `totalMinutes`, `totalPayment`, `wageHourly`, `workedDays`)
+- **Methods:** `setList(List<TimeEntry>)`, `setWage(WageHourly)`
+- **Cross-feature:** Consumes data from times and wage features
 
-## Feature: Wage Hourly Management
+### LocaleCubit
 
-### Fetch/Display Wage
+- **File:** `lib/src/core/locale/locale_cubit.dart`
+- **State:** `LocaleState` (holds current `Locale`)
+- **Methods:** `toggleLocale()`
+- **Scope:** Core-level, app-wide locale management
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `FetchWagePage` | StatelessWidget | fetch_wage/ | State-based rendering: dispatches getWage |
-| `WageHourlyDataView` | StatelessWidget | fetch_wage/views/ | StreamBuilder → WageHourlyCard |
-| `ErrorFetchWageHourlyView` | StatelessWidget | fetch_wage/views/ | Error display delegating to ErrorView |
-| `ShimmerWageHourlyView` | StatelessWidget | fetch_wage/views/ | CircularProgressIndicator loading state |
-| `WageHourlyCard` | StatelessWidget | fetch_wage/widgets/ | Primary color card: WageHourlyInfo + UpdateWageButton |
-| `WageHourlyInfo` | StatelessWidget | fetch_wage/widgets/ | Column: "hourly:" label + wage value |
-| `UpdateWageButton` | StatelessWidget | fetch_wage/widgets/ | ElevatedButton "change" → opens WageHourlyView dialog |
+## Use Cases
 
-### Update Wage
+| Use Case | Feature | Description |
+|---|---|---|
+| `CreateTimeUseCase` | Times | Creates a new time entry |
+| `ListTimesUseCase` | Times | Streams all time entries reactively |
+| `UpdateTimeUseCase` | Times | Updates an existing time entry |
+| `DeleteTimeUseCase` | Times | Deletes a time entry by ID |
+| `FetchWageUseCase` | Wage | Streams current hourly wage |
+| `SetWageUseCase` | Wage | Initializes/sets wage if not exists |
+| `UpdateWageUseCase` | Wage | Updates existing wage record |
+| `CalculatePaymentUseCase` | Payment | Computes payment from times list and wage |
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `WageHourlyView` | StatelessWidget | update_wage/ | AlertDialog: WageHourlyField + SetWageButton |
-| `WageHourlyField` | HookWidget | update_wage/widgets/ | Row: "hourly:" label + decimal numeric input |
-| `SetWageButton` | StatelessWidget | update_wage/widgets/ | Green submit button with ActionState feedback |
+## Datasources
 
-## Feature: Payment Calculation
+| Datasource | Feature | Platform | Persistence |
+|---|---|---|---|
+| `TimesObjectBoxDatasource` | Times | Native (iOS/Android/Windows) | ObjectBox |
+| `TimesDriftDatasource` | Times | Web | Drift/SQLite |
+| `WageObjectBoxDatasource` | Wage | Native (iOS/Android/Windows) | ObjectBox |
+| `WageDriftDatasource` | Wage | Web | Drift/SQLite |
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `CalculatePaymentButton` | StatelessWidget | result_payment/ | FAB that observes ResultPaymentCubit, disables when empty |
-| `ResultPaymentScreen` | StatelessWidget | result_payment/ | AlertDialog showing: total hours, minutes, rate, days, total payment |
+## Repository Implementations
 
-## Shared/Reusable Widgets
+| Repository | Feature | Datasource |
+|---|---|---|
+| `ObjectBoxTimesRepository` | Times | `TimesObjectBoxDatasource` |
+| `DriftTimesRepository` | Times | `TimesDriftDatasource` |
+| `ObjectBoxWageRepository` | Wage | `WageObjectBoxDatasource` |
+| `DriftWageRepository` | Wage | `WageDriftDatasource` |
 
-| Component | Type | Location | Description |
-|-----------|------|----------|-------------|
-| `CatchErrorBuilder<T>` | StatelessWidget | widgets/ | Generic AsyncSnapshot error handler with loading/error/data states |
-| `ShowInfoSection` | StatelessWidget | widgets/ | Centered info display: image + message + action button |
-| `IconText` | StatelessWidget | widgets/ | Scalable text-based emoji/icon display |
-| `ErrorView` | StatelessWidget | widgets/views/ | Pattern-matched GlobalFailure display with type-specific icons |
-| `CustomCard` | StatelessWidget | widgets/ | Generic card template (appears unused) |
+## Pages
 
-## Design System
+| Page | Feature | Description |
+|---|---|---|
+| `HomePage` | Home | Main app screen integrating all features |
+| `CreateTimePage` | Times | Dialog-based time entry creation |
+| `ListTimesPage` | Times | Displays list of tracked time entries |
+| `UpdateTimePage` | Times | Dialog-based time entry modification |
+| `FetchWagePage` | Wage | Displays current hourly wage |
+| `UpdateWagePage` | Wage | Dialog-based wage update |
+| `PaymentResultPage` | Payment | Displays calculated payment summary |
 
-- **Theme**: Material 3 with `colorSchemeSeed: Color(6, 16, 31)` (dark blue)
-- **Color Conventions**:
-  - Delete actions: Red `Color.fromARGB(255, 163, 70, 64)`
-  - Update/Success actions: Green `Color.fromARGB(255, 32, 137, 86)`
-  - Wage card: Primary color background with white text
-- **Input Fields**: OutlineInputBorder with horizontal padding, number keyboard
-- **Dialogs**: AlertDialog pattern for all CRUD operations
-- **Loading States**: CircularProgressIndicator (adaptive variant in CatchErrorBuilder)
-- **Empty States**: ShowInfoSection with emoji icons
+## Widgets by Feature
 
-## Widget Interaction Patterns
+### Home Widgets
 
-### ActionState Visual Feedback Pattern
-All submit buttons follow the same pattern:
-1. `initial` → Show action label ("Create", "Update", "Delete")
-2. `loading` → Show CircularProgressIndicator
-3. `success` → Show "Success" label
-4. `error` → Show "Error" label
-5. Auto-reset to initial after 500ms delay
+| Widget | Description |
+|---|---|
+| `CalculatePaymentButton` | Triggers payment calculation |
 
-### Stream-Based Data Pattern
-Both ListTimes and FetchWage follow:
-1. BLoC dispatches fetch event on build
-2. BLoC returns `hasDataStream` state with `Stream<T>`
-3. View uses `StreamBuilder` wrapped in `CatchErrorBuilder`
-4. Data view also updates `ResultPaymentCubit` for cross-feature payment calculation
+### Times Widgets (21)
+
+| Widget | Category | Description |
+|---|---|---|
+| `CreateHourField` | Input | Hour input for create dialog |
+| `CreateMinutesField` | Input | Minutes input for create dialog |
+| `UpdateHourField` | Input | Hour input for update dialog |
+| `UpdateMinutesField` | Input | Minutes input for update dialog |
+| `CustomCreateField` | Input | Reusable styled field for create forms |
+| `CustomUpdateField` | Input | Reusable styled field for update forms |
+| `CreateTimeButton` | Action | Submit button for create dialog |
+| `UpdateTimeButton` | Action | Submit button for update dialog |
+| `DeleteTimeButton` | Action | Delete action with confirmation |
+| `EditButton` | Action | Opens update dialog for a time entry |
+| `CreateTimeCard` | Composite | Card composing create form fields |
+| `UpdateTimeCard` | Composite | Card composing update form fields |
+| `TimeCard` | Display | Single time entry display card |
+| `InfoTime` | Display | Time entry detail view |
+| `CustomInfo` | Display | Formatted info display |
+| `ListTimesDataView` | View | Renders list of time cards |
+| `ListTimesOtherView` | View | Empty/loading state for times list |
+| `ErrorListTimesView` | View | Error state for times list |
+| `DeleteTimeConfirmationDialog` | Dialog | Confirmation before deletion |
+
+### Wage Widgets (8)
+
+| Widget | Category | Description |
+|---|---|---|
+| `WageHourlyField` | Input | Wage amount input field |
+| `SetWageButton` | Action | Initial wage setup button |
+| `UpdateWageButton` | Action | Submit button for wage update |
+| `WageHourlyCard` | Display | Wage display card |
+| `WageHourlyInfo` | Display | Wage detail information |
+| `WageHourlyOtherView` | View | Empty/loading state for wage |
+| `ErrorFetchWageHourlyView` | View | Error state for wage fetch |
+
+### Shared Widgets (4)
+
+| Widget | Description |
+|---|---|
+| `CatchErrorBuilder` | AsyncSnapshot error catching wrapper |
+| `ErrorView` | Reusable GlobalFailure display component |
+| `IconText` | Icon + text combination widget |
+| `ShowInfoSection` | Information section layout with spacers |
+
+## Injection Components
+
+| Component | File | Description |
+|---|---|---|
+| `BlocInjections` | `lib/src/shared/injections/bloc_injections.dart` | Aggregates all feature BLoCs for MultiBlocProvider |
+| `UseCasesInjection` | `lib/src/shared/injections/use_cases_injection.dart` | Aggregates all use cases for MultiRepositoryProvider |
+| `TimesBlocs` | `lib/src/features/times/presentation/bloc/times_blocs.dart` | Static `list()` for times BLoC registration |
+| `WageBlocs` | `lib/src/features/wage/presentation/bloc/wage_blocs.dart` | Static `list()` for wage BLoC registration |
+| `PaymentCubits` | `lib/src/features/payment/presentation/cubit/payment_cubits.dart` | Static `list()` for payment Cubit registration |
+| `TimesInjection` | `lib/src/features/times/times_injection.dart` | Times use case provider registration |
+| `WageInjection` | `lib/src/features/wage/wage_injection.dart` | Wage use case provider registration |
+
+## Design Patterns
+
+- **4-State BLoC Pattern:** Initial → Loading → Success/Error for all BLoCs
+- **ActionState<T>:** Generic sealed class for embedded CRUD action tracking
+- **AppDurations.actionFeedback:** 400ms delay between loading→result and result→initial emissions
+- **Sealed Classes:** Native Dart 3 sealed + final classes for all BLoC states/events
+- **Freezed:** Reserved exclusively for domain entities (TimeEntry, WageHourly)
+- **Either Monad:** All repository methods return `Either<GlobalFailure, T>` via fpdart
+- **Reactive Streams:** `emit.forEach` for ObjectBox `watch()` and Drift `watchAll()`
+- **buildSubject():** Widget tests centralize widget composition in local function
+- **canPop Guard:** Dialog buttons check `Navigator.of(context).canPop` before `pop()`

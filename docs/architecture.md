@@ -1,168 +1,180 @@
 # Architecture - TimeMoney
 
-> Generated: 2026-03-16 | Scan Level: Exhaustive
+> Generated: 2026-03-23 | Scan Level: Exhaustive | Mode: Full Rescan
 
-## Executive Summary
+## Architecture Overview
 
-TimeMoney follows **Clean Architecture** with a **feature-based organization** pattern. The app uses the **BLoC pattern** for state management, **ObjectBox** for local persistence, and **Dartz Either** for functional error handling. The architecture enforces clear separation between domain logic, data access, and presentation.
-
-## Architecture Pattern
+TimeMoney uses **Feature-First Clean Architecture** with a dual datasource persistence strategy. Each feature is self-contained with its own Data, Domain, and Presentation layers, enabling independent development and testing.
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   PRESENTATION                       │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
-│  │  Widgets  │  │  Views   │  │  BLoCs / Cubits  │  │
-│  └──────────┘  └──────────┘  └──────────────────┘  │
-├─────────────────────────────────────────────────────┤
-│                   APPLICATION                        │
-│  ┌──────────────────────────────────────────────┐   │
-│  │              Use Cases                        │   │
-│  │  (CreateTimeUseCase, ListTimesUseCase, ...)   │   │
-│  └──────────────────────────────────────────────┘   │
-├─────────────────────────────────────────────────────┤
-│                     DOMAIN                           │
-│  ┌────────────┐  ┌──────────────────────────────┐   │
-│  │   Entities  │  │  Repository Interfaces       │   │
-│  │ (ModelTime, │  │ (TimesRepository,            │   │
-│  │ WageHourly) │  │  WageHourlyRepository)       │   │
-│  └────────────┘  └──────────────────────────────┘   │
-├─────────────────────────────────────────────────────┤
-│                 INFRASTRUCTURE                       │
-│  ┌──────────────┐  ┌────────────────────────────┐   │
-│  │  ObjectBox    │  │  Repository Implementations│   │
-│  │  Entities     │  │  (ITimesObjectboxRepository,│  │
-│  │ (TimeBox,     │  │  IWageHourlyObjectbox...)   │  │
-│  │ WageHourlyBox)│  └────────────────────────────┘   │
-│  └──────────────┘                                    │
-├─────────────────────────────────────────────────────┤
-│                    CORE                              │
-│  ┌──────────┐  ┌──────────┐  ┌─────────────────┐   │
-│  │ Failures │  │ Services │  │  ActionState<T>  │   │
-│  │ (Freezed)│  │(ObjectBox)│  │  (Union Type)    │   │
-│  └──────────┘  └──────────┘  └─────────────────┘   │
-└─────────────────────────────────────────────────────┘
++---------------------------------------------------+
+|              PRESENTATION LAYER                    |
+|   BLoC/Cubit  |  Pages  |  Widgets                |
++---------------------------------------------------+
+|               DOMAIN LAYER                         |
+|   Entities (Freezed)  |  Repository Interfaces     |
+|   Use Cases (single-responsibility)                |
++---------------------------------------------------+
+|                DATA LAYER                          |
+|   +--------------+  +------------------------+    |
+|   |   ObjectBox   |  |       Drift            |    |
+|   |  (iOS/Android |  |  (Web - SQLite via     |    |
+|   |   /Windows)   |  |   WASM + OPFS)         |    |
+|   +--------------+  +------------------------+    |
++---------------------------------------------------+
+|                CORE LAYER                          |
+|   Errors | Services | Extensions | Constants       |
++---------------------------------------------------+
 ```
 
-## Layer Details
+## Layer Responsibilities
 
-### Domain Layer (`lib/src/features/*/domain/`)
+### Presentation Layer
 
-The innermost layer with zero external dependencies. Contains:
+- **BLoC (complex flows):** Event-driven state management for CRUD operations. Uses Dart 3 `sealed class` hierarchies for states and events.
+- **Cubit (simple state):** For derived/computed state like `PaymentCubit` and `LocaleCubit`.
+- **Pages:** Screen-level widgets that compose feature UI.
+- **Widgets:** Reusable UI components within each feature.
 
-- **Entities**: Immutable data classes using Freezed
-  - `ModelTime` - Work time entry with `id`, `hour`, `minutes`
-  - `WageHourly` - Hourly wage rate with `id`, `value`
-- **Repository Interfaces**: Abstract contracts defining data operations
-  - `TimesRepository` - CRUD operations for time entries
-  - `WageHourlyRepository` - Fetch/set/update wage rate
-- **Type Aliases**: Return types using `Either<GlobalFailure, T>` for explicit error handling
+**State Pattern:** All BLoCs follow the 4-state pattern: `Initial`, `Loading`, `Error(GlobalFailure)`, `Success(data)`. The `ActionState<T>` sealed class provides embedded CRUD tracking with boolean convenience getters (`isInitial`, `isLoading`, `isSuccess`, `isError`).
 
-### Application Layer (`lib/src/features/*/aplication/`)
+### Domain Layer
 
-Use cases implementing single-responsibility operations:
+- **Entities:** Immutable data classes using Freezed (domain layer only — NOT for BLoC states/events).
+- **Repository Interfaces:** Abstract contracts defining data access methods. Return `Either<GlobalFailure, T>` via fpdart.
+- **Use Cases:** Single-responsibility classes encapsulating business logic. Each use case wraps a single repository call.
 
-| Use Case | Feature | Operation | Return Type |
-|----------|---------|-----------|-------------|
-| `CreateTimeUseCase` | times | Create entry | `Future<Either<GlobalFailure, ModelTime>>` |
-| `DeleteTimeUseCase` | times | Delete entry | `Future<Either<GlobalFailure, Unit>>` |
-| `ListTimesUseCase` | times | Stream list | `Either<GlobalFailure, Stream<List<ModelTime>>>` |
-| `UpdateTimeUseCase` | times | Update entry | `Future<Either<GlobalFailure, ModelTime>>` |
-| `FetchWageHourlyUseCase` | wage | Stream wage | `Either<GlobalFailure, Stream<WageHourly>>` |
-| `SetWageHourlyUseCase` | wage | Set initial | `Future<Either<GlobalFailure, WageHourly>>` |
-| `UpdateWageHourlyUseCase` | wage | Update wage | `Future<Either<GlobalFailure, WageHourly>>` |
+### Data Layer
 
-### Infrastructure Layer (`lib/src/features/*/infraestructure/`)
+- **Datasources:** Low-level persistence wrappers. `watchAll()` returns reactive streams, `insert()`/`update()`/`remove()` return metadata (ID or affected row count), never domain entities.
+- **Models:** Platform-specific data models — `TimeBox`/`WageHourlyBox` (ObjectBox), `TimesTable`/`WageHourlyTable` (Drift).
+- **Repository Implementations:** Concrete implementations that map between datasource and domain models.
 
-Concrete implementations of domain interfaces:
+### Core Layer
 
-- **Repository Implementations**: Use ObjectBox for persistence
-  - `ITimesObjectboxRepository` implements `TimesRepository`
-  - `IWageHourlyObjectboxRepository` extends `WageHourlyRepository`
-- **ObjectBox Entities**: Database-specific models with bidirectional converters
-  - `TimeBox` ↔ `ModelTime` (via extension methods)
-  - `WageHourlyBox` ↔ `WageHourly` (via extension methods)
-
-### Presentation Layer (`lib/src/presentation/`)
-
-UI components organized by feature:
-
-- **BLoCs**: Handle UI events and manage state transitions
-  - Event-driven (Bloc): CreateTime, DeleteTime, UpdateTime, ListTimes, FetchWage, UpdateWage
-  - State-driven (Cubit): ResultPayment
-- **Views**: State-specific UI (data, error, loading, empty)
-- **Widgets**: Reusable UI components (cards, fields, buttons)
-
-### Core Layer (`lib/src/core/`)
-
-Cross-cutting concerns shared across features:
-
-- **Failures**: `GlobalFailure<F>` (serverError, notConnection, timeOutExceeded, internalError) and `ValueFailure<T>` for validation
-- **ActionState\<T\>**: Generic union type for async operation states (initial → loading → success/error)
-- **ObjectBox Service**: Database wrapper managing Store and Boxes with reactive streams
-- **Responsive Utilities**: Breakpoints, ScreenType enum, context extensions
+- **Errors:** `GlobalFailure` sealed class (ServerError, NotConnection, TimeOutExceeded, InternalError) and `ValueFailure` sealed class for domain validation.
+- **Services:** Database initialization — `ObjectboxService` (native) and `AppDatabase` (Drift/web).
+- **Extensions:** Context utilities (`isMobile`, `getWidth`), boolean helpers.
+- **Constants:** `AppDurations` (animation timing), breakpoints for responsive design.
+- **UI:** `ActionState<T>` reusable sealed class for embedded action tracking.
+- **Locale:** `LocaleCubit` for runtime language switching (EN/ES).
 
 ## Dependency Injection
 
-Three-tier injection setup in `AppBloc`:
+Three-tier DI wired in `app_bloc.dart`:
 
 ```
-main_*.dart → Creates ObjectBox + Repository implementations
-    ↓
-AppBloc (MultiRepositoryProvider)
-    ├── UseCasesInjection.list(repositories)
-    │   ├── TimesUseCasesInjections (4 use cases)
-    │   └── WageHourlyUseCasesInjections (3 use cases)
-    ↓
-AppBloc (MultiBlocProvider)
-    └── BlocInjections.list()
-        ├── TimesBlocs (4 blocs)
-        ├── WageHourlyBlocs (2 blocs)
-        └── ResultPaymentCubits (1 cubit)
+Repositories (MultiRepositoryProvider)
+  → Use Cases (UseCasesInjection)
+    → BLoCs (MultiBlocProvider via feature-grouped .list() methods)
 ```
+
+### Platform-Aware DI
+
+Platform selection happens at compile time via conditional imports:
+
+```dart
+// bootstrap.dart
+import 'bootstrap_repositories_web.dart'
+    if (dart.library.io) 'bootstrap_repositories_native.dart';
+```
+
+- `bootstrap_repositories_native.dart` → ObjectBox (iOS, Android, Windows)
+- `bootstrap_repositories_web.dart` → Drift (Web — SQLite via WASM + OPFS)
+
+Both return a `({TimesRepository, WageRepository, Future<void> Function() close})` record.
 
 ## Data Flow
 
-### Read Flow (Reactive)
-```
-ObjectBox Store → Stream<List<T>> → Repository → UseCase → BLoC → StreamBuilder → UI
-```
+### CRUD Operation (e.g., Create Time Entry)
 
-### Write Flow (CRUD)
 ```
-UI Event → BLoC → UseCase → Repository → ObjectBox Store → (triggers stream update)
-```
-
-### Payment Calculation Flow
-```
-ListTimesDataView → ResultPaymentCubit.setList(times)
-WageHourlyDataView → ResultPaymentCubit.setWage(wage)
-CalculatePaymentButton → reads cubit state → ResultPaymentScreen
-    → times.calculatePayment(wageHourly) → displays total
+User Input → Widget → BLoC Event
+  → BLoC Handler → Use Case → Repository Interface
+    → Repository Implementation → Datasource (ObjectBox or Drift)
+      → Datasource returns ID/metadata
+    → Repository wraps result in Either<GlobalFailure, TimeEntry>
+  → BLoC emits Loading → Success/Error states (with ActionState feedback delay)
+→ Widget rebuilds via BlocBuilder/BlocListener
 ```
 
-## Error Handling Strategy
+### Reactive Streams (e.g., List Times)
 
-1. **Infrastructure**: Catches exceptions, wraps in `GlobalFailure` via `fromException()`
-2. **Domain**: Returns `Either<GlobalFailure, T>` - no thrown exceptions
-3. **Application**: Passes through Either without modification
-4. **Presentation**: BLoC folds Either into success/error states
-5. **UI**: Pattern-matched error display via `ErrorView` with type-specific icons and messages
+```
+BLoC receives ListTimesRequested event
+  → emit.forEach(useCase.call()) subscribes to reactive stream
+    → ObjectBox: store.box<TimeBox>().query().watch().map(...)
+    → Drift: select(timesTable).watch().map(...)
+  → Stream emits updated list whenever data changes
+→ BLoC emits new ListTimesSuccess(entries) state
+→ UI rebuilds automatically
+```
 
-## Multi-Environment Configuration
+## Error Handling
 
-| Environment | Entry Point | Database | Purpose |
-|-------------|-------------|----------|---------|
-| Development | `main_development.dart` | `test-1` | Local development |
-| Staging | `main_staging.dart` | `stg-1` | Pre-production testing |
-| Production | `main_production.dart` | `prod-1` | Released builds |
+- Repositories catch all exceptions with `on Object catch (e)` and wrap in `GlobalFailure.fromException(e)`.
+- `GlobalFailure.fromException()` maps: `TimeoutException` → `TimeOutExceeded`, everything else → `InternalError`.
+- Use cases pass through `Either<GlobalFailure, T>` from repositories.
+- BLoCs fold the Either: `left` → Error state, `right` → Success state.
+- UI displays failures via `ErrorView` widget using localized messages.
 
-Each environment uses a separate ObjectBox database name to isolate data.
+## Database Lifecycle
 
-## Testing Strategy
+The `createRepositories()` function returns a `close` callback registered with `WidgetsBindingObserver` in `bootstrap.dart`. The database is closed on `AppLifecycleState.detached`.
 
-- **Framework**: flutter_test + bloc_test + mocktail
-- **Linting**: very_good_analysis v4 (strict rules)
-- **Helper Utilities**: `pumpApp()` extension for widget testing with localization
-- **Current Coverage**: Minimal - only test helper infrastructure exists
-- **CI/CD**: GitHub Actions with VGV reusable workflows (build, semantic PR, spell-check)
+## Feature Structure Template
+
+Each feature follows this structure:
+
+```
+feature_name/
+├── data/
+│   ├── datasources/
+│   │   ├── feature_objectbox_datasource.dart
+│   │   ├── feature_drift_datasource.dart
+│   │   └── datasources.dart
+│   ├── models/
+│   │   ├── feature_box.dart        (ObjectBox)
+│   │   ├── feature_table.dart      (Drift)
+│   │   └── models.dart
+│   └── repositories/
+│       ├── objectbox_feature_repository.dart
+│       ├── drift_feature_repository.dart
+│       └── repositories.dart
+├── domain/
+│   ├── entities/
+│   │   ├── feature_entity.dart     (Freezed)
+│   │   └── entities.dart
+│   ├── repositories/
+│   │   ├── feature_repository.dart (Interface)
+│   │   └── repositories.dart
+│   └── use_cases/
+│       ├── action_feature_use_case.dart
+│       └── use_cases.dart
+└── presentation/
+    ├── bloc/
+    │   ├── action_feature_bloc.dart
+    │   ├── action_feature_event.dart
+    │   ├── action_feature_state.dart
+    │   ├── feature_blocs.dart      (injection helper)
+    │   └── bloc.dart
+    ├── pages/
+    │   ├── feature_page.dart
+    │   └── pages.dart
+    └── widgets/
+        ├── feature_widget.dart
+        └── widgets.dart
+```
+
+## Cross-Feature Composition
+
+Features can depend on other features' domain layer only. Example: `PaymentCubit` depends on `ListTimesUseCase` (times feature) and `FetchWageUseCase` (wage feature) to calculate payments.
+
+## Multi-Platform Support
+
+| Platform | Persistence | Build Command |
+|---|---|---|
+| iOS | ObjectBox (FFI) | `flutter build ios --flavor production --target lib/main_production.dart` |
+| Android | ObjectBox (FFI) | `flutter build appbundle --flavor production --target lib/main_production.dart` |
+| Web | Drift (SQLite WASM + OPFS) | `flutter build web --target lib/main_production.dart` |
+| Windows | ObjectBox (FFI) | `flutter build windows --target lib/main_production.dart` |
