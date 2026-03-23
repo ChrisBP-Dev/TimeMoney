@@ -19,7 +19,7 @@ TimeMoney is a cross-platform time and payment tracker built for hourly workers.
 
 This project represents a **real brownfield modernization** of a 3-year-old Flutter codebase, upgraded from Dart 2.x to 3.11+ with professional-grade standards. Unlike tutorial apps, TimeMoney demonstrates practical migration decisions: feature-first Clean Architecture, dual datasource persistence (ObjectBox for native + Drift for web), BLoC 9.x with sealed classes, and comprehensive testing with 373 tests at 92.3% coverage.
 
-The modernization was AI-assisted using the [BMad Method][bmad_link] + Claude Code, following a structured 6-epic migration from SDK foundation through CI/CD pipeline and documentation polish.
+The modernization was AI-assisted using the [BMad Method][bmad_link] + Claude Code, following a structured 6-epic migration from SDK foundation through CI/CD pipeline and documentation polish. See [Modernization Methodology](#modernization-methodology) for the full process.
 
 ## Tech Stack
 
@@ -164,6 +164,54 @@ The [GitHub Actions pipeline](.github/workflows/main.yaml) runs 8 jobs on every 
 6. **Build Web** — web release build
 7. **Build Windows** — Windows release build
 8. **Spell Check** — cspell scan on all markdown files
+
+## Modernization Methodology
+
+This project was modernized using the **[BMad Method][bmad_link]** — a structured methodology for AI-assisted software development — with **Claude Code** as the implementation engine.
+
+### How It Works
+
+The BMad Method orchestrates specialized AI agents through a phased workflow. Each phase produces artifacts that feed the next, with human approval gates at every transition:
+
+```
+Product Brief → PRD → Architecture → Test Design → Epics & Stories
+  → Create Story → Validate → Implement (code + tests) → Code Review → Retrospective
+```
+
+Each phase has a dedicated AI agent role: **PM** (requirements discovery), **Architect** (solution design), **Scrum Master** (story creation and sprint planning), **Dev** (implementation), and **Code Reviewer** (adversarial multi-layer review). The human developer drives decisions and approvals at each gate.
+
+Key principles enforced throughout:
+
+- **Tests ship with implementation, never deferred** — every story includes its tests as part of the acceptance criteria. Test design happens at the architecture phase, and each story spec defines what must be tested before it can pass code review.
+- **Story lifecycle is rigorous** — each story is created with full context (ACs, tasks, dev notes), validated against the spec before implementation begins, implemented with tests, then reviewed through an adversarial 3-layer code review (Blind Hunter + Edge Case Hunter + Acceptance Auditor).
+- **Retrospectives close the loop** — after each epic, lessons learned feed back into subsequent planning, preventing repeated mistakes and refining the process.
+
+### The 6-Epic Migration
+
+The brownfield modernization followed a deliberate sequence — each epic building on the previous:
+
+| Epic | Focus | Stories | Key Outcomes |
+|---|---|---|---|
+| 1 | SDK Foundation | 4 | Dart 2.x → 3.11+, dependency upgrades |
+| 2 | Architecture | 5 | Feature-first restructure, Clean Architecture layers |
+| 3 | State Management | 6 | BLoC 9.x sealed classes, Freezed entities, fpdart |
+| 4 | Platform | 5 | Drift web datasource, platform-aware DI, multi-platform |
+| 5 | Testing | 3 | 373 tests, 92.3% coverage, golden tests |
+| 6 | Polish | 2 | CI/CD pipeline (8 jobs), README, docs |
+
+Testing was not an afterthought confined to Epic 5 — unit and BLoC tests were written alongside every story from Epic 3 onward. Epic 5 added the remaining widget tests, golden tests, and coverage validation to reach 92.3%.
+
+**25 stories** executed across 138 commits, with retrospectives after each epic to capture lessons and adjust course.
+
+### Generated Artifacts
+
+All planning and implementation artifacts are preserved in [`_bmad-output/`](_bmad-output/) for transparency:
+
+- **Planning:** product brief, PRD, architecture decisions, epics breakdown
+- **Implementation:** 25 story specs (with acceptance criteria, tasks, dev records), 5 epic retrospectives, 5 tech specs for cross-cutting concerns
+- **Tracking:** sprint status, deferred work log, implementation readiness report
+
+This structure means every design decision, scope change, and tradeoff is traceable — from the initial product brief through each story's code review record.
 
 ## Contributing
 
