@@ -113,6 +113,9 @@ flutter pub get
 
 # Generate code (Freezed, ObjectBox, Drift, JSON)
 dart run build_runner build --delete-conflicting-outputs
+
+# Regenerate app icons (only needed if time-money-logo.png changes)
+dart run flutter_launcher_icons
 ```
 
 ### Run

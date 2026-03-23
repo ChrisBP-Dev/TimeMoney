@@ -256,10 +256,17 @@ None — clean implementation, no failures.
 - Task 4: Full code quality verification pass — flutter analyze zero issues, dart format zero changes (223 files), no orphaned files (131 dart files scanned), 5 barrel files spot-checked clean, dev_dependencies correctly separated, no deprecated APIs, generated files exclusion verified
 - Task 5: Commit history verification — all 80+ commits follow conventional format (type: description), coherent 6-epic migration story confirmed
 - Task 6: Final holistic validation — Daniel's/Sofia's journey tests pass, all 15 ACs verified, cspell zero failures (added "Bobadilla" and "Plasencia" to cspell.json), 368 tests passing (+ 5 golden = 373 total)
+- Code Review: Adversarial 3-layer review (Blind Hunter + Edge Case Hunter + Acceptance Auditor) — 1 bad_spec (Task 3.2 deviation approved), 6 patches applied, 7 findings rejected as noise
+- Post-Review Enhancement 1: Added "Modernization Methodology" section to README — explains BMad workflow, AI agent roles, story lifecycle (create → validate → implement → code review), test-first principles, 6-epic migration table, generated artifacts in _bmad-output/
+- Post-Review Enhancement 2: Added "Verify Before Push" subsection to Contributing — local commands for format, analyze, tests, cspell before pushing
+- Post-Review Enhancement 3: Custom app icon — created TimeMoney logo in Canva (TM + digital clock, blue #245db4 background), generated launcher icons for all 4 platforms x 3 flavors using flutter_launcher_icons package
 
 ### Change Log
 
 - 2026-03-23: Story 6.2 implementation complete — README rewrite, LICENSE creation, docs/ full regeneration (exhaustive rescan), quality verification
+- 2026-03-23: Code review — 1 bad_spec + 6 patch corrections (ResultPaymentCubit→PaymentCubit, coverage badge 100%→92.3%, cspell alphabetical sort, project-overview pages 8→7, BMad canonical URL, feature structure qualification)
+- 2026-03-23: Post-review enhancements — added Modernization Methodology section to README (BMad workflow, 6-epic table, test-first principles, story lifecycle, generated artifacts), added Verify Before Push subsection to Contributing
+- 2026-03-23: Custom app icon — replaced VGV default icons with TimeMoney logo (time-money-logo.png) across all 4 platforms x 3 flavors using flutter_launcher_icons
 
 ### File List
 
@@ -274,6 +281,16 @@ None — clean implementation, no failures.
 - docs/source-tree-analysis.md (regenerated — exhaustive rescan)
 - docs/project-scan-report.json (regenerated)
 - docs/.archive/project-scan-report-2026-03-16.json (archived old state)
-- .github/cspell.json (added Bobadilla, Plasencia, Rescan)
+- .github/cspell.json (added Bobadilla, Plasencia, Rescan, oneline; fixed alphabetical order)
+- coverage_badge.svg (regenerated — 100% → 92.3%)
+- docs/project-overview.md (pages count 8 → 7)
+- time-money-logo.png (new — custom logo source 2000x2000)
+- flutter_launcher_icons-{production,development,staging}.yaml (new — icon generation configs)
+- android/app/src/{main,production,development,staging}/res/ (regenerated icons — adaptive + foreground)
+- ios/Runner/Assets.xcassets/AppIcon*.appiconset/ (regenerated icons — all sizes)
+- web/favicon.png, web/icons/ (regenerated — includes maskable variants)
+- web/manifest.json (updated colors + maskable icons)
+- windows/runner/resources/app_icon.ico (regenerated)
+- pubspec.yaml (added flutter_launcher_icons dev dependency)
 
 Status: review
