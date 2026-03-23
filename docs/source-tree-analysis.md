@@ -9,24 +9,32 @@ TimeMoney/
 ├── .github/
 │   ├── workflows/
 │   │   └── main.yaml                # CI/CD pipeline (8 jobs)
-│   ├── cspell.json                   # Spell check configuration (190+ terms)
-│   ├── dependabot.yaml               # Daily dependency updates
+│   ├── cspell.json                   # Spell check configuration (200+ terms)
+│   ├── dependabot.yaml               # Daily dependency updates (github-actions + pub)
 │   └── PULL_REQUEST_TEMPLATE.md      # PR checklist template
 ├── android/                          # Android platform config
 ├── ios/                              # iOS platform config
 ├── web/                              # Web platform config (WASM/OPFS)
 ├── windows/                          # Windows platform config
 ├── lib/                              # Application source code
-├── test/                             # Test suite (373 tests)
-├── docs/                             # Project documentation
+├── test/                             # Test suite (373 tests across 70 files)
+├── docs/                             # Project documentation (AI context)
 ├── coverage/                         # Test coverage reports
+├── design-artifacts/                 # UX/design deliverables (Product Brief, PRD, etc.)
 ├── _bmad/                            # BMad method framework
 ├── _bmad-output/                     # BMad planning & implementation artifacts
 ├── analysis_options.yaml             # Linting (very_good_analysis ^10.2.0)
+├── build.yaml                        # Freezed code generation options (when/map enabled)
+├── dart_test.yaml                    # Test tag definitions (golden tag)
 ├── pubspec.yaml                      # Dependencies & project config
 ├── objectbox-model.json              # ObjectBox schema definition
 ├── l10n.yaml                         # Localization configuration
-├── LICENSE                           # MIT License
+├── time-money-logo.png               # Custom app icon source image
+├── flutter_launcher_icons-development.yaml  # Icon config: development flavor (iOS + Android)
+├── flutter_launcher_icons-staging.yaml      # Icon config: staging flavor (iOS + Android)
+├── flutter_launcher_icons-production.yaml   # Icon config: production flavor (all platforms)
+├── coverage_badge.svg                # Coverage badge for README
+├── LICENSE                           # MIT License (2023-2026)
 └── README.md                         # Professional project overview
 ```
 
@@ -37,13 +45,14 @@ lib/
 ├── main_development.dart             # Entry point: development flavor
 ├── main_staging.dart                 # Entry point: staging flavor
 ├── main_production.dart              # Entry point: production flavor
-├── bootstrap.dart                    # Core bootstrap logic (140 lines)
+├── bootstrap.dart                    # Core bootstrap logic
 │                                     #   - AppBlocObserver
 │                                     #   - _AppLifecycleObserver (DB cleanup)
 │                                     #   - bootstrap() function
 │                                     #   - _BootstrapErrorApp (fallback UI)
 ├── bootstrap_repositories_native.dart # ObjectBox repository factory
 ├── bootstrap_repositories_web.dart    # Drift repository factory
+├── objectbox.g.dart                  # ObjectBox generated model binding
 ├── app/
 │   ├── app.dart                      # App barrel export
 │   └── view/
@@ -137,7 +146,7 @@ times/
 │       ├── delete_time_use_case.dart
 │       └── use_cases.dart
 ├── presentation/
-│   ├── bloc/                                # 14 files (4 BLoCs × 3 + 2 barrels)
+│   ├── bloc/                                # 14 files (4 BLoCs x 3 + 2 barrels)
 │   │   ├── create_time_bloc.dart
 │   │   ├── create_time_event.dart
 │   │   ├── create_time_state.dart
@@ -303,7 +312,7 @@ test/
     ├── core/                                # Core tests (errors, locale, services, ui)
     ├── features/
     │   ├── home/                            # Home tests (2)
-    │   ├── payment/                         # Payment tests (3)
+    │   ├── payment/                         # Payment tests (4)
     │   ├── times/                           # Times tests (34)
     │   └── wage/                            # Wage tests (24)
     └── shared/                              # Shared widget tests (4)
@@ -315,8 +324,12 @@ test/
 |---|---|
 | `pubspec.yaml` | Dependencies, SDK constraints, flavor config |
 | `analysis_options.yaml` | Linting rules (very_good_analysis, public_member_api_docs) |
+| `build.yaml` | Freezed code generation options (when/map methods enabled) |
+| `dart_test.yaml` | Test tag definitions (golden tag for golden tests) |
 | `objectbox-model.json` | ObjectBox schema (auto-generated, committed) |
-| `l10n.yaml` | Localization configuration |
-| `.github/workflows/main.yaml` | CI/CD pipeline definition |
-| `.github/cspell.json` | Spell check dictionary (190+ terms) |
+| `l10n.yaml` | Localization configuration (ARB source, output dir) |
+| `time-money-logo.png` | Custom app icon source image for flutter_launcher_icons |
+| `flutter_launcher_icons-*.yaml` | Per-flavor icon generation configs (3 files) |
+| `.github/workflows/main.yaml` | CI/CD pipeline definition (8 jobs) |
+| `.github/cspell.json` | Spell check dictionary (200+ terms) |
 | `lib/bootstrap.dart` | Application initialization and lifecycle |

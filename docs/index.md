@@ -10,6 +10,7 @@
 - **Architecture:** Feature-first Clean Architecture + BLoC 9.x Pattern
 - **Database:** ObjectBox 5.x (native: iOS, Android, Windows) + Drift 2.32+ (web: SQLite via WASM + OPFS)
 - **Platforms:** iOS, Android, Web, Windows
+- **License:** MIT (2023-2026)
 
 ## Quick Reference
 
@@ -20,6 +21,7 @@
 - **Localization:** English, Spanish (ARB files)
 - **Testing:** 373 tests, 92.3% coverage (unit, BLoC, widget, golden)
 - **CI/CD:** GitHub Actions — 8-job pipeline (quality gate, platform builds, golden tests, spell-check)
+- **App Icons:** Custom `time-money-logo.png` via flutter_launcher_icons (per-flavor configs)
 
 ## Generated Documentation
 
@@ -28,15 +30,16 @@
 - [Source Tree Analysis](./source-tree-analysis.md) - Complete annotated directory structure
 - [Data Models](./data-models.md) - Domain entities, ObjectBox models, Drift tables, repository layer
 - [Component Inventory](./component-inventory.md) - All BLoCs, Cubits, use cases, widgets, and design patterns
-- [Development Guide](./development-guide.md) - Setup, build, test, CI/CD, coding standards
+- [Development Guide](./development-guide.md) - Setup, build, test, CI/CD, coding standards, app icons
 
 ## Existing Documentation
 
 - [README.md](../README.md) - Professional project overview, architecture, getting started, CI/CD
 - [PR Template](../.github/PULL_REQUEST_TEMPLATE.md) - Pull request checklist and change types
 - [CI/CD Pipeline](../.github/workflows/main.yaml) - GitHub Actions: quality gate, platform builds, golden tests, spell-check
-- [Dependabot Config](../.github/dependabot.yaml) - Daily dependency update automation
+- [Dependabot Config](../.github/dependabot.yaml) - Daily dependency update automation (github-actions + pub)
 - [LICENSE](../LICENSE) - MIT License (2023-2026)
+- [Spell Check Config](../.github/cspell.json) - cspell dictionary (200+ terms, VGV dictionaries)
 
 ## Getting Started
 
@@ -47,9 +50,12 @@ flutter pub get
 # 2. Generate code (Freezed, ObjectBox, Drift, JSON)
 dart run build_runner build --delete-conflicting-outputs
 
-# 3. Run in development mode
+# 3. Regenerate app icons (only if time-money-logo.png changes)
+dart run flutter_launcher_icons
+
+# 4. Run in development mode
 flutter run --flavor development --target lib/main_development.dart
 
-# 4. Run tests
+# 5. Run tests
 flutter test --coverage --test-randomize-ordering-seed random
 ```

@@ -12,8 +12,8 @@
 | Repository Interfaces | 2 |
 | Repository Implementations | 4 |
 | Datasources | 4 |
-| Pages | 8 |
-| Feature Widgets | 30 |
+| Pages | 7 |
+| Feature Widgets | 27 |
 | Shared Widgets | 4 |
 | Domain Entities | 3 |
 
@@ -136,7 +136,7 @@
 |---|---|
 | `CalculatePaymentButton` | Triggers payment calculation |
 
-### Times Widgets (21)
+### Times Widgets (19)
 
 | Widget | Category | Description |
 |---|---|---|
@@ -160,7 +160,7 @@
 | `ErrorListTimesView` | View | Error state for times list |
 | `DeleteTimeConfirmationDialog` | Dialog | Confirmation before deletion |
 
-### Wage Widgets (8)
+### Wage Widgets (7)
 
 | Widget | Category | Description |
 |---|---|---|

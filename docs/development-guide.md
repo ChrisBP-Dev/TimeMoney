@@ -24,6 +24,9 @@ flutter pub get
 
 # Generate code (Freezed, ObjectBox, Drift, JSON)
 dart run build_runner build --delete-conflicting-outputs
+
+# Regenerate app icons (only needed if time-money-logo.png changes)
+dart run flutter_launcher_icons
 ```
 
 ## Running the App
@@ -57,6 +60,27 @@ Each flavor uses a separate database name to prevent data conflicts:
 | Staging | `stg-1` |
 | Production | `prod-1` |
 
+## App Icons
+
+Custom app icons are generated via `flutter_launcher_icons` (^0.14.3) from a single source image (`time-money-logo.png` at project root).
+
+### Configuration Files
+
+| File | Platforms | Notes |
+|---|---|---|
+| `flutter_launcher_icons-development.yaml` | iOS, Android | Adaptive icon with `#245db4` background |
+| `flutter_launcher_icons-staging.yaml` | iOS, Android | Adaptive icon with `#245db4` background |
+| `flutter_launcher_icons-production.yaml` | iOS, Android, Web, Windows | Full platform coverage |
+
+### Regenerating Icons
+
+```bash
+# Regenerate all platform icons from time-money-logo.png
+dart run flutter_launcher_icons
+```
+
+This generates platform-specific icons in `android/`, `ios/`, `web/`, and `windows/` directories. Only needed when the source `time-money-logo.png` changes.
+
 ## Testing
 
 ```bash
@@ -87,6 +111,18 @@ flutter test --update-goldens test/goldens/
 | Golden | 8 (4 files) | flutter_test (matchesGoldenFile) | `test/goldens/` |
 | **Total** | **373** | | |
 
+### Test Tag Configuration
+
+Golden tests are tagged via `dart_test.yaml`:
+
+```yaml
+tags:
+  golden:
+    description: Golden image tests — platform-specific baselines
+```
+
+This allows CI to run golden tests separately on macOS (for consistent font rendering).
+
 ### Test Helpers
 
 - **`pumpApp(widget)`** — Wraps widget with localization and required providers
@@ -96,7 +132,7 @@ flutter test --update-goldens test/goldens/
 
 ### Test Conventions
 
-- Mirror source path: `lib/src/.../file.dart` → `test/src/.../file_test.dart`
+- Mirror source path: `lib/src/.../file.dart` -> `test/src/.../file_test.dart`
 - `group('ClassName', () { ... })` wrapping related tests
 - `late` variables initialized in `setUp()`
 - `const` test fixtures at top-level
@@ -109,6 +145,18 @@ Run after modifying Freezed, ObjectBox, or Drift entities:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
+```
+
+Freezed code generation options are configured in `build.yaml`:
+
+```yaml
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          when: { when: true, maybeWhen: true }
+          map: { map: true, maybeMap: true }
 ```
 
 Run after modifying `.arb` localization files:
@@ -143,7 +191,7 @@ dart format .
 
 ```bash
 # Check all markdown files (uses .github/cspell.json config)
-npx cspell --config .github/cspell.json **/*.md
+npx cspell --config .github/cspell.json "**/*.md"
 ```
 
 ## CI/CD Pipeline
@@ -160,6 +208,13 @@ GitHub Actions pipeline (`.github/workflows/main.yaml`) runs on push to `main` a
 | build-web | ubuntu-latest | Web release build |
 | build-windows | windows-latest | Windows release build |
 | spell-check | (VGV workflow) | cspell on all .md files |
+
+### Pipeline Features
+
+- **Concurrency control:** Groups by workflow + branch, cancels in-progress PR runs
+- **Dependency chain:** Platform builds and golden tests depend on quality gate passing first
+- **Coverage artifact:** Quality gate uploads `coverage/lcov.info` as build artifact
+- **Spell check:** Uses VeryGoodOpenSource reusable workflow with `.github/cspell.json` dictionary
 
 ## Coding Standards
 

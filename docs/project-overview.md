@@ -8,6 +8,8 @@ TimeMoney is a cross-platform Flutter application for hourly workers to track wo
 
 The project represents a real brownfield modernization of a 3-year-old codebase, upgraded from Dart 2.x to 3.11+ with professional-grade standards including BLoC 9.x with sealed classes, Freezed 3.x for domain entities, fpdart for functional error handling, and comprehensive testing (373 tests, 92.3% coverage).
 
+The modernization was AI-assisted using the BMad Method + Claude Code, following a structured 6-epic migration (25 stories, 138 commits) with retrospectives after each epic.
+
 ## Technology Stack
 
 | Category | Technology | Version |
@@ -22,6 +24,7 @@ The project represents a real brownfield modernization of a 3-year-old codebase,
 | Linting | very_good_analysis | ^10.2.0 |
 | Testing | bloc_test / mocktail | ^10.0.0 / ^1.0.0 |
 | i18n | intl | ^0.20.0 |
+| App Icons | flutter_launcher_icons | ^0.14.3 |
 | CI/CD | GitHub Actions | 8-job pipeline |
 
 ## Architecture Classification
@@ -31,6 +34,7 @@ The project represents a real brownfield modernization of a 3-year-old codebase,
 - **Datasource Strategy:** Dual datasource — ObjectBox (native: iOS/Android/Windows) + Drift (web: SQLite via WASM + OPFS)
 - **DI Strategy:** Platform-aware compile-time conditional imports
 - **State Pattern:** Sealed classes for BLoC states/events, Freezed for domain entities only
+- **License:** MIT (2023-2026)
 
 ## Features
 
@@ -45,7 +49,8 @@ The project represents a real brownfield modernization of a 3-year-old codebase,
 
 | Metric | Value |
 |---|---|
-| Dart source files (lib/src/) | 131 |
+| Dart source files (lib/src/) | 131 (non-generated) |
+| Total Dart files (lib/src/) | 136 (including .g.dart / .freezed.dart) |
 | Features | 4 |
 | BLoCs + Cubits | 6 + 2 (includes LocaleCubit) |
 | Use Cases | 8 |
@@ -60,6 +65,7 @@ The project represents a real brownfield modernization of a 3-year-old codebase,
 | Platforms | 4 (iOS, Android, Web, Windows) |
 | Locales | 2 (English, Spanish) |
 | CI/CD Jobs | 8 |
+| App Icon Source | Custom `time-money-logo.png` (3 per-flavor configs) |
 
 ## Repository Structure
 
