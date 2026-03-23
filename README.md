@@ -74,13 +74,13 @@ lib/src/
 │   └── ui/              # ActionState<T> reusable sealed class
 ├── features/
 │   ├── home/            # Main app screen
-│   ├── payment/         # Payment calculation (ResultPaymentCubit)
+│   ├── payment/         # Payment calculation (PaymentCubit)
 │   ├── times/           # Time entry CRUD (BLoC + reactive streams)
 │   └── wage/            # Hourly wage management (Cubit)
 └── shared/              # Cross-feature shared widgets/utilities
 ```
 
-Each feature follows: `data/datasources/`, `data/repositories/`, `domain/entities/`, `domain/repositories/`, `domain/use_cases/`, `presentation/bloc/`, `presentation/pages/`, `presentation/widgets/`.
+Data-intensive features (times, wage) follow: `data/datasources/`, `data/repositories/`, `domain/entities/`, `domain/repositories/`, `domain/use_cases/`, `presentation/bloc/`, `presentation/pages/`, `presentation/widgets/`. Simpler features (home, payment) use only the layers they need.
 
 ## Features
 
@@ -197,4 +197,4 @@ Built with Flutter. Modernized with the [BMad Method][bmad_link] + Claude Code.
 [license_link]: LICENSE
 [vga_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [vga_link]: https://pub.dev/packages/very_good_analysis
-[bmad_link]: https://github.com/bmadcode/bmad-method
+[bmad_link]: https://github.com/bmad-code-org/BMAD-METHOD

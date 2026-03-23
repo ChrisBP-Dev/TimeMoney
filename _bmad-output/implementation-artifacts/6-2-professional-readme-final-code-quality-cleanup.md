@@ -76,7 +76,7 @@ so that I can understand the project's architecture and quality within 30 second
 ### Task 3: Update Outdated docs/index.md (AC: 14)
 
 - [x] 3.1 Update `docs/index.md` — currently references pre-modernization state (Flutter 3.7.5, Dart 2.x SDK constraint `>=2.19.2 <3.0.0`, dartz, ObjectBox-only). Update to reflect: Flutter 3.41+, Dart SDK >=3.11.0 <4.0.0, BLoC 9.x + Freezed 3.x + fpdart + ObjectBox 5.x + Drift 2.32+, feature-first Clean Architecture, dual datasource.
-- [x] 3.2 **Add disclaimers to ALL 6 docs/ files** — all files (`architecture.md`, `component-inventory.md`, `data-models.md`, `development-guide.md`, `project-overview.md`, `source-tree-analysis.md`) contain pre-modernization references (Flutter 3.7.5, Dart 2.x, dartz, ModelTime, ObjectBox-only, zero test coverage). Add this disclaimer at the very top of each file: `> **Note:** This document was auto-generated during the initial brownfield scan (2026-03-16) and reflects the pre-modernization state. See [README.md](../README.md) and `_bmad-output/planning-artifacts/` for current architecture.` Do NOT rewrite docs/ files — that's out of scope.
+- [x] 3.2 **~~Add disclaimers to ALL 6 docs/ files~~ → Full docs/ regeneration (approved deviation)** — Original spec required disclaimers only. Dev agent ran exhaustive document-project rescan instead, regenerating all 6 files to reflect current post-modernization state. Result is superior: all docs now accurately describe Flutter 3.41+, Dart 3.11+, dual datasource, BLoC 9.x, 373 tests. Deviation approved during code review.
 
 ### Task 4: Final Code Quality Verification Pass (AC: 7, 8, 9, 10, 11, 12)
 

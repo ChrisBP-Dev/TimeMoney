@@ -52,7 +52,7 @@ The project represents a real brownfield modernization of a 3-year-old codebase,
 | Domain Entities | 3 (TimeEntry, WageHourly, PaymentResult) |
 | Repository Implementations | 4 (2 ObjectBox + 2 Drift) |
 | Datasources | 4 (2 ObjectBox + 2 Drift) |
-| Pages | 8 |
+| Pages | 7 |
 | Widgets | 37+ |
 | Test Files | 70 |
 | Total Tests | 373 |
