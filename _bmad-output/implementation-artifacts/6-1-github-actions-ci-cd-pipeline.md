@@ -1,6 +1,6 @@
 # Story 6.1: GitHub Actions CI/CD Pipeline
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -338,3 +338,22 @@ Claude Opus 4.6 (1M context)
 - `test/goldens/payment_result_page_golden_test.dart` — added `@Tags(['golden'])`
 - `test/goldens/update_time_dialog_golden_test.dart` — added `@Tags(['golden'])`
 - 91 Dart files in `lib/` and `test/` — formatted by `dart format .` (formatting only, no logic changes)
+
+### Code Review Record
+
+- **Reviewer model:** Claude Opus 4.6 (1M context)
+- **Review method:** 3-layer adversarial (Blind Hunter, Edge Case Hunter, Acceptance Auditor)
+- **Findings raised:** 19 total
+- **Triage result:** 3 bad_spec, 3 patch, 2 defer (resolved), 11 reject
+- **Bad Spec (BS-1):** Spec stated "No flavor/environment needed" but project has no `lib/main.dart` — only `main_production.dart`, `main_staging.dart`, `main_development.dart`. All build commands require `--target lib/main_production.dart`; Android/iOS also require `--flavor production`. **Amended:** Build Environment Notes updated to document required flags and rationale.
+- **Bad Spec (BS-2):** Android `build.gradle` signing fallback to debug keys was undocumented — CI silently produces debug-signed release bundles. **Amended:** Added `echo "::warning::"` step in `build-android` job; documented in spec that release signing will be configured in a future deployment story.
+- **Bad Spec (BS-3):** `cancel-in-progress: true` applied to all events, causing rapid merges to main to cancel each other's validation. **Amended:** Changed to `${{ github.event_name == 'pull_request' }}` so push events to main always complete; spec updated.
+- **Patches applied (3):**
+  - P-1: Golden tests used last-resort exclusion (Option C) without attempting preferred Option A (regenerate baselines on Ubuntu). **Fix:** Added dedicated `test-goldens` job on `macos-latest` (where baselines were generated) gated behind `quality`. Golden tests now run in CI on the correct platform while `quality` job on ubuntu skips them. All 5 golden tests verified locally.
+  - P-2: `semantic-pull-request` VGV reusable workflow had no event guard — would run (and potentially fail) on push events to main where no PR context exists. **Fix:** Added `if: github.event_name == 'pull_request'` to the job.
+  - P-3: `@Tags(['golden'])` used in 4 test files but `golden` tag not declared in any config file, producing undeclared-tag warnings. **Fix:** Created `dart_test.yaml` at project root with `tags: golden:` declaration.
+- **Deferred → Resolved (2):**
+  - D-1: `_bmad/` cspell ignorePaths concern — `_bmad/` is BMad framework tooling (1064 markdown files, 3163 cspell issues) correctly excluded from spell-check. `_bmad-output/` (project planning artifacts) is NOT ignored and passes with zero failures across 43 files. Both directories are tracked in git and will be on GitHub.
+  - D-2: 91 Dart files reformatted in the same story as CI changes. These were necessary for the `dart format --set-exit-if-changed .` CI check to pass on any PR — without them, every PR would fail formatting. Documented as process learning; ideally would have been a preparatory commit.
+- **Rejected (11):** No pinned Flutter SDK (spec-intentional: latest stable), `actions/checkout@v6` existence (verified: v6.0.2, CI green), permissions insufficient for reusable workflows (E2E verified: PR #8 all checks pass), no coverage threshold (explicitly out of scope per spec), pub cache optimization (not a defect), spell-check/semantic not gated behind quality (Tier 0 by spec design), cspell `ignoreWords` vs `words` (correct API usage for VGV forbidden dictionary override), coverage artifact without `if: always()` (test failure already blocks PR), spell-check delegation to VGV (matches spec Task 1.3), PR template missing "Summary" section (existing `Description` section fulfills intent), web/windows no `--flavor` (platforms don't support it — `--target` only is correct).
+- **Final validation:** 373 tests pass (368 non-golden + 5 golden), `flutter analyze` zero issues, `dart format` zero changes, `cspell` zero failures (52 files). CI validation passed — all 8 jobs green (PR #8 run 23418073581): quality, semantic-pull-request, spell-check, test-goldens, build-android, build-ios, build-web, build-windows.
