@@ -1,0 +1,123 @@
+appId: com.criszx17dev.time-money.dev
+---
+# TimeMoney — Demo Video Flow
+# Smooth walkthrough of the full app experience for README demo.
+# Record: maestro record .maestro/demo-video.yaml
+#
+# Semantics identifiers (defined in source):
+#   create_hour_field, create_minutes_field  — CustomCreateField
+#   update_hour_field, update_minutes_field  — CustomUpdateField
+#   wage_hourly_field                        — WageHourlyField
+
+# Launch with clean state
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# Show wage dialog briefly
+- tapOn: "Change"
+- extendedWaitUntil:
+    visible: "Update Hourly Pay:"
+    timeout: 5000
+# Dismiss wage dialog
+- tapOn:
+    point: "10%, 10%"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 5000
+
+# Add first time entry (8h 30m)
+- tapOn: "Add Time"
+- extendedWaitUntil:
+    visible: "Create Time:"
+    timeout: 5000
+- tapOn:
+    id: "create_hour_field"
+- inputText: "8"
+- tapOn:
+    id: "create_minutes_field"
+- inputText: "30"
+- tapOn: "Create Time:"
+- tapOn:
+    text: "^Create$"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# Add second time entry (6h 45m)
+- tapOn: "Add Time"
+- extendedWaitUntil:
+    visible: "Create Time:"
+    timeout: 5000
+- tapOn:
+    id: "create_hour_field"
+- inputText: "6"
+- tapOn:
+    id: "create_minutes_field"
+- inputText: "45"
+- tapOn: "Create Time:"
+- tapOn:
+    text: "^Create$"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# Add third time entry (7h 15m)
+- tapOn: "Add Time"
+- extendedWaitUntil:
+    visible: "Create Time:"
+    timeout: 5000
+- tapOn:
+    id: "create_hour_field"
+- inputText: "7"
+- tapOn:
+    id: "create_minutes_field"
+- inputText: "15"
+- tapOn: "Create Time:"
+- tapOn:
+    text: "^Create$"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# Edit a time entry (tap edit icon on first entry)
+- tapOn:
+    point: "80%, 38%"
+- extendedWaitUntil:
+    visible: "Update:"
+    timeout: 5000
+# Dismiss edit dialog
+- tapOn:
+    point: "10%, 10%"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 5000
+
+# Calculate payment
+- tapOn: "Calculate Payment"
+- extendedWaitUntil:
+    visible: "Result Info:"
+    timeout: 5000
+# Dismiss payment result
+- tapOn:
+    point: "10%, 10%"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 5000
+
+# Toggle locale to Spanish
+- tapOn:
+    text: "^ES$"
+# Wait for Spanish UI to fully render before toggling back
+- extendedWaitUntil:
+    visible: "Agregar Tiempo"
+    timeout: 5000
+
+# Toggle back to English
+- tapOn:
+    text: "^EN$"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 5000

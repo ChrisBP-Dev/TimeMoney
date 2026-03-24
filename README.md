@@ -11,7 +11,19 @@ A Flutter application for hourly workers to track work hours and calculate payme
 
 ## Demo
 
-https://user-images.githubusercontent.com/80471939/222861291-6728b069-f92f-4be1-a707-a0ad9c2dda68.mp4
+https://github.com/user-attachments/assets/83805138-4817-42eb-874f-f50f1ae1223d
+
+### Screenshots
+
+| Home | Create Time | Payment Result |
+|:---:|:---:|:---:|
+| ![Home](docs/screenshots/02_home_populated.png) | ![Create](docs/screenshots/03_create_time.png) | ![Payment](docs/screenshots/06_payment_result.png) |
+
+| Empty State | Update Time | Update Wage |
+|:---:|:---:|:---:|
+| ![Empty](docs/screenshots/01_home_empty.png) | ![Update](docs/screenshots/04_update_time.png) | ![Wage](docs/screenshots/05_update_wage.png) |
+
+> Screenshots generated automatically with [Maestro][maestro_link] E2E flows (see [`.maestro/`](.maestro/)).
 
 ## Project Overview
 
@@ -33,6 +45,7 @@ The modernization was AI-assisted using the [BMad Method][bmad_link] + Claude Co
 | Persistence (web) | Drift 2.32+ (SQLite via WASM + OPFS) |
 | Linting | very_good_analysis ^10.2.0 (strict) |
 | Testing | 373 tests / 92.3% coverage |
+| E2E UI Testing | Maestro (YAML flows) |
 | i18n | intl (English, Spanish) |
 | CI/CD | GitHub Actions (8-job pipeline) |
 
@@ -154,6 +167,7 @@ open coverage/index.html
 | BLoC | State management | bloc_test with build/act/expect |
 | Widget | Presentation layer | pumpApp helper, finder assertions |
 | Golden | Visual regression | matchesGoldenFile on macOS |
+| E2E | UI flows | Maestro YAML (`.maestro/`) |
 
 ## CI/CD
 
@@ -266,3 +280,4 @@ Built with Flutter. Modernized with the [BMad Method][bmad_link] + Claude Code.
 [vga_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [vga_link]: https://pub.dev/packages/very_good_analysis
 [bmad_link]: https://github.com/bmad-code-org/BMAD-METHOD
+[maestro_link]: https://maestro.dev

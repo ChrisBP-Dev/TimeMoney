@@ -40,6 +40,7 @@ class _UpdateHourFieldState extends State<UpdateHourField> {
       builder: (context, state) {
         return CustomUpdateField(
           title: context.l10n.hourTitle,
+          semanticId: 'update_hour_field',
           controller: _controller,
           onChanged: (value) => context.read<UpdateTimeBloc>().add(
             UpdateTimeHourChanged(value: value),

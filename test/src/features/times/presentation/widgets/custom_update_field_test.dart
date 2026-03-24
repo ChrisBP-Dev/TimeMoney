@@ -17,6 +17,7 @@ void main() {
         Scaffold(
           body: CustomUpdateField(
             title: 'TestTitle',
+            semanticId: 'test_field',
             controller: TextEditingController(),
           ),
         ),
@@ -33,6 +34,7 @@ void main() {
         Scaffold(
           body: CustomUpdateField(
             title: 'Hour',
+            semanticId: 'test_hour_field',
             controller: controller,
           ),
         ),
@@ -50,6 +52,7 @@ void main() {
         Scaffold(
           body: CustomUpdateField(
             title: 'Hour',
+            semanticId: 'test_hour_field',
             controller: TextEditingController(),
             onChanged: (value) => changedValue = value,
           ),
@@ -66,6 +69,7 @@ void main() {
         Scaffold(
           body: CustomUpdateField(
             title: 'Hour',
+            semanticId: 'test_hour_field',
             controller: TextEditingController(),
           ),
         ),

@@ -101,6 +101,10 @@ unlinked_spec.ds
 # Coverage
 coverage/
 
+# Maestro E2E test outputs (debug logs, videos, reports)
+.maestro/tests/
+docs/screenshots/*.mp4
+
 # Submodules
 !pubspec.lock
 packages/**/pubspec.lock

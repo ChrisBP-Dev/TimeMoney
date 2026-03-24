@@ -43,6 +43,7 @@ class _CreateMinutesFieldState extends State<CreateMinutesField> {
       listener: (context, state) => _controller.clear(),
       child: CustomCreateField(
         title: context.l10n.minutesTitle,
+        semanticId: 'create_minutes_field',
         controller: _controller,
         onChanged: (value) => context.read<CreateTimeBloc>().add(
           CreateTimeMinutesChanged(value: value),
