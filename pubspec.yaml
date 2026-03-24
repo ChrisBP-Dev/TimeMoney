@@ -30,7 +30,7 @@ dependencies:
 
 dev_dependencies:
   bloc_test: ^10.0.0
-  drift_dev: ^2.32.0
+  drift_dev: ^2.32.1
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.0
