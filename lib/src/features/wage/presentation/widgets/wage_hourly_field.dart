@@ -7,6 +7,9 @@ import 'package:time_money/src/features/wage/presentation/bloc/update_wage_bloc.
 ///
 /// Dispatches [UpdateWageHourlyChanged] events to [UpdateWageBloc]
 /// on each keystroke for real-time validation.
+///
+/// Exposes a [Semantics] identifier to support accessibility services
+/// and E2E UI testing tools (e.g. Maestro).
 class WageHourlyField extends StatefulWidget {
   /// Creates a [WageHourlyField].
   const WageHourlyField({super.key});
@@ -40,17 +43,22 @@ class _WageHourlyFieldState extends State<WageHourlyField> {
           builder: (context, state) {
             return SizedBox(
               width: 70,
-              child: TextFormField(
-                controller: _controller,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                onChanged: (value) => context.read<UpdateWageBloc>().add(
-                  UpdateWageHourlyChanged(value: value),
-                ),
-                decoration: const InputDecoration(
-                  filled: true,
-                  border: OutlineInputBorder(),
+              child: Semantics(
+                identifier: 'wage_hourly_field',
+                child: TextFormField(
+                  controller: _controller,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  onTapOutside: (_) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
+                  onChanged: (value) => context.read<UpdateWageBloc>().add(
+                    UpdateWageHourlyChanged(value: value),
+                  ),
+                  decoration: const InputDecoration(
+                    filled: true,
+                    border: OutlineInputBorder(),
+                  ),
                 ),
               ),
             );

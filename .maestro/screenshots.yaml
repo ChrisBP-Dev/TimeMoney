@@ -1,0 +1,135 @@
+appId: com.criszx17dev.time-money.dev
+---
+# TimeMoney — E2E Screenshot Capture Flow
+# Seeds demo data and captures all app screens for portfolio documentation.
+# Run: maestro test .maestro/screenshots.yaml
+#
+# Semantics identifiers (defined in source):
+#   create_hour_field, create_minutes_field  — CustomCreateField
+#   update_hour_field, update_minutes_field  — CustomUpdateField
+#   wage_hourly_field                        — WageHourlyField
+
+# Launch with clean state for consistent screenshots
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# Screenshot 1: Home page — empty state
+- takeScreenshot: "01_home_empty"
+
+# --- Screenshot 5: Update wage dialog ---
+- tapOn: "Change"
+- extendedWaitUntil:
+    visible: "Update Hourly Pay:"
+    timeout: 5000
+- takeScreenshot: "05_update_wage"
+# Dismiss dialog via barrier
+- tapOn:
+    point: "10%, 10%"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 5000
+
+# --- Seed time entries ---
+
+# Add time entry 1: 8h 30m
+- tapOn: "Add Time"
+- extendedWaitUntil:
+    visible: "Create Time:"
+    timeout: 5000
+- tapOn:
+    id: "create_hour_field"
+- inputText: "8"
+- tapOn:
+    id: "create_minutes_field"
+- inputText: "30"
+- tapOn: "Create Time:"
+- tapOn:
+    text: "^Create$"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# Add time entry 2: 6h 45m
+- tapOn: "Add Time"
+- extendedWaitUntil:
+    visible: "Create Time:"
+    timeout: 5000
+- tapOn:
+    id: "create_hour_field"
+- inputText: "6"
+- tapOn:
+    id: "create_minutes_field"
+- inputText: "45"
+- tapOn: "Create Time:"
+- tapOn:
+    text: "^Create$"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# Add time entry 3: 7h 15m
+- tapOn: "Add Time"
+- extendedWaitUntil:
+    visible: "Create Time:"
+    timeout: 5000
+- tapOn:
+    id: "create_hour_field"
+- inputText: "7"
+- tapOn:
+    id: "create_minutes_field"
+- inputText: "15"
+- tapOn: "Create Time:"
+- tapOn:
+    text: "^Create$"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 10000
+
+# --- Capture remaining screenshots ---
+
+# Screenshot 2: Home page — populated with time entries
+- takeScreenshot: "02_home_populated"
+
+# Screenshot 3: Create time dialog (with values pre-filled)
+- tapOn: "Add Time"
+- extendedWaitUntil:
+    visible: "Create Time:"
+    timeout: 5000
+- tapOn:
+    id: "create_hour_field"
+- inputText: "4"
+- tapOn:
+    id: "create_minutes_field"
+- inputText: "20"
+- tapOn: "Create Time:"
+- takeScreenshot: "03_create_time"
+# Dismiss dialog via barrier
+- tapOn:
+    point: "10%, 10%"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 5000
+
+# Screenshot 4: Update time dialog (tap edit icon on first entry)
+- tapOn:
+    point: "80%, 38%"
+- extendedWaitUntil:
+    visible: "Update:"
+    timeout: 5000
+- takeScreenshot: "04_update_time"
+# Dismiss dialog via barrier
+- tapOn:
+    point: "10%, 10%"
+- extendedWaitUntil:
+    visible: "Add Time"
+    timeout: 5000
+
+# Screenshot 6: Payment result
+- tapOn: "Calculate Payment"
+- extendedWaitUntil:
+    visible: "Result Info:"
+    timeout: 5000
+- takeScreenshot: "06_payment_result"

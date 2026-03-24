@@ -43,6 +43,7 @@ class _CreateHourFieldState extends State<CreateHourField> {
       listener: (context, state) => _controller.clear(),
       child: CustomCreateField(
         title: context.l10n.hourTitle,
+        semanticId: 'create_hour_field',
         controller: _controller,
         onChanged: (value) => context.read<CreateTimeBloc>().add(
           CreateTimeHourChanged(value: value),
